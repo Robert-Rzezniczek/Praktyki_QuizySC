@@ -99,7 +99,6 @@
             "php vendor\\bin\\php-cs-fixer fix src\\ --rules=@Symfony,@PSR1,@PSR2,@PSR12",
             "php vendor\\bin\\phpcs --standard=Symfony src\\ --ignore=Kernel.php",
             "php vendor\\bin\\phpcbf --standard=Symfony src\\ --ignore=Kernel.php"
-//            "php vendor\\bin\\rector.bat process src"
         ],
         "init-app" : [
             "./bin/console --no-interaction doctrine:migrations:migrate",
