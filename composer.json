@@ -106,8 +106,8 @@
             "php vendor\\bin\\phpcbf --standard=Symfony src\\ --ignore=Kernel.php"
         ],
         "init-app" : [
-            "./bin/console --no-interaction doctrine:migrations:migrate",
-            "./bin/console --no-interaction doctrine:fixtures:load"
+          "bin/console --no-interaction doctrine:migrations:migrate",
+          "bin/console --no-interaction doctrine:fixtures:load"
         ]
     },
     "conflict": {
