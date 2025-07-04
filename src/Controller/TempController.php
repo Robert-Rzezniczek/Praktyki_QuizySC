@@ -17,8 +17,6 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/temp')]
 class TempController extends AbstractController
 {
-
-
     /**
      * Constructor.
      *

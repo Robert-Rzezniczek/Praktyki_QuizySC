@@ -1,25 +1,25 @@
 <?php
 
 /**
- * User entity.
+ * UserAuth entity.
  */
 
 namespace App\Entity;
 
 use App\Entity\Enum\UserRole;
-use App\Repository\UserRepository;
+use App\Repository\UserAuthRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * Class User.
+ * Class UserAuth.
  */
-#[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ORM\Table(name: 'users')]
+#[ORM\Entity(repositoryClass: UserAuthRepository::class)]
+#[ORM\Table(name: 'user_auth')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-class User implements UserInterface, PasswordAuthenticatedUserInterface
+class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
      * Primary key.
@@ -50,6 +50,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(type: 'string')]
     private ?string $password = null;
+
+    #[ORM\OneToOne(targetEntity: UserProfile::class, mappedBy: 'userAuth', cascade: ['persist', 'remove'])]
+    private ?UserProfile $profile = null;
 
     /**
      * Getter for id.
@@ -86,7 +89,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      *
      * @see UserInterface
      *
-     * @return string User identifier
+     * @return string UserAuth identifier
      */
     public function getUserIdentifier(): string
     {
@@ -134,7 +137,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Setter for password.
      *
-     * @param string $password User password
+     * @param string $password UserAuth password
      */
     public function setPassword(string $password): void
     {
@@ -150,5 +153,19 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // If you store any temporary, sensitive data on the user, clear it here
         // $this->plainPassword = null;
+    }
+
+    public function setProfile(?UserProfile $profile): void
+    {
+        $this->profile = $profile;
+
+        if (null !== $profile && $this !== $profile->getUserAuth()) {
+            $profile->setUserAuth($this);
+        }
+    }
+
+    public function getProfile(): ?UserProfile
+    {
+        return $this->profile;
     }
 }

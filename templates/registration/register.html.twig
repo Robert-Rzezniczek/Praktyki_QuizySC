@@ -22,12 +22,14 @@
                         {{ form_start(registrationForm, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
                         {{ form_errors(registrationForm) }}
 
+                        <!-- Email -->
                         <div class="mb-4">
                             {{ form_label(registrationForm.email, 'label.email'|trans, {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'required': 'required', 'placeholder': 'label.email'|trans}}) }}
                             {{ form_errors(registrationForm.email) }}
                         </div>
 
+                        <!-- Hasło -->
                         <div class="mb-4">
                             {{ form_label(registrationForm.plainPassword, 'label.password'|trans, {'label_attr': {'class': 'form-label'}}) }}
                             {{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control', 'required': 'required', 'autocomplete': 'new-password', 'placeholder': 'label.password'|trans}}) }}
@@ -35,11 +37,63 @@
                             <div class="invalid-feedback">{{ 'message.password_required'|trans }}</div>
                         </div>
 
+                        <!-- Imię -->
+                        <div class="mb-4">
+                            {{ form_label(registrationForm.imie, 'label.imie'|trans, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.imie, {'attr': {'class': 'form-control', 'required': 'required', 'placeholder': 'label.imie'|trans}}) }}
+                            {{ form_errors(registrationForm.imie) }}
+                        </div>
+
+                        <!-- Nazwisko -->
+                        <div class="mb-4">
+                            {{ form_label(registrationForm.nazwisko, 'label.nazwisko'|trans, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.nazwisko, {'attr': {'class': 'form-control', 'required': 'required', 'placeholder': 'label.nazwisko'|trans}}) }}
+                            {{ form_errors(registrationForm.nazwisko) }}
+                        </div>
+
+                        <!-- Szkoła -->
+                        <div class="mb-4">
+                            {{ form_label(registrationForm.szkola, 'label.szkola'|trans, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.szkola, {'attr': {'class': 'form-control', 'required': 'required', 'placeholder': 'label.szkola'|trans}}) }}
+                            {{ form_errors(registrationForm.szkola) }}
+                        </div>
+
+                        <!-- Województwo -->
+                        <div class="mb-4">
+                            {{ form_label(registrationForm.wojewodztwo, 'label.wojewodztwo'|trans, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.wojewodztwo, {'attr': {'class': 'form-control', 'required': 'required', 'placeholder': 'label.wojewodztwo'|trans}}) }}
+                            {{ form_errors(registrationForm.wojewodztwo) }}
+                        </div>
+
+                        <!-- Powiat -->
+                        <div class="mb-4">
+                            {{ form_label(registrationForm.powiat, 'label.powiat'|trans, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.powiat, {'attr': {'class': 'form-control', 'required': 'required', 'placeholder': 'label.powiat'|trans}}) }}
+                            {{ form_errors(registrationForm.powiat) }}
+                        </div>
+
+                        <!-- Podział wiekowy -->
+                        <div class="mb-4">
+                            {{ form_label(registrationForm.podzialWiekowy, 'label.poziom_edukacji'|trans, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(registrationForm.podzialWiekowy, {'attr': {'class': 'form-control', 'required': 'required', 'placeholder': 'label.poziom_edukacji'|trans}}) }}
+                            {{ form_errors(registrationForm.podzialWiekowy) }}
+                        </div>
+
+                        <!-- Zgoda na regulamin -->
                         <div class="mb-4">
                             <div class="form-check">
                                 {{ form_label(registrationForm.agreeTerms, null, {'label_attr': {'class': 'form-check-label'}}) }}
                                 {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
                                 {{ form_errors(registrationForm.agreeTerms) }}
+                            </div>
+                        </div>
+
+                        <!-- Zgoda na RODO -->
+                        <div class="mb-4">
+                            <div class="form-check">
+                                {{ form_label(registrationForm.agreeRodo, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                                {{ form_widget(registrationForm.agreeRodo, {'attr': {'class': 'form-check-input'}}) }}
+                                {{ form_errors(registrationForm.agreeRodo) }}
                             </div>
                         </div>
 

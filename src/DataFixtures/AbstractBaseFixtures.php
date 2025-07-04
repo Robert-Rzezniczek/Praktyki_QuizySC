@@ -47,7 +47,7 @@ abstract class AbstractBaseFixtures extends Fixture
      * Create many objects at once:.
      *
      *      $this->createMany(10, 'user', function(int $i) {
-     *          $user = new User();
+     *          $user = new UserAuth();
      *          $user->setFirstName('Ryan');
      *
      *           return $user;

@@ -6,9 +6,9 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
+use App\Entity\UserAuth;
 use App\Form\RegistrationForm;
-use App\Service\UserServiceInterface;
+use App\Service\UserAuthServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,9 +23,9 @@ class RegistrationController extends AbstractController
     /**
      * Constructor.
      *
-     * @param UserServiceInterface $userService UserService
+     * @param UserAuthServiceInterface $userAuthService UserAuthService
      */
-    public function __construct(private readonly UserServiceInterface $userService)
+    public function __construct(private readonly UserAuthServiceInterface $userAuthService)
     {
     }
 
@@ -40,12 +40,12 @@ class RegistrationController extends AbstractController
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, Security $security): Response
     {
-        $user = new User();
+        $user = new UserAuth();
         $form = $this->createForm(RegistrationForm::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userService->registerUser($user, $form);
+            $this->userAuthService->registerUser($user, $form);
 
             return $security->login($user, 'form_login', 'main');
         }

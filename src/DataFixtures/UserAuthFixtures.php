@@ -1,23 +1,23 @@
 <?php
 
 /**
- * User fixtures.
+ * UserAuth fixtures.
  */
 
 namespace App\DataFixtures;
 
 use App\Entity\Enum\UserRole;
-use App\Entity\User;
+use App\Entity\UserAuth;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 /**
- * Class UserFixtures.
+ * Class UserAuthFixtures.
  *
  * @psalm-suppress MissingConstructor
  */
-class UserFixtures extends AbstractBaseFixtures
+class UserAuthFixtures extends AbstractBaseFixtures
 {
     /**
      * Constructor.
@@ -41,8 +41,8 @@ class UserFixtures extends AbstractBaseFixtures
             return;
         }
 
-        $this->createMany(10, 'user', function (int $i) {
-            $user = new User();
+        $this->createMany(5, 'user', function (int $i) {
+            $user = new UserAuth();
             $user->setEmail(sprintf('user%d@example.com', $i));
             $user->setRoles([UserRole::ROLE_USER->value]);
             $user->setPassword(
@@ -55,8 +55,8 @@ class UserFixtures extends AbstractBaseFixtures
             return $user;
         });
 
-        $this->createMany(3, 'admin', factory: function (int $i = 10) {
-            $user = new User();
+        $this->createMany(2, 'admin', factory: function (int $i = 10) {
+            $user = new UserAuth();
             $user->setEmail(sprintf('admin%d@example.com', $i));
             $user->setRoles([UserRole::ROLE_USER->value, UserRole::ROLE_ADMIN->value]);
             $user->setPassword(
