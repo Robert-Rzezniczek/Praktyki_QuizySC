@@ -9,7 +9,6 @@ namespace App\Entity;
 use App\Repository\UserProfileRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
-
 /**
  * Class UserProfile.
  */
@@ -99,8 +98,11 @@ class UserProfile
         return $this->imie;
     }
 
+
     /**
      * Setter for imie.
+     *
+     * @param string $imie
      *
      * @return $this
      */
