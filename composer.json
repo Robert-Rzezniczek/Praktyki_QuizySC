@@ -1,22 +1,53 @@
 {
-    "name": "symfony/skeleton",
     "type": "project",
     "license": "proprietary",
-    "description": "A minimal Symfony project recommended to create bare bones applications",
     "minimum-stability": "stable",
     "prefer-stable": true,
     "require": {
         "php": ">=8.1",
         "ext-ctype": "*",
         "ext-iconv": "*",
+        "doctrine/dbal": "^3",
+        "doctrine/doctrine-bundle": "^2.14",
+        "doctrine/doctrine-migrations-bundle": "^3.4",
+        "doctrine/orm": "^3.3",
+        "knplabs/knp-paginator-bundle": "*",
+        "phpdocumentor/reflection-docblock": "*",
+        "phpstan/phpdoc-parser": "^2.1",
+        "stof/doctrine-extensions-bundle": "*",
+        "symfony/asset": "6.4.*",
+        "symfony/asset-mapper": "6.4.*",
         "symfony/console": "6.4.*",
+        "symfony/doctrine-messenger": "6.4.*",
         "symfony/dotenv": "6.4.*",
+        "symfony/expression-language": "6.4.*",
         "symfony/flex": "^2",
+        "symfony/form": "6.4.*",
         "symfony/framework-bundle": "6.4.*",
+        "symfony/http-client": "6.4.*",
+        "symfony/intl": "6.4.*",
+        "symfony/mailer": "6.4.*",
+        "symfony/mime": "6.4.*",
+        "symfony/monolog-bundle": "^3.0",
+        "symfony/notifier": "6.4.*",
+        "symfony/process": "6.4.*",
+        "symfony/property-access": "6.4.*",
+        "symfony/property-info": "6.4.*",
         "symfony/runtime": "6.4.*",
-        "symfony/yaml": "6.4.*"
-    },
-    "require-dev": {
+        "symfony/security-bundle": "6.4.*",
+        "symfony/serializer": "6.4.*",
+        "symfony/stimulus-bundle": "^2.24",
+        "symfony/string": "6.4.*",
+        "symfony/translation": "6.4.*",
+        "symfony/twig-bundle": "6.4.*",
+        "symfony/ux-turbo": "^2.24",
+        "symfony/validator": "6.4.*",
+        "symfony/web-link": "6.4.*",
+        "symfony/yaml": "6.4.*",
+        "symfonycasts/verify-email-bundle": "*",
+        "twig/extra-bundle": "^2.12|^3.0",
+        "twig/intl-extra": "*",
+        "twig/twig": "^2.12|^3.0"
     },
     "config": {
         "allow-plugins": {
@@ -24,7 +55,10 @@
             "symfony/flex": true,
             "symfony/runtime": true
         },
-        "sort-packages": true
+        "sort-packages": true,
+        "optimize-autoloader": true,
+        "apcu-autoloader": true,
+        "classmap-authoritative": true
     },
     "autoload": {
         "psr-4": {
@@ -48,13 +82,30 @@
     "scripts": {
         "auto-scripts": {
             "cache:clear": "symfony-cmd",
-            "assets:install %PUBLIC_DIR%": "symfony-cmd"
+            "assets:install %PUBLIC_DIR%": "symfony-cmd",
+            "importmap:install": "symfony-cmd"
         },
         "post-install-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "@static-analysis"
         ],
         "post-update-cmd": [
-            "@auto-scripts"
+            "@auto-scripts",
+            "@static-analysis"
+        ],
+        "static-analysis": [
+            "php vendor\\bin\\phpcs --config-set installed_paths vendor\\escapestudios\\symfony2-coding-standard",
+            "php vendor\\bin\\phpcs --config-set default_standard Symfony",
+            "php vendor\\bin\\php-cs-fixer fix src\\ --rules=@Symfony,@PSR1,@PSR2,@PSR12",
+            "php vendor\\bin\\phpcs --standard=Symfony src\\ --ignore=Kernel.php",
+            "php vendor\\bin\\phpcbf --standard=Symfony src\\ --ignore=Kernel.php"
+        ],
+        "clean-up":[
+            "php vendor\\bin\\phpcbf --standard=Symfony src\\ --ignore=Kernel.php"
+        ],
+        "init-app" : [
+          "bin/console --no-interaction doctrine:migrations:migrate",
+          "bin/console --no-interaction doctrine:fixtures:load"
         ]
     },
     "conflict": {
@@ -62,8 +113,24 @@
     },
     "extra": {
         "symfony": {
-            "allow-contrib": false,
+            "allow-contrib": "true",
             "require": "6.4.*"
         }
+    },
+    "require-dev": {
+        "doctrine/doctrine-fixtures-bundle": "*",
+        "escapestudios/symfony2-coding-standard": "^3.15",
+        "fakerphp/faker": "*",
+        "friendsofphp/php-cs-fixer": "^3.75",
+        "phpunit/phpunit": "^9.5",
+        "rector/rector": "*",
+        "squizlabs/php_codesniffer": "^3.13",
+        "symfony/browser-kit": "6.4.*",
+        "symfony/css-selector": "6.4.*",
+        "symfony/debug-bundle": "6.4.*",
+        "symfony/maker-bundle": "^1.63",
+        "symfony/phpunit-bridge": "^7.2",
+        "symfony/stopwatch": "6.4.*",
+        "symfony/web-profiler-bundle": "6.4.*"
     }
 }
