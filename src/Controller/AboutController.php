@@ -18,8 +18,6 @@ class AboutController extends AbstractController
 
     /**
      * O nas (About Us) page.
-     *
-     * @return Response
      */
     #[Route('/o-nas', name: 'app_about')]
     public function about(): Response

@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Controller;
 
 use App\Form\UserProfileType;
@@ -11,29 +10,36 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class UserEditController extends AbstractController
 {
-    #[Route('/user/edit', name: 'user_edit')]
-    public function edit(Request $request, EntityManagerInterface $em): Response
-    {
-        $user = $this->getUser();
+#[Route('/user/edit', name: 'user_edit')]
+public function edit(Request $request, EntityManagerInterface $em): Response
+{
+$user = $this->getUser();
 
-        if (!$user) {
-            $this->addFlash('danger', 'Musisz być zalogowany.');
-
-            return $this->redirectToRoute('app_login');
-        }
-
-        $form = $this->createForm(UserProfileType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->flush();
-            $this->addFlash('success', 'Dane zostały zaktualizowane.');
-
-            return $this->redirectToRoute('menu_view');
-        }
-
-        return $this->render('edit/edit.html.twig', [
-            'editForm' => $form->createView(),
-        ]);
-    }
+if (!$user) {
+$this->addFlash('danger', 'Musisz być zalogowany.');
+return $this->redirectToRoute('app_login');
 }
+
+$profile = $user->getProfile();
+
+if (!$profile) {
+$this->addFlash('danger', 'Brak profilu użytkownika.');
+return $this->redirectToRoute('app_menu');
+}
+
+$form = $this->createForm(UserProfileType::class, $profile);
+$form->handleRequest($request);
+
+if ($form->isSubmitted() && $form->isValid()) {
+$em->flush();
+$this->addFlash('success', 'Dane zostały zaktualizowane.');
+
+return $this->redirectToRoute('app_menu');
+}
+
+return $this->render('edit/edit.html.twig', [
+'editForm' => $form->createView(),
+]);
+}
+}
+?>
