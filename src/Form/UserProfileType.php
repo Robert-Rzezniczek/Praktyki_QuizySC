@@ -34,8 +34,8 @@ class UserProfileType extends AbstractType
 
             ->add('podzialWiekowy', ChoiceType::class, [
                 'choices' => EducationLevel::cases(),
-                'choice_label' => fn(EducationLevel $choice) => $choice->value,
-                'choice_value' => fn(?EducationLevel $choice) => $choice?->value,
+                'choice_label' => fn (EducationLevel $choice) => $choice->value,
+                'choice_value' => fn (?EducationLevel $choice) => $choice?->value,
                 'label' => 'Poziom edukacji',
             ]);
     }

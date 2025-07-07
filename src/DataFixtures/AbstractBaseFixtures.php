@@ -27,6 +27,23 @@ abstract class AbstractBaseFixtures extends Fixture
     protected ?ObjectManager $manager = null;
 
     /**
+     * Repositories.
+     *
+     * @var array<string, object>
+     */
+    protected array $repositories = [];
+
+    /**
+     * Constructor.
+     *
+     * @param array<string, object> $repositories Repositories
+     */
+    public function __construct(array $repositories = [])
+    {
+        $this->repositories = $repositories;
+    }
+
+    /**
      * Load.
      *
      * @param ObjectManager $manager Persistence object manager
@@ -44,19 +61,10 @@ abstract class AbstractBaseFixtures extends Fixture
     abstract protected function loadData(): void;
 
     /**
-     * Create many objects at once:.
+     * Create many objects at once.
      *
-     *      $this->createMany(10, 'user', function(int $i) {
-     *          $user = new UserAuth();
-     *          $user->setFirstName('Ryan');
-     *
-     *           return $user;
-     *      });
-     *
-     * @param int      $count              Number of object to create
-     * @param string   $referenceGroupName Tag these created objects with this group name,
-     *                                     and use this later with getRandomReference(s)
-     *                                     to fetch only from this specific group
+     * @param int      $count              Number of objects to create
+     * @param string   $referenceGroupName Tag these created objects with this group name
      * @param callable $factory            Defines method of creating objects
      */
     protected function createMany(int $count, string $referenceGroupName, callable $factory): void
@@ -69,13 +77,22 @@ abstract class AbstractBaseFixtures extends Fixture
                 throw new \LogicException('Did you forget to return the entity object from your callback to BaseFixture::createMany()?');
             }
 
-            $this->manager->persist($entity);
+            // Save using repository if available, otherwise use manager
+            if (isset($this->repositories[$referenceGroupName])) {
+                $this->repositories[$referenceGroupName]->save($entity);
+            } else {
+                $this->manager->persist($entity);
+                $this->manager->flush();
+            }
 
-            // store for usage later than groupName_#COUNT#
+            // Store for usage later as groupName_#COUNT#
             $this->addReference(sprintf('%s_%d', $referenceGroupName, $i), $entity);
         }
 
-        $this->manager->flush();
+        // Flush only if no repository is used
+        if (!isset($this->repositories[$referenceGroupName])) {
+            $this->manager->flush();
+        }
     }
 
     /**
@@ -137,7 +154,7 @@ abstract class AbstractBaseFixtures extends Fixture
 
         $referenceNameList = array_filter(
             $referenceNameListByClass,
-            fn ($referenceName) => preg_match_all("/^{$referenceGroupName}_\\d+\$/", $referenceName)
+            fn ($referenceName) => preg_match("/^{$referenceGroupName}_\\d+\$/", $referenceName)
         );
 
         if ([] === $referenceNameList) {

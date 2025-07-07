@@ -15,7 +15,6 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class AboutController extends AbstractController
 {
-
     /**
      * O nas (About Us) page.
      */
