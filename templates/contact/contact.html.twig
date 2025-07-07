@@ -1,0 +1,46 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Kontakt{% endblock %}
+
+{% block body %}
+    <div class="container my-5">
+        <div class="row align-items-center">
+            <div class="col-md-5 mb-4 mb-md-0">
+                <img src="{{ asset('images/sursum-carda.png') }}" alt="Sursum Corda" class="img-fluid rounded" style="max-height: 400px;">
+            </div>
+
+            <div class="col-md-7">
+                <h1 class="mb-4">Zostańmy w kontakcie!</h1>
+                <p class="lead">Zachęcamy do kontaktu:</p>
+
+                <div class="card shadow-sm p-4 ml-auto mr-0"  style="max-width: 400px;">
+                    {# text-center jakbym chciala wyrownac #}
+                    <p class="mb-4">
+                        <strong>Email:</strong><br>
+                        <a href="mailto:biuro@sc.org.pl">biuro@sc.org.pl</a>
+                    </p>
+                    <p>
+                        <strong>Telefon:</strong><br>
+                        <a href="tel:+48184411994">18 44 11 994</a>
+                    </p>
+                    <p>Znajdziesz nas także:</p>
+
+                    <div class="d-flex justify-content-center gap-4 fs-4">
+                        <a href="https://www.facebook.com/Stowarzyszenie.sursum.corda/" target="_blank" class="text-primary text-decoration-none">
+                            <i class="fab fa-facebook"></i>
+                        </a>
+
+                        <a href="https://www.instagram.com/stowarzyszenie.sursum.corda/" target="_blank" class="text-danger text-decoration-none">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+
+                        <a href="https://www.youtube.com/user/SursumCorda2000" target="_blank" class="text-danger text-decoration-none">
+                            <i class="fab fa-youtube"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+{% endblock %}

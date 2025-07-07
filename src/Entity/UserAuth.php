@@ -39,6 +39,22 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface, Two
     private ?string $email = null;
 
     /**
+     * imieee
+     */
+    //public function getName(): string
+    //{
+   //     return $this->getProfile()?->getImie() . ' ' . $this->getProfile()?->getNazwisko();
+   // }
+    /**
+     * nazwisko
+     */
+    //public function getSurname(): ?string
+    //{
+   //    return $this->getProfile()?->getNazwisko();
+   // }
+
+
+    /**
      * Roles.
      *
      * @var list<int, string>
