@@ -99,9 +99,9 @@
         "static-analysis": [
             "php vendor\\bin\\phpcs --config-set installed_paths vendor\\escapestudios\\symfony2-coding-standard",
             "php vendor\\bin\\phpcs --config-set default_standard Symfony",
+            "php vendor\\bin\\phpcbf --standard=Symfony src\\ --ignore=Kernel.php",
             "php vendor\\bin\\php-cs-fixer fix src\\ --rules=@Symfony,@PSR1,@PSR2,@PSR12",
-            "php vendor\\bin\\phpcs --standard=Symfony src\\ --ignore=Kernel.php",
-            "php vendor\\bin\\phpcbf --standard=Symfony src\\ --ignore=Kernel.php"
+            "php vendor\\bin\\phpcs --standard=Symfony src\\ --ignore=Kernel.php"
         ],
         "clean-up":[
             "php vendor\\bin\\phpcbf --standard=Symfony src\\ --ignore=Kernel.php"

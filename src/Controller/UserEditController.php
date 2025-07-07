@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Form\UserEditForm;
 use App\Form\UserProfileType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,6 +18,7 @@ class UserEditController extends AbstractController
 
         if (!$user) {
             $this->addFlash('danger', 'Musisz być zalogowany.');
+
             return $this->redirectToRoute('app_login');
         }
 

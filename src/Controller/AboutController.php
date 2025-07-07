@@ -1,13 +1,21 @@
 <?php
 
+/**
+ * About controller.
+ */
+
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * AboutController class.
+ */
 class AboutController extends AbstractController
 {
+
     /**
      * O nas (About Us) page.
      *

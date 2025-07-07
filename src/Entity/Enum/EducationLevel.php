@@ -17,8 +17,6 @@ enum EducationLevel: string
 
     /**
      * Get the label for the education level.
-     *
-     * @return string
      */
     public function label(): string
     {
