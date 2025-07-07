@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Form\UserEditForm;
+use App\Form\UserProfileType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +22,7 @@ class UserEditController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        $form = $this->createForm(UserEditForm::class, $user);
+        $form = $this->createForm(UserProfileType::class, $user);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {

@@ -15,8 +15,8 @@ class UserEditForm extends AbstractType
     {
         $builder
             ->add('email', EmailType::class)
-            ->add('name', TextType::class)
-            ->add('surname', TextType::class);
+            ->add('imie', TextType::class)
+            ->add('nazwisko', TextType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
