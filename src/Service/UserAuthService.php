@@ -6,6 +6,7 @@
 
 namespace App\Service;
 
+use App\Entity\Enum\EducationLevel;
 use App\Entity\Enum\UserRole;
 use App\Entity\UserAuth;
 use App\Form\RegistrationForm;
@@ -94,6 +95,9 @@ class UserAuthService implements UserAuthServiceInterface
         if ($powiat && $wojewodztwo && $powiat->getWojewodztwo()->getId() !== $wojewodztwo->getId()) {
             throw new \InvalidArgumentException('Wybrany powiat nie należy do wybranego województwa.');
         }
+        // Konwersja podzialWiekowy na obiekt EducationLevel
+        $podzialWiekowy = $form->get('podzialWiekowy')->getData();
+        $podzialWiekowyEnum = $podzialWiekowy ? EducationLevel::from($podzialWiekowy) : null;
 
         $profileData = [
             'imie' => $form->get('imie')->getData(),
@@ -101,7 +105,7 @@ class UserAuthService implements UserAuthServiceInterface
             'szkola' => $form->get('szkola')->getData(),
             'wojewodztwo' =>  $wojewodztwo,
             'powiat' => $powiat,
-            'podzialWiekowy' => $form->get('podzialWiekowy')->getData(),
+            'podzialWiekowy' => $podzialWiekowyEnum,
         ];
         $this->profileService->createProfile($user, $profileData);
     }
