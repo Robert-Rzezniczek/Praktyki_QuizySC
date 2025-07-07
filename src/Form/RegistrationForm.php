@@ -6,6 +6,7 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\EducationLevel;
 use App\Entity\UserAuth;
 use App\Repository\WojewodztwoRepository;
 use App\Repository\PowiatRepository;
@@ -45,6 +46,12 @@ class RegistrationForm extends AbstractType
         $powiatyChoices = [];
         foreach ($powiaty as $powiat) {
             $powiatyChoices[$powiat->getName()] = $powiat->getId();
+        }
+
+        // Opcje dla podziału wiekowego
+        $educationChoices = [];
+        foreach (EducationLevel::cases() as $level) {
+            $educationChoices[$level->label()] = $level->value;
         }
 
         $builder
@@ -118,9 +125,14 @@ class RegistrationForm extends AbstractType
                     ]),
                 ],
             ])
-            ->add('podzialWiekowy', TextType::class, [
+            ->add('podzialWiekowy', ChoiceType::class, [
                 'mapped' => false,
                 'label' => 'label.poziom_edukacji',
+                'choices' => $educationChoices,
+                'choice_label' => function ($value) {
+                    return $value;
+                },
+                'placeholder' => 'Wybierz etap edukacyjny',
                 'constraints' => [
                     new NotBlank([
                         'message' => 'message.nie_powinno_byc_puste',

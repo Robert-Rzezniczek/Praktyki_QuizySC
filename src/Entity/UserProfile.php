@@ -6,6 +6,7 @@
 
 namespace App\Entity;
 
+use App\Entity\Enum\EducationLevel;
 use App\Repository\UserProfileRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -71,8 +72,8 @@ class UserProfile
      * Podział wiekowy.
      */
     #[Assert\NotBlank]
-    #[ORM\Column(length: 50)]
-    private ?string $podzialWiekowy = null;
+    #[ORM\Column(type: 'string', enumType: EducationLevel::class)]
+    private ?EducationLevel $podzialWiekowy = null;
 
     /**
      * Profil. (relacja).
@@ -214,7 +215,7 @@ class UserProfile
      *
      * @return string|null Podział wiekowy
      */
-    public function getPodzialWiekowy(): ?string
+    public function getPodzialWiekowy(): ?EducationLevel
     {
         return $this->podzialWiekowy;
     }
@@ -226,7 +227,7 @@ class UserProfile
      *
      * @return $this
      */
-    public function setPodzialWiekowy(string $podzialWiekowy): static
+    public function setPodzialWiekowy(?EducationLevel $podzialWiekowy): static
     {
         $this->podzialWiekowy = $podzialWiekowy;
 
