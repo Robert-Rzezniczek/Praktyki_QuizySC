@@ -42,6 +42,10 @@ security:
         # - { path: ^/profile, roles: ROLE_USER }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/faq/new, roles: ROLE_ADMIN }
+        #- { path: ^/faq, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        #- { path: ^/about, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        #- { path: ^/contact, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/, roles: ROLE_USER }
 
 when@test:

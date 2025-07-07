@@ -48,59 +48,8 @@ class RegistrationForm extends AbstractType
                     ]),
                 ],
             ])
-            ->add('imie', TextType::class, [
-                'mapped' => false,
-                'label' => 'label.imie',
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'massage.prosze_podac_imie',
-                    ]),
-                ],
-            ])
-            ->add('nazwisko', TextType::class, [
-                'mapped' => false,
-                'label' => 'label.nazwisko',
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'message.prosze_podac_nazwisko',
-                    ]),
-                ],
-            ])
-            ->add('szkola', TextType::class, [
-                'mapped' => false,
-                'label' => 'label.szkola',
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'message.prosze_podac_nazwe_szkoly',
-                    ]),
-                ],
-            ])
-            ->add('wojewodztwo', TextType::class, [
-                'mapped' => false,
-                'label' => 'label.wojewodztwo',
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'message.prosze_podac_wojewodztwo',
-                    ]),
-                ],
-            ])
-            ->add('powiat', TextType::class, [
-                'mapped' => false,
-                'label' => 'label.powiat',
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'message.prosze_podac_powiat',
-                    ]),
-                ],
-            ])
-            ->add('podzialWiekowy', TextType::class, [
-                'mapped' => false,
-                'label' => 'label.poziom_edukacji',
-                'constraints' => [
-                    new NotBlank([
-                        'message' => 'message.nie_powinno_być_puste',
-                    ]),
-                ],
+            ->add('profile', UserProfileType::class, [
+                'label' => false,
             ])
             ->add('agreeTerms', CheckboxType::class, [
                 'mapped' => false,

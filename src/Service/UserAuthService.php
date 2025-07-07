@@ -75,10 +75,11 @@ class UserAuthService implements UserAuthServiceInterface
     public function registerUser(UserAuth $user, FormInterface $form): void
     {
         $user->setRoles([UserRole::ROLE_USER->value]);
+
         $plainPassword = $form->get('plainPassword')->getData();
         $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
 
-        $this->save($user);
+        $this->save($user); // zapisujemy użytkownika najpierw, żeby mieć ID (jeśli wymagane przez relację)
 
         $profileData = [
             'imie' => $form->get('imie')->getData(),
@@ -88,6 +89,14 @@ class UserAuthService implements UserAuthServiceInterface
             'powiat' => $form->get('powiat')->getData(),
             'podzialWiekowy' => $form->get('podzialWiekowy')->getData(),
         ];
-        $this->profileService->createProfile($user, $profileData);
+
+        // createProfile powinno zwrócić instancję UserProfile
+        $userProfile = $this->profileService->createProfile($user, $profileData);
+
+        // ustawiamy profil w użytkowniku (jeśli relacja jest dwustronna)
+        $user->setProfile($userProfile);
+
+        // zapisujemy jeszcze raz użytkownika z przypisanym profilem
+        $this->save($user);
     }
 }
