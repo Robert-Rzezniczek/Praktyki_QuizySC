@@ -51,6 +51,7 @@ class UserAuthFixtures extends AbstractBaseFixtures
                     'user1234'
                 )
             );
+            $user->setIsTwoFactorEnabled(false);
 
             return $user;
         });
@@ -65,6 +66,7 @@ class UserAuthFixtures extends AbstractBaseFixtures
                     'admin1234'
                 )
             );
+            $user->setIsTwoFactorEnabled(false);
 
             return $user;
         });

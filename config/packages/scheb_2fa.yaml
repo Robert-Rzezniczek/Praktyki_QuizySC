@@ -1,0 +1,15 @@
+scheb_two_factor:
+  email:
+    enabled: true
+    sender_email: 'robertrzezniczek01@gmail.com'      # Adres nadawcy (lepiej: prawdziwy e-mail, nie adres SMTP)
+    sender_name: 'PraktykiTestPortal'     # Nazwa nadawcy
+    digits: 6
+    template: 'security/2fa_form.html.twig'  # Ścieżka do szablonu formularza kodu
+
+  security_tokens:
+    - Symfony\Component\Security\Core\Authentication\Token\UsernamePasswordToken
+    - Symfony\Component\Security\Http\Authenticator\Token\PostAuthenticationToken
+    - Acme\AuthenticationBundle\Token\CustomAuthenticationToken
+
+  trusted_device:
+    enabled: false   # lub true, jeśli chcesz zapamiętywać urządzenia

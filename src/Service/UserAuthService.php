@@ -9,7 +9,9 @@ namespace App\Service;
 use App\Entity\Enum\UserRole;
 use App\Entity\UserAuth;
 use App\Form\RegistrationForm;
+use App\Repository\PowiatRepository;
 use App\Repository\UserAuthRepository;
+use App\Repository\WojewodztwoRepository;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\FormInterface;
@@ -22,7 +24,8 @@ class UserAuthService implements UserAuthServiceInterface
 {
     private const PAGINATOR_ITEMS_PER_PAGE = 10;
 
-    public function __construct(private readonly UserAuthRepository $userRepository, private readonly PaginatorInterface $paginator, private readonly UserPasswordHasherInterface $passwordHasher, private readonly UserProfileService $profileService) {
+    public function __construct(private readonly UserAuthRepository $userRepository, private readonly PaginatorInterface $paginator, private readonly UserPasswordHasherInterface $passwordHasher, private readonly UserProfileService $profileService, private readonly WojewodztwoRepository $wojewodztwoRepository, private readonly PowiatRepository $powiatRepository)
+    {
     }
 
     /**
@@ -77,15 +80,27 @@ class UserAuthService implements UserAuthServiceInterface
         $user->setRoles([UserRole::ROLE_USER->value]);
         $plainPassword = $form->get('plainPassword')->getData();
         $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
-
+        $user->setIsTwoFactorEnabled(false);
         $this->save($user);
+
+        // Pobieranie encji Wojewodztwo i Powiat na podstawie ID z formularza
+        $wojewodztwoId = $form->get('wojewodztwo')->getData();
+        $powiatId = $form->get('powiat')->getData();
+
+        $wojewodztwo = $wojewodztwoId ? $this->wojewodztwoRepository->findById($wojewodztwoId) : null;
+        $powiat = $powiatId ? $this->powiatRepository->findById($powiatId) : null;
+
+        // Walidacja zgodności województwa i powiatu
+        if ($powiat && $wojewodztwo && $powiat->getWojewodztwo()->getId() !== $wojewodztwo->getId()) {
+            throw new \InvalidArgumentException('Wybrany powiat nie należy do wybranego województwa.');
+        }
 
         $profileData = [
             'imie' => $form->get('imie')->getData(),
             'nazwisko' => $form->get('nazwisko')->getData(),
             'szkola' => $form->get('szkola')->getData(),
-            'wojewodztwo' => $form->get('wojewodztwo')->getData(),
-            'powiat' => $form->get('powiat')->getData(),
+            'wojewodztwo' =>  $wojewodztwo,
+            'powiat' => $powiat,
             'podzialWiekowy' => $form->get('podzialWiekowy')->getData(),
         ];
         $this->profileService->createProfile($user, $profileData);

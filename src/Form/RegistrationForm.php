@@ -7,31 +7,46 @@
 namespace App\Form;
 
 use App\Entity\UserAuth;
+use App\Repository\WojewodztwoRepository;
+use App\Repository\PowiatRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-/**
- * Class RegistrationForm.
- */
 class RegistrationForm extends AbstractType
 {
-    /**
-     * Builds the form.
-     *
-     * @param FormBuilderInterface $builder The form builder
-     * @param array                $options Form options
-     *
-     * @return void
-     */
+    private WojewodztwoRepository $wojewodztwoRepository;
+    private PowiatRepository $powiatRepository;
+
+    public function __construct(WojewodztwoRepository $wojewodztwoRepository, PowiatRepository $powiatRepository)
+    {
+        $this->wojewodztwoRepository = $wojewodztwoRepository;
+        $this->powiatRepository = $powiatRepository;
+    }
+
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
+        // Pobieranie województw
+        $wojewodztwa = $this->wojewodztwoRepository->findAllVoivodeships();
+        $wojewodztwaChoices = [];
+        foreach ($wojewodztwa as $wojewodztwo) {
+            $wojewodztwaChoices[$wojewodztwo->getName()] = $wojewodztwo->getId();
+        }
+
+        // Pobieranie powiatów
+        $powiaty = $this->powiatRepository->findAll();
+        $powiatyChoices = [];
+        foreach ($powiaty as $powiat) {
+            $powiatyChoices[$powiat->getName()] = $powiat->getId();
+        }
+
         $builder
             ->add('email')
             ->add('plainPassword', PasswordType::class, [
@@ -75,18 +90,28 @@ class RegistrationForm extends AbstractType
                     ]),
                 ],
             ])
-            ->add('wojewodztwo', TextType::class, [
+            ->add('wojewodztwo', ChoiceType::class, [
                 'mapped' => false,
                 'label' => 'label.wojewodztwo',
+                'choices' => $wojewodztwaChoices,
+                'choice_value' => function ($value) {
+                    return $value;
+                },
+                'placeholder' => 'Wybierz województwo',
                 'constraints' => [
                     new NotBlank([
                         'message' => 'message.prosze_podac_wojewodztwo',
                     ]),
                 ],
             ])
-            ->add('powiat', TextType::class, [
+            ->add('powiat', ChoiceType::class, [
                 'mapped' => false,
                 'label' => 'label.powiat',
+                'choices' => $powiatyChoices,
+                'choice_value' => function ($value) {
+                    return $value;
+                },
+                'placeholder' => 'Wybierz powiat',
                 'constraints' => [
                     new NotBlank([
                         'message' => 'message.prosze_podac_powiat',
@@ -98,7 +123,7 @@ class RegistrationForm extends AbstractType
                 'label' => 'label.poziom_edukacji',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'message.nie_powinno_być_puste',
+                        'message' => 'message.nie_powinno_byc_puste',
                     ]),
                 ],
             ])
@@ -122,13 +147,6 @@ class RegistrationForm extends AbstractType
             ]);
     }
 
-    /**
-     * Configures the options for this type.
-     *
-     * @param OptionsResolver $resolver The resolver for the options
-     *
-     * @return void
-     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

@@ -9,6 +9,7 @@ namespace App\Entity;
 use App\Entity\Enum\UserRole;
 use App\Repository\UserAuthRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -19,7 +20,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: UserAuthRepository::class)]
 #[ORM\Table(name: 'user_auth')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_EMAIL', fields: ['email'])]
-class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface
+class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
     /**
      * Primary key.
@@ -53,6 +54,19 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToOne(targetEntity: UserProfile::class, mappedBy: 'userAuth', cascade: ['persist', 'remove'])]
     private ?UserProfile $profile = null;
+
+    /**
+     * Is 2FA enabled for this user.
+     */
+    #[ORM\Column(type: 'boolean', nullable: true)]
+    private ?bool $isTwoFactorEnabled = null;
+
+    /**
+     * 2FA code.
+     */
+    #[Assert\Length(min: 6, max: 6)]
+    #[ORM\Column(type: 'string', length: 6, nullable: true)]
+    private ?string $authCode;
 
     /**
      * Getter for id.
@@ -155,6 +169,9 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
+    /**
+     * Setter for UserProfile.
+     */
     public function setProfile(?UserProfile $profile): void
     {
         $this->profile = $profile;
@@ -164,8 +181,67 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface
         }
     }
 
+    /**
+     * Getter for UserProfile.
+     */
     public function getProfile(): ?UserProfile
     {
         return $this->profile;
+    }
+
+    /**
+     * Is TwoFactorEnabled.
+     */
+    public function isTwoFactorEnabled(): ?bool
+    {
+        return $this->isTwoFactorEnabled;
+    }
+
+    /**
+     * Setter for isTwoFactorEnabled.
+     *
+     * @return $this
+     */
+    public function setIsTwoFactorEnabled(?bool $isTwoFactorEnabled): static
+    {
+        $this->isTwoFactorEnabled = $isTwoFactorEnabled;
+
+        return $this;
+    }
+
+    /**
+     * Get email for authorization.
+     */
+    public function getEmailAuthRecipient(): string
+    {
+        return $this->email;
+    }
+
+    /**
+     * Get the current email authentication code.
+     */
+    public function getEmailAuthCode(): ?string
+    {
+        if (null === $this->authCode) {
+            throw new \LogicException('The email authentication code was not set');
+        }
+
+        return $this->authCode;
+    }
+
+    /**
+     * Set the email authentication code.
+     */
+    public function setEmailAuthCode(?string $authCode): void
+    {
+        $this->authCode = $authCode;
+    }
+
+    /**
+     * Check if email-based two-factor authentication is enabled.
+     */
+    public function isEmailAuthEnabled(): bool
+    {
+        return $this->isTwoFactorEnabled ?? false; // Używamy istniejącej flagi isTwoFactorEnabled
     }
 }

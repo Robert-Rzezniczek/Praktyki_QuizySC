@@ -9,6 +9,7 @@ namespace App\Entity;
 use App\Repository\UserProfileRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+
 /**
  * Class UserProfile.
  */
@@ -53,16 +54,18 @@ class UserProfile
     /**
      * Wojewodztwo.
      */
-    #[Assert\NotBlank]
-    #[ORM\Column(length: 100)]
-    private ?string $wojewodztwo = null;
+    #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Wojewodztwo::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Wojewodztwo $wojewodztwo = null;
 
     /**
      * Powiat.
      */
-    #[Assert\NotBlank]
-    #[ORM\Column(length: 100)]
-    private ?string $powiat = null;
+    #[Assert\NotNull]
+    #[ORM\ManyToOne(targetEntity: Powiat::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private ?Powiat $powiat = null;
 
     /**
      * Podział wiekowy.
@@ -98,11 +101,8 @@ class UserProfile
         return $this->imie;
     }
 
-
     /**
      * Setter for imie.
-     *
-     * @param string $imie
      *
      * @return $this
      */
@@ -166,7 +166,7 @@ class UserProfile
      *
      * @return string|null Województwo
      */
-    public function getWojewodztwo(): ?string
+    public function getWojewodztwo(): ?Wojewodztwo
     {
         return $this->wojewodztwo;
     }
@@ -178,7 +178,7 @@ class UserProfile
      *
      * @return $this
      */
-    public function setWojewodztwo(string $wojewodztwo): static
+    public function setWojewodztwo(?Wojewodztwo $wojewodztwo): static
     {
         $this->wojewodztwo = $wojewodztwo;
 
@@ -190,7 +190,7 @@ class UserProfile
      *
      * @return string|null Powiat
      */
-    public function getPowiat(): ?string
+    public function getPowiat(): ?Powiat
     {
         return $this->powiat;
     }
@@ -202,7 +202,7 @@ class UserProfile
      *
      * @return $this
      */
-    public function setPowiat(string $powiat): static
+    public function setPowiat(?Powiat $powiat): static
     {
         $this->powiat = $powiat;
 

@@ -89,6 +89,9 @@
             "./bin/phpunit"
         ]
     },
+    "scheb/2fa": {
+        "version": "v6.6.0"
+    },
     "squizlabs/php_codesniffer": {
         "version": "3.13",
         "recipe": {

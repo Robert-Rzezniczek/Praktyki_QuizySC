@@ -15,6 +15,7 @@
         "phpdocumentor/reflection-docblock": "*",
         "phpstan/phpdoc-parser": "^2.1",
         "scheb/2fa": "*",
+        "scheb/2fa-bundle": "*",
         "scheb/2fa-email": "*",
         "stof/doctrine-extensions-bundle": "*",
         "symfony/asset": "6.4.*",
