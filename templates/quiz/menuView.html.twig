@@ -1,0 +1,63 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Wybór quizu{% endblock %}
+
+{% block body %}
+    <style>
+        .menu-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+
+        .quiz-list {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 100px;
+        }
+
+        .quiz-item {
+            background: #f0f0f0;
+            padding: 15px 25px;
+            margin: 10px 0;
+            width: 300px;
+            text-align: center;
+            border-radius: 8px;
+            transition: background 0.2s;
+        }
+
+        .quiz-item:hover {
+            background: #ddd;
+        }
+
+        .quiz-item a {
+            text-decoration: none;
+            color: #333;
+            font-weight: bold;
+        }
+    </style>
+
+    <a href="{{ path('app_menu') }}" class="menu-button">☰ Menu</a>
+
+
+    <div class="quiz-list">
+        <h1>Wybierz quiz</h1>
+        {% for quiz in quizzes %}
+            <div class="quiz-item">
+                <a href="{{ path('app_quiz_start', {id: quiz.id}) }}">
+
+                    {{ quiz.title }}
+                </a>
+            </div>
+        {% else %}
+            <p>Brak dostępnych quizów.</p>
+        {% endfor %}
+    </div>
+{% endblock %}

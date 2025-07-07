@@ -3,14 +3,18 @@
 {% block title %}Edytuj dane{% endblock %}
 
 {% block body %}
-    <div class="container mt-5">
-        <h2>Edytuj dane</h2>
+    <h1>Edytuj dane</h1>
 
-        {{ form_start(editForm) }}
-        {{ form_row(editForm.email) }}
-        {{ form_row(editForm.imie) }}
-        {{ form_row(editForm.nazwisko) }}
-        <button class="btn btn-primary">Zapisz</button>
-        {{ form_end(editForm) }}
-    </div>
+    {{ form_start(editForm) }}
+    {{ form_row(editForm.imie) }}
+    {{ form_row(editForm.nazwisko) }}
+    {{ form_row(editForm.szkola) }}
+    {{ form_row(editForm.wojewodztwo) }}
+    {{ form_row(editForm.powiat) }}
+    {{ form_row(editForm.podzialWiekowy) }}
+
+    <button class="btn btn-primary">Zapisz</button>
+    {{ form_end(editForm) }}
+    <button type="button" class="btn btn-secondary" onclick="history.back()">Wróć</button>
+
 {% endblock %}
