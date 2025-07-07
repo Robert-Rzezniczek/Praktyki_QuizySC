@@ -39,19 +39,19 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface, Two
     private ?string $email = null;
 
     /**
-     * imieee
+     * imieee.
      */
-    //public function getName(): string
-    //{
-   //     return $this->getProfile()?->getImie() . ' ' . $this->getProfile()?->getNazwisko();
-   // }
+    // public function getName(): string
+    // {
+    //     return $this->getProfile()?->getImie() . ' ' . $this->getProfile()?->getNazwisko();
+    // }
     /**
-     * nazwisko
+     * nazwisko.
      */
-    //public function getSurname(): ?string
-    //{
-   //    return $this->getProfile()?->getNazwisko();
-   // }
+    // public function getSurname(): ?string
+    // {
+    //    return $this->getProfile()?->getNazwisko();
+    // }
 
 
     /**
