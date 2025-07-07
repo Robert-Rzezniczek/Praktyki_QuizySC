@@ -82,7 +82,7 @@ class UserAuthService implements UserAuthServiceInterface
         $plainPassword = $form->get('plainPassword')->getData();
         $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
         $user->setIsTwoFactorEnabled(false);
-        $this->save($user);
+
 
         // Pobieranie encji Wojewodztwo i Powiat na podstawie ID z formularza
         $wojewodztwoId = $form->get('wojewodztwo')->getData();
@@ -107,6 +107,7 @@ class UserAuthService implements UserAuthServiceInterface
             'powiat' => $powiat,
             'podzialWiekowy' => $podzialWiekowyEnum,
         ];
+        $this->save($user);
         $this->profileService->createProfile($user, $profileData);
     }
 }
