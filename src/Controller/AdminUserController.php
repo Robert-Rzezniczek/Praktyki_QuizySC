@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\UserAuth;
 use App\Form\UserEditForm;
 use App\Form\UserProfileType;
+use App\Entity\UserProfile;
 use App\Form\AdminPasswordType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormError;
@@ -20,9 +21,11 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AdminUserController extends AbstractController
 {
     public function __construct(
-        private readonly EntityManagerInterface $em,
+        private readonly EntityManagerInterface      $em,
         private readonly UserPasswordHasherInterface $passwordHasher
-    ) {}
+    )
+    {
+    }
 
     #[Route('/', name: 'admin_user_list')]
     public function list(): Response
@@ -34,12 +37,20 @@ class AdminUserController extends AbstractController
         ]);
     }
 
+
     #[Route('/{id}/edit', name: 'admin_user_edit')]
     public function edit(UserAuth $user, Request $request): Response
     {
         $profile = $user->getProfile();
 
-        $authForm = $this->createForm(UserEditForm::class, $profile);
+        if (!$profile) {
+            $profile = new UserProfile();
+            $profile->setUserAuth($user);
+            $user->setProfile($profile);
+            $this->em->persist($profile);
+        }
+
+        $authForm = $this->createForm(UserEditForm::class, $user);
         $profileForm = $this->createForm(UserProfileType::class, $profile);
         $passwordForm = $this->createForm(AdminPasswordType::class);
 
@@ -47,20 +58,26 @@ class AdminUserController extends AbstractController
         $profileForm->handleRequest($request);
         $passwordForm->handleRequest($request);
 
-        if ($authForm->isSubmitted() && $authForm->isValid() && $profileForm->isValid()) {
+        if ($authForm->isSubmitted() && $authForm->isValid()) {
             $this->em->flush();
-            $this->addFlash('success', 'Dane użytkownika zostały zaktualizowane.');
-            return $this->redirectToRoute('admin_user_list');
+            $this->addFlash('success', 'Dane logowania zostały zapisane.');
+            return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
         }
+
+        if ($profileForm->isSubmitted() && $profileForm->isValid()) {
+            $this->em->flush();
+            $this->addFlash('success', 'Dane profilu zostały zapisane.');
+            return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
+        }
+
 
         if ($passwordForm->isSubmitted() && $passwordForm->isValid()) {
             $newPassword = $passwordForm->get('plainPassword')->getData();
             if ($newPassword) {
-                $hashedPassword = $this->passwordHasher->hashPassword($user, $newPassword);
-                $user->setPassword($hashedPassword);
+                $user->setPassword($this->passwordHasher->hashPassword($user, $newPassword));
                 $this->em->flush();
                 $this->addFlash('success', 'Hasło zostało zmienione.');
-                return $this->redirectToRoute('admin_user_list');
+                return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
             } else {
                 $passwordForm->get('plainPassword')->addError(new FormError('Hasło nie może być puste.'));
             }
@@ -73,4 +90,5 @@ class AdminUserController extends AbstractController
             'passwordForm' => $passwordForm->createView(),
         ]);
     }
+
 }

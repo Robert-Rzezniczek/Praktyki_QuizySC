@@ -7,21 +7,27 @@
 
     <h2>Dane logowania</h2>
     {{ form_start(authForm) }}
-    {{ form_widget(authForm) }}
+    {{ form_row(authForm.email) }}
     <button class="btn btn-primary">Zapisz dane logowania</button>
     {{ form_end(authForm) }}
 
     <h2>Dane osobowe</h2>
     {{ form_start(profileForm) }}
-    {{ form_widget(profileForm) }}
+    {{ form_row(profileForm.imie) }}
+    {{ form_row(profileForm.nazwisko) }}
+    {{ form_row(profileForm.szkola) }}
+    {{ form_row(profileForm.wojewodztwo) }}
+    {{ form_row(profileForm.powiat) }}
+    {{ form_row(profileForm.podzialWiekowy) }}
     <button class="btn btn-primary">Zapisz dane profilu</button>
     {{ form_end(profileForm) }}
 
     <h2>Zmiana hasła</h2>
     {{ form_start(passwordForm) }}
-    {{ form_widget(passwordForm) }}
+    {{ form_row(passwordForm.plainPassword) }}
     <button class="btn btn-warning">Zmień hasło</button>
     {{ form_end(passwordForm) }}
+
 
 
     <a href="{{ path('admin_user_list') }}" class="btn btn-secondary mt-3">Powrót</a>
