@@ -2,16 +2,16 @@
 
 namespace App\Form;
 
+use App\Entity\Enum\EducationLevel;
+use App\Entity\Powiat;
 use App\Entity\UserProfile;
+use App\Entity\Wojewodztwo;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use App\Entity\Enum\EducationLevel;
-use Symfony\Bridge\Doctrine\Form\Type\EntityType;
-use App\Entity\Wojewodztwo;
-use App\Entity\Powiat;
 
 class UserProfileType extends AbstractType
 {

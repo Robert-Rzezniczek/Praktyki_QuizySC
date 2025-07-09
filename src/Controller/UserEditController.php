@@ -6,17 +6,17 @@ use App\Service\UserAuthServiceInterface;
 use App\Service\UserProfileServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorageInterface;
-use Symfony\Component\HttpFoundation\RequestStack;
 
 class UserEditController extends AbstractController
 {
     #[Route('/user/edit', name: 'user_edit')]
     public function edit(
         Request $request,
-        UserProfileServiceInterface $userProfileService
+        UserProfileServiceInterface $userProfileService,
     ): Response {
         $user = $this->getUser();
 
@@ -26,16 +26,10 @@ class UserEditController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
-        try {
-            $form = $userProfileService->handleEditForm($request, $user);
-        } catch (\LogicException $e) {
-            $this->addFlash('danger', $e->getMessage());
-
-            return $this->redirectToRoute('app_menu');
-        }
+        $form = $userProfileService->buildEditForm($request, $user);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $userProfileService->save($user->getProfile());
+            $userProfileService->processEditForm($user);
             $this->addFlash('success', 'Dane zostały zaktualizowane.');
 
             return $this->redirectToRoute('app_menu');
@@ -51,17 +45,17 @@ class UserEditController extends AbstractController
         Request $request,
         UserAuthServiceInterface $userAuthService,
         TokenStorageInterface $tokenStorage,
-        RequestStack $requestStack
+        RequestStack $requestStack,
     ): Response {
-        $user = $this->getUser();
-
         if (!$this->isCsrfTokenValid('delete-account', $request->request->get('_token'))) {
             $this->addFlash('danger', 'Nieprawidłowy token CSRF.');
 
             return $this->redirectToRoute('user_edit');
         }
 
-        $userAuthService->delete($user);
+        $user = $this->getUser();
+
+        $userAuthService->processDeleteAccount($user);
         $tokenStorage->setToken(null);
         $requestStack->getSession()->invalidate();
 

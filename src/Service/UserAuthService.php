@@ -93,7 +93,6 @@ class UserAuthService implements UserAuthServiceInterface
         $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
         $user->setIsTwoFactorEnabled(false);
 
-
         // Pobieranie encji Wojewodztwo i Powiat na podstawie ID z formularza
         $wojewodztwoId = $form->get('wojewodztwo')->getData();
         $powiatId = $form->get('powiat')->getData();
@@ -113,11 +112,43 @@ class UserAuthService implements UserAuthServiceInterface
             'imie' => $form->get('imie')->getData(),
             'nazwisko' => $form->get('nazwisko')->getData(),
             'szkola' => $form->get('szkola')->getData(),
-            'wojewodztwo' =>  $wojewodztwo,
+            'wojewodztwo' => $wojewodztwo,
             'powiat' => $powiat,
             'podzialWiekowy' => $podzialWiekowyEnum,
         ];
         $this->save($user);
         $this->profileService->createProfile($user, $profileData);
+    }
+
+    /**
+     * delete account
+     * @param UserAuth $user
+     *
+     * @return void
+     */
+    public function processDeleteAccount(UserAuth $user): void
+    {
+        $this->delete($user);
+    }
+
+    /**
+     * @param UserAuth $user
+     * @param string   $plainPassword
+     *
+     * @return void
+     * change password
+     */
+    public function changePassword(UserAuth $user, string $plainPassword): void
+    {
+        $user->setPassword($this->passwordHasher->hashPassword($user, $plainPassword));
+        $this->save($user);
+    }
+
+    /**
+     * @return array
+     */
+    public function getAll(): array
+    {
+        return $this->userRepository->findAll();
     }
 }
