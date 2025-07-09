@@ -3,32 +3,37 @@
 {% block title %}Edycja użytkownika{% endblock %}
 
 {% block body %}
-    <h1>Edycja użytkownika {{ user.email }}</h1>
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <h2>Zmiana e-mail</h2>
+            {{ form_start(authForm) }}
+            {{ form_row(authForm.email) }}
+            <button class="btn btn-primary mt-2 me-2">Zapisz e-mail</button>
+            {{ form_end(authForm) }}
 
-    <h2>Dane logowania</h2>
-    {{ form_start(authForm) }}
-    {{ form_row(authForm.email) }}
-    <button class="btn btn-primary">Zapisz dane logowania</button>
-    {{ form_end(authForm) }}
-
-    <h2>Dane osobowe</h2>
-    {{ form_start(profileForm) }}
-    {{ form_row(profileForm.imie) }}
-    {{ form_row(profileForm.nazwisko) }}
-    {{ form_row(profileForm.szkola) }}
-    {{ form_row(profileForm.wojewodztwo) }}
-    {{ form_row(profileForm.powiat) }}
-    {{ form_row(profileForm.podzialWiekowy) }}
-    <button class="btn btn-primary">Zapisz dane profilu</button>
-    {{ form_end(profileForm) }}
-
-    <h2>Zmiana hasła</h2>
-    {{ form_start(passwordForm) }}
-    {{ form_row(passwordForm.plainPassword) }}
-    <button class="btn btn-warning">Zmień hasło</button>
-    {{ form_end(passwordForm) }}
+            <h3 class="mt-4">Zmiana hasła</h3>
+            {{ form_start(passwordForm) }}
+            {{ form_row(passwordForm.plainPassword) }}
+            <button class="btn btn-warning mt-2">Zmień hasło</button>
+            {{ form_end(passwordForm) }}
+        </div>
 
 
+        <div class="col-md-6">
+            <h2>Dane osobowe</h2>
+            {{ form_start(profileForm) }}
+            {{ form_row(profileForm.imie) }}
+            {{ form_row(profileForm.nazwisko) }}
+            {{ form_row(profileForm.szkola) }}
+            {{ form_row(profileForm.wojewodztwo) }}
+            {{ form_row(profileForm.powiat) }}
+            {{ form_row(profileForm.podzialWiekowy) }}
+            <button class="btn btn-primary mt-2">Zapisz dane profilu</button>
+            {{ form_end(profileForm) }}
+        </div>
 
-    <a href="{{ path('admin_user_list') }}" class="btn btn-secondary mt-3">Powrót</a>
+    </div>
+
+    <a href="{{ path('admin_user_list') }}" class="btn btn-secondary">Powrót</a>
+    </div>
 {% endblock %}

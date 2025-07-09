@@ -8,6 +8,8 @@ namespace App\Service;
 
 use App\Entity\UserAuth;
 use App\Entity\UserProfile;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Interface UserProfileServiceInterface.
@@ -56,4 +58,12 @@ interface UserProfileServiceInterface
      * @return UserProfile Updated profile entity
      */
     public function updateProfile(UserProfile $profile, array $profileData): UserProfile;
+
+    /**
+     * @param Request  $request
+     * @param UserAuth $user
+     *
+     * @return FormInterface
+     */
+    public function handleEditForm(Request $request, UserAuth $user): FormInterface;
 }

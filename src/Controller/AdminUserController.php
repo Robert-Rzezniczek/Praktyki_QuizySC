@@ -91,4 +91,21 @@ class AdminUserController extends AbstractController
             'passwordForm' => $passwordForm->createView(),
         ]);
     }
+
+    #[Route('/{id}/delete', name: 'admin_user_delete', methods: ['POST'])]
+    public function delete(UserAuth $user, Request $request): Response
+    {
+        if (!$this->isCsrfTokenValid('delete-user-'.$user->getId(), $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Nieprawidłowy token CSRF.');
+
+            return $this->redirectToRoute('admin_user_list');
+        }
+
+        $this->em->remove($user);
+        $this->em->flush();
+
+        $this->addFlash('success', 'Użytkownik został usunięty.');
+
+        return $this->redirectToRoute('admin_user_list');
+    }
 }

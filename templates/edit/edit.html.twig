@@ -15,6 +15,11 @@
 
     <button class="btn btn-primary">Zapisz</button>
     {{ form_end(editForm) }}
+    <form method="post" action="{{ path('user_delete_account') }}"
+          onsubmit="return confirm('Czy na pewno chcesz usunąć swoje konto? Tej operacji nie można cofnąć.');">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete-account') }}">
+        <button class="btn btn-danger mt-3">Usuń moje konto</button>
+    </form>
     <button type="button" class="btn btn-secondary" onclick="history.back()">Wróć</button>
 
 {% endblock %}
