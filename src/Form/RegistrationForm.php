@@ -21,17 +21,34 @@ use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
+/**
+ * RegistrationForm class.
+ */
 class RegistrationForm extends AbstractType
 {
     private WojewodztwoRepository $wojewodztwoRepository;
     private PowiatRepository $powiatRepository;
 
+    /**
+     * Constructor.
+     *
+     * @param WojewodztwoRepository $wojewodztwoRepository WojewodztwoRepository
+     * @param PowiatRepository      $powiatRepository      PowiatRepository
+     */
     public function __construct(WojewodztwoRepository $wojewodztwoRepository, PowiatRepository $powiatRepository)
     {
         $this->wojewodztwoRepository = $wojewodztwoRepository;
         $this->powiatRepository = $powiatRepository;
     }
 
+    /**
+     * Builds the form.
+     *
+     * @param FormBuilderInterface $builder FormBuilderInterface
+     * @param array                $options array
+     *
+     * @return void void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         // Pobieranie województw
@@ -159,6 +176,13 @@ class RegistrationForm extends AbstractType
             ]);
     }
 
+    /**
+     * Configures the options.
+     *
+     * @param OptionsResolver $resolver OptionsResolver
+     *
+     * @return void void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

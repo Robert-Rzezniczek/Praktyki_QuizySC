@@ -1,0 +1,203 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'title.quiz_edit'|trans }}
+{% endblock %}
+
+{% block body %}
+    <div class="container my-4">
+        <h1 class="display-5 text-primary mb-4">{{ 'title.quiz_edit'|trans }}</h1>
+        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+        {{ form_widget(form) }}
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">{{ 'action.save'|trans }}</button>
+            <a href="{{ url('quiz_index') }}" class="btn btn-secondary">{{ 'action.back_to_list'|trans }}</a>
+        </div>
+        {{ form_end(form) }}
+        <script>
+            // Ten sam JavaScript co w create.html.twig
+            const translations = {
+                'remove_question': '{{ 'action.remove_question'|trans|escape('js') }}',
+                'remove_answer': '{{ 'action.remove_answer'|trans|escape('js') }}'
+            };
+
+            document.addEventListener('DOMContentLoaded', function () {
+                function addRemoveButton(container, type) {
+                    const removeButton = document.createElement('button');
+                    removeButton.type = 'button';
+                    removeButton.className = 'btn btn-danger btn-sm mt-2 remove-' + type;
+                    removeButton.innerHTML = '<i class="bi bi-trash"></i> ' + (type === 'question' ? translations['remove_question'] : translations['remove_answer']);
+                    container.appendChild(removeButton);
+                    removeButton.addEventListener('click', function () {
+                        container.remove();
+                    });
+                }
+
+                const questionCollectionHolder = document.querySelector('[data-collection-holder="questions"]');
+                if (questionCollectionHolder) {
+                    let questionIndex = questionCollectionHolder.querySelectorAll('.question-item').length;
+                    questionCollectionHolder.dataset.index = questionIndex;
+
+                    const addQuestionButton = document.createElement('button');
+                    addQuestionButton.type = 'button';
+                    addQuestionButton.className = 'btn btn-primary mt-3 mb-2';
+                    addQuestionButton.innerHTML = '<i class="bi bi-plus-circle"></i> {{ 'action.add_question'|trans }}';
+                    questionCollectionHolder.parentNode.appendChild(addQuestionButton);
+
+                    questionCollectionHolder.querySelectorAll('.question-item').forEach((item, index) => {
+                        addRemoveButton(item, 'question');
+                        const answerCollectionHolder = item.querySelector('[data-collection-holder="answers"]');
+                        if (answerCollectionHolder) {
+                            let answerIndex = answerCollectionHolder.querySelectorAll('.answer-item').length;
+                            answerCollectionHolder.dataset.index = answerIndex;
+                            answerCollectionHolder.querySelectorAll('.answer-item').forEach(answerItem => {
+                                addRemoveButton(answerItem, 'answer');
+                            });
+
+                            const addAnswerButton = document.createElement('button');
+                            addAnswerButton.type = 'button';
+                            addAnswerButton.className = 'btn btn-secondary mt-2 mb-2';
+                            addAnswerButton.innerHTML = '<i class="bi bi-plus-circle"></i> {{ 'action.add_answer'|trans }}';
+                            answerCollectionHolder.parentNode.appendChild(addAnswerButton);
+
+                            addAnswerButton.addEventListener('click', function () {
+                                const answerPrototype = answerCollectionHolder.dataset.prototype;
+                                let newAnswerIndex = answerCollectionHolder.dataset.index;
+                                const newAnswerForm = answerPrototype.replace(/__answers_name__/g, newAnswerIndex);
+                                answerCollectionHolder.dataset.index = parseInt(newAnswerIndex) + 1;
+
+                                const answerDiv = document.createElement('div');
+                                answerDiv.className = 'answer-item card mt-2 p-2 border';
+                                answerDiv.innerHTML = newAnswerForm;
+                                const answerHeader = document.createElement('h6');
+                                answerHeader.textContent = `Odpowiedź ${parseInt(newAnswerIndex) + 1} dla pytania ${index + 1}`;
+                                answerDiv.insertBefore(answerHeader, answerDiv.firstChild);
+                                answerCollectionHolder.appendChild(answerDiv);
+                                addRemoveButton(answerDiv, 'answer');
+
+                                console.log('Added answer with index: ' + newAnswerIndex);
+                            });
+                        }
+                    });
+
+                    addQuestionButton.addEventListener('click', function () {
+                        const prototype = questionCollectionHolder.dataset.prototype;
+                        const newForm = prototype.replace(/__name__/g, questionIndex);
+                        questionCollectionHolder.dataset.index = questionIndex + 1;
+
+                        const div = document.createElement('div');
+                        div.className = 'question-item card mt-3 p-3 border';
+                        div.innerHTML = newForm;
+                        questionCollectionHolder.appendChild(div);
+                        addRemoveButton(div, 'question');
+
+                        const answerCollectionHolder = div.querySelector('[data-collection-holder="answers"]');
+                        if (answerCollectionHolder) {
+                            answerCollectionHolder.dataset.index = 0;
+
+                            const addAnswerButton = document.createElement('button');
+                            addAnswerButton.type = 'button';
+                            addAnswerButton.className = 'btn btn-secondary mt-2 mb-2';
+                            addAnswerButton.innerHTML = '<i class="bi bi-plus-circle"></i> {{ 'action.add_answer'|trans }}';
+                            answerCollectionHolder.parentNode.appendChild(addAnswerButton);
+
+                            addAnswerButton.addEventListener('click', function () {
+                                const answerPrototype = answerCollectionHolder.dataset.prototype;
+                                let newAnswerIndex = answerCollectionHolder.dataset.index;
+                                const newAnswerForm = answerPrototype.replace(/__answers_name__/g, newAnswerIndex);
+                                answerCollectionHolder.dataset.index = parseInt(newAnswerIndex) + 1;
+
+                                const answerDiv = document.createElement('div');
+                                answerDiv.className = 'answer-item card mt-2 p-2 border';
+                                answerDiv.innerHTML = newAnswerForm;
+                                const answerHeader = document.createElement('h6');
+                                answerHeader.textContent = `Odpowiedź ${parseInt(newAnswerIndex) + 1} dla pytania ${questionIndex + 1}`;
+                                answerDiv.insertBefore(answerHeader, answerDiv.firstChild);
+                                answerCollectionHolder.appendChild(answerDiv);
+                                addRemoveButton(answerDiv, 'answer');
+
+                                console.log('Added answer with index: ' + newAnswerIndex);
+                            });
+                        }
+                        questionIndex++;
+                    });
+                }
+            });
+        </script>
+        <style>
+            .question-item {
+                position: relative;
+                background-color: #f8f9fa;
+                border: 1px solid #dee2e6;
+                border-radius: 0.25rem;
+                margin-bottom: 1rem;
+                padding: 1rem;
+            }
+
+            .question-item .form-label {
+                font-weight: bold;
+                color: #343a40;
+            }
+
+            .answer-item {
+                position: relative;
+                background-color: #e9ecef;
+                border: 1px solid #ced4da;
+                border-radius: 0.25rem;
+                margin-top: 0.5rem;
+                padding: 0.75rem;
+            }
+
+            .answer-item .form-label {
+                font-weight: bold;
+                color: #495057;
+            }
+
+            .remove-question,
+            .remove-answer {
+                position: absolute;
+                top: 0.5rem;
+                right: 0.5rem;
+                padding: 0.25rem 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            .remove-question i,
+            .remove-answer i {
+                margin-right: 0.25rem;
+            }
+
+            .btn-primary {
+                background-color: #007bff;
+                border-color: #007bff;
+            }
+
+            .btn-primary:hover {
+                background-color: #0056b3;
+                border-color: #0056b3;
+            }
+
+            .btn-secondary {
+                background-color: #6c757d;
+                border-color: #6c757d;
+            }
+
+            .btn-secondary:hover {
+                background-color: #5a6268;
+                border-color: #5a6268;
+            }
+
+            .mt-3 {
+                margin-top: 1rem;
+            }
+
+            .mb-2 {
+                margin-bottom: 0.5rem;
+            }
+
+            .needs-validation {
+                width: 100%;
+            }
+        </style>
+    </div>
+{% endblock %}

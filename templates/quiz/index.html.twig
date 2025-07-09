@@ -1,0 +1,70 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'title.quiz_list'|trans }}
+{% endblock %}
+
+{% block body %}
+    <div class="container my-4">
+        <h1 class="display-5 text-primary mb-4">{{ 'title.quiz_list'|trans }}</h1>
+        {% if pagination is defined and pagination.items|length %}
+            <div class="navigation text-center mb-3">
+                {{ knp_pagination_render(pagination) }}
+            </div>
+
+            {% if is_granted('ROLE_ADMIN') %}
+                <div class="add-new mb-3">
+                    <a href="{{ url('quiz_create') }}" class="btn btn-primary" title="{{ 'action.create'|trans }}">
+                        {{ 'action.create'|trans }}
+                    </a>
+                </div>
+            {% endif %}
+
+            <table class="table table-striped table-bordered">
+                <thead>
+                <tr>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.id'|trans, 'quiz.id') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.title'|trans, 'quiz.title') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.created_at'|trans, 'quiz.createdAt') }}</th>
+                    <th>{{ knp_pagination_sortable(pagination, 'label.updated_at'|trans, 'quiz.updatedAt') }}</th>
+                    <th>{{ 'label.actions'|trans }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for quiz in pagination.items %}
+                    <tr>
+                        <td>{{ quiz.id }}</td>
+                        <td>{{ quiz.title }}</td>
+                        <td>{{ quiz.createdAt|format_date('long') }}</td>
+                        <td>{{ quiz.updatedAt|format_date('long') }}</td>
+                        <td>
+                            <div class="btn-group" role="group">
+                                {% if is_granted('ROLE_ADMIN') %}
+                                    <a class="btn btn-outline-primary me-2" href="{{ url('quiz_view', {id: quiz.id}) }}" title="{{ 'action.view'|trans }}">
+                                        {{ 'action.view'|trans }}
+                                    </a>
+                                    <a class="btn btn-outline-warning me-2" href="{{ url('quiz_edit', {id: quiz.id}) }}" title="{{ 'action.edit'|trans }}">
+                                        {{ 'action.edit'|trans }}
+                                    </a>
+                                    <a class="btn btn-outline-danger" href="{{ url('quiz_delete', {id: quiz.id}) }}" title="{{ 'action.delete'|trans }}">
+                                        {{ 'action.delete'|trans }}
+                                    </a>
+                                {% else %}
+                                    <a class="btn btn-outline-primary me-2" href="{{ url('quiz_view', {id: quiz.id}) }}" title="{{ 'action.view'|trans }}">
+                                        {{ 'action.view'|trans }}
+                                    </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            <div class="navigation text-center">
+                {{ knp_pagination_render(pagination) }}
+            </div>
+        {% else %}
+            <p class="alert alert-info">{{ 'message.empty_list'|trans }}</p>
+        {% endif %}
+    </div>
+{% endblock %}

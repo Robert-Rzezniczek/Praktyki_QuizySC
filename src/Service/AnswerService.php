@@ -80,7 +80,9 @@ class AnswerService implements AnswerServiceInterface
     /**
      * Save entity.
      *
-     * @param Answer $answer Answer entity
+     * @param Answer $answer Answer
+     *
+     * @return void void
      */
     public function save(Answer $answer): void
     {
@@ -95,5 +97,21 @@ class AnswerService implements AnswerServiceInterface
     public function delete(Answer $answer): void
     {
         $this->answerRepository->delete($answer);
+    }
+
+    public function canBeDeleted(Answer $answer): bool
+    {
+        $question = $answer->getQuestion();
+        $answers = $question->getAnswers();
+        if ($answers->count() <= 2) {
+            return false; // Minimum 2 odpowiedzi
+        }
+        if ($answer->isCorrect()) {
+            $correctAnswers = $answers->filter(fn ($a) => $a->isCorrect())->count();
+
+            return $correctAnswers > 1; // Musi zostać co najmniej jedna poprawna odpowiedź
+        }
+
+        return true;
     }
 }

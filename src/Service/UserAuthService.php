@@ -25,6 +25,16 @@ class UserAuthService implements UserAuthServiceInterface
 {
     private const PAGINATOR_ITEMS_PER_PAGE = 10;
 
+    /**
+     * Construct.
+     *
+     * @param UserAuthRepository          $userRepository        UserAuthRepository
+     * @param PaginatorInterface          $paginator             PaginatorInterface
+     * @param UserPasswordHasherInterface $passwordHasher        UserPasswordHasherInterface
+     * @param UserProfileService          $profileService        UserProfileService
+     * @param WojewodztwoRepository       $wojewodztwoRepository WojewodztwoRepository
+     * @param PowiatRepository            $powiatRepository      PowiatRepository
+     */
     public function __construct(private readonly UserAuthRepository $userRepository, private readonly PaginatorInterface $paginator, private readonly UserPasswordHasherInterface $passwordHasher, private readonly UserProfileService $profileService, private readonly WojewodztwoRepository $wojewodztwoRepository, private readonly PowiatRepository $powiatRepository)
     {
     }

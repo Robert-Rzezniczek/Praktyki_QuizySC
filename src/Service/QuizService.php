@@ -6,8 +6,10 @@
 
 namespace App\Service;
 
+use App\Entity\Answer;
 use App\Entity\Quiz;
 use App\Repository\QuizRepository;
+use Doctrine\Common\Collections\ArrayCollection;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 
@@ -82,6 +84,38 @@ class QuizService implements QuizServiceInterface
      */
     public function save(Quiz $quiz): void
     {
+        if ($quiz->getQuestions()->isEmpty()) {
+            throw new \InvalidArgumentException('Quiz musi mieć co najmniej jedno pytanie.');
+        }
+
+        foreach ($quiz->getQuestions() as $question) {
+            $answers = $question->getAnswers();
+            dump('Initial count: ' . $answers->count()); // Debug początkowy
+
+            // Przejście po wszystkich odpowiedziach i synchronizacja
+            $newAnswers = new ArrayCollection();
+            foreach ($answers as $answer) {
+                $newAnswers->add($answer);
+            }
+            // Upewnij się, że wszystkie odpowiedzi są dodane
+            foreach ($question->getAnswers() as $answer) { // Ponowne pobranie
+                if (!$newAnswers->contains($answer)) {
+                    $newAnswers->add($answer);
+                    $question->addAnswer($answer);
+                }
+            }
+
+            $answers = $question->getAnswers();
+            dump('After sync: ' . $answers->count()); // Debug po synchronizacji
+            if ($answers->count() < 2) {
+                throw new \InvalidArgumentException('Każde pytanie musi mieć co najmniej dwie odpowiedzi.');
+            }
+            $correctAnswers = $answers->filter(fn (Answer $answer) => $answer->isCorrect())->count();
+            if (1 !== $correctAnswers) {
+                throw new \InvalidArgumentException('Każde pytanie musi mieć dokładnie jedną poprawną odpowiedź.');
+            }
+        }
+
         $this->quizRepository->save($quiz);
     }
 
@@ -93,5 +127,11 @@ class QuizService implements QuizServiceInterface
     public function delete(Quiz $quiz): void
     {
         $this->quizRepository->delete($quiz);
+    }
+
+    public function canBeDeleted(Quiz $quiz): bool
+    {
+        // Przykład: nie można usunąć quizu, jeśli jest opublikowany
+        return !$quiz->isPublished();
     }
 }

@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'title.answer_details'|trans({'%id%': answer.id|default('')}) }}
+{% endblock %}
+
+{% block body %}
+    <div class="container my-4">
+        <h1 class="display-5 text-primary mb-4">{{ 'title.answer_details'|trans({'%id%': answer.id|default('')}) }}</h1>
+
+        {% if answer is defined %}
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <dl class="row">
+                        <dt class="col-sm-3 text-muted">{{ 'label.id'|trans }}</dt>
+                        <dd class="col-sm-9">{{ answer.id }}</dd>
+                        <dt class="col-sm-3 text-muted">{{ 'label.content'|trans }}</dt>
+                        <dd class="col-sm-9">{{ answer.content }}</dd>
+                        <dt class="col-sm-3 text-muted">{{ 'label.is_correct'|trans }}</dt>
+                        <dd class="col-sm-9">{{ answer.isCorrect ? 'label.yes'|trans : 'label.no'|trans }}</dd>
+                        <dt class="col-sm-3 text-muted">{{ 'label.position'|trans }}</dt>
+                        <dd class="col-sm-9">{{ answer.position }}</dd>
+                        <dt class="col-sm-3 text-muted">{{ 'label.question'|trans }}</dt>
+                        <dd class="col-sm-9">{{ answer.question.content }}</dd>
+                    </dl>
+                </div>
+                <div class="card-footer bg-light d-flex flex-wrap gap-2 justify-content-between">
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a class="btn btn-outline-warning" href="{{ url('answer_edit', {id: answer.id}) }}" title="{{ 'action.edit'|trans }}">
+                            <i class="bi bi-pencil"></i> {{ 'action.edit'|trans }}
+                        </a>
+                        <a class="btn btn-outline-danger" href="{{ url('answer_delete', {id: answer.id}) }}" title="{{ 'action.delete'|trans }}">
+                            <i class="bi bi-trash"></i> {{ 'action.delete'|trans }}
+                        </a>
+                    {% endif %}
+                    <a href="{{ url('answer_index') }}" title="{{ 'action.back_to_list'|trans }}" class="btn btn-outline-secondary">
+                        <i class="bi bi-arrow-left"></i> {{ 'action.back_to_list'|trans }}
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning" role="alert">
+                {{ 'message.record_not_found'|trans }}
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

@@ -96,4 +96,10 @@ class QuestionService implements QuestionServiceInterface
     {
         $this->questionRepository->delete($question);
     }
+
+    public function canBeDeleted(Question $question): bool
+    {
+        // Przykład: nie można usunąć, jeśli quiz ma tylko jedno pytanie
+        return $question->getQuiz()->getQuestions()->count() > 1;
+    }
 }
