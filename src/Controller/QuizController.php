@@ -88,7 +88,6 @@ class QuizController extends AbstractController
         methods: 'GET|POST'
     )]
     #[IsGranted('ROLE_ADMIN')]
-    // src/Controller/QuizController.php
     public function create(Request $request): Response
     {
         $quiz = new Quiz();
@@ -131,21 +130,17 @@ class QuizController extends AbstractController
         methods: 'GET|POST'
     )]
     #[IsGranted('ROLE_ADMIN')]
-    public function edit(Request $request, Quiz $quiz, EntityManagerInterface $em): Response
+    public function edit(Request $request, Quiz $quiz, QuizServiceInterface $quizService): Response
     {
-        $form = $this->createForm(
-            QuizType::class,
-            $quiz,
-            [
-                'method' => 'POST',
-                'action' => $this->generateUrl('quiz_edit', ['id' => $quiz->getId()]),
-            ]
-        );
+        $form = $this->createForm(QuizType::class, $quiz, [
+            'method' => 'POST',
+            'action' => $this->generateUrl('quiz_edit', ['id' => $quiz->getId()]),
+        ]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $this->quizService->save($quiz);
+                $quizService->save($quiz);
                 $this->addFlash(
                     'success',
                     $this->translator->trans('message.edited_successfully')
@@ -218,6 +213,35 @@ class QuizController extends AbstractController
                 'form' => $form->createView(),
                 'quiz' => $quiz,
             ]
+        );
+    }
+
+    #[Route(
+        '/{id}/view-quiz',
+        name: 'quiz_view_quiz',
+        requirements: ['id' => '[1-9]\d*'],
+        methods: 'GET'
+    )]
+    #[IsGranted('ROLE_USER')]
+    public function viewQuiz(Quiz $quiz): Response
+    {
+        return $this->render(
+            'quiz/view_quiz.html.twig',
+            ['quiz' => $quiz]
+        );
+    }
+
+    #[Route(
+        '/{id}/solve',
+        name: 'quiz_solve',
+        requirements: ['id' => '[1-9]\d*'],
+        methods: 'GET'
+    )]
+    public function solve(Quiz $quiz): Response
+    {
+        return $this->render(
+            'quiz/solve_quiz.html.twig',
+            ['quiz' => $quiz]
         );
     }
 }

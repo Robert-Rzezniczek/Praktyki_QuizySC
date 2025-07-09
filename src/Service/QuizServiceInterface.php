@@ -24,6 +24,13 @@ interface QuizServiceInterface
     public function getPaginatedList(int $page): PaginationInterface;
 
     /**
+     * Prepare quiz for editing by ensuring each question has exactly one correct answer.
+     *
+     * @param Quiz $quiz Quiz entity
+     */
+    public function prepareForEdit(Quiz $quiz): void;
+
+    /**
      * Save entity.
      *
      * @param Quiz $quiz Quiz entity
@@ -45,4 +52,6 @@ interface QuizServiceInterface
      * @return PaginationInterface Paginated list
      */
     public function getPaginatedPublishedList(int $page): PaginationInterface;
+
+    public function canBeDeleted(Quiz $quiz): bool;
 }

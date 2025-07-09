@@ -59,6 +59,8 @@ class QuizType extends AbstractType
                 'by_reference' => false,
                 'label' => 'label.questions',
                 'attr' => ['data-collection-holder' => 'questions'],
+                'prototype' => true,
+                'prototype_name' => '__name__',
             ]);
     }
 

@@ -15,7 +15,6 @@
         </div>
         {{ form_end(form) }}
         <script>
-            // Definiowanie tłumaczeń w Twig, które będą dostępne w JavaScript
             const translations = {
                 'remove_question': '{{ 'action.remove_question'|trans|escape('js') }}',
                 'remove_answer': '{{ 'action.remove_answer'|trans|escape('js') }}'
@@ -91,7 +90,7 @@
                                 addRemoveButton(answerDiv, 'answer');
 
                                 // Debugowanie indeksów
-                                console.log('Added answer with index: ' + answerIndex);
+                                // console.log('Added answer with index: ' + answerIndex);
                             });
                         }
                     });

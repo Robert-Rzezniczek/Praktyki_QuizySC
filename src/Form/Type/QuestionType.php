@@ -53,6 +53,7 @@ class QuestionType extends AbstractType
                 'by_reference' => false,
                 'label' => 'label.answers',
                 'attr' => ['data-collection-holder' => 'answers'],
+                'prototype' => true,
                 'prototype_name' => '__answers_name__',
             ]);
     }

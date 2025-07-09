@@ -78,6 +78,32 @@ class QuizService implements QuizServiceInterface
     }
 
     /**
+     * Prepare quiz for editing by ensuring each question has exactly one correct answer.
+     *
+     * @param Quiz $quiz Quiz entity
+     */
+    public function prepareForEdit(Quiz $quiz): void
+    {
+        foreach ($quiz->getQuestions() as $question) {
+            $correctAnswers = $question->getAnswers()->filter(fn (Answer $answer) => $answer->isCorrect())->toArray();
+            if (empty($correctAnswers)) {
+                // Jeśli nie ma poprawnej odpowiedzi, ustaw pierwszą jako poprawną
+                $firstAnswer = $question->getAnswers()->first();
+                if ($firstAnswer) {
+                    $firstAnswer->setIsCorrect(true);
+                }
+            } elseif (count($correctAnswers) > 1) {
+                // Jeśli jest więcej niż jedna poprawna, pozostaw pierwszą i zresetuj resztę
+                foreach ($correctAnswers as $index => $answer) {
+                    if ($index > 0) {
+                        $answer->setIsCorrect(false);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
      * Save entity.
      *
      * @param Quiz $quiz Quiz entity
@@ -90,23 +116,15 @@ class QuizService implements QuizServiceInterface
 
         foreach ($quiz->getQuestions() as $question) {
             $answers = $question->getAnswers();
-            dump('Initial count: ' . $answers->count()); // Debug początkowy
+            dump('Initial count: ' . $answers->count()); // Debug
 
-            // Przejście po wszystkich odpowiedziach i synchronizacja
-            $newAnswers = new ArrayCollection();
+            // Synchronizacja odpowiedzi
             foreach ($answers as $answer) {
-                $newAnswers->add($answer);
-            }
-            // Upewnij się, że wszystkie odpowiedzi są dodane
-            foreach ($question->getAnswers() as $answer) { // Ponowne pobranie
-                if (!$newAnswers->contains($answer)) {
-                    $newAnswers->add($answer);
-                    $question->addAnswer($answer);
-                }
+                $question->addAnswer($answer); // Upewnia się, że relacja jest ustawiona
             }
 
             $answers = $question->getAnswers();
-            dump('After sync: ' . $answers->count()); // Debug po synchronizacji
+            dump('After sync: ' . $answers->count()); // Debug
             if ($answers->count() < 2) {
                 throw new \InvalidArgumentException('Każde pytanie musi mieć co najmniej dwie odpowiedzi.');
             }
