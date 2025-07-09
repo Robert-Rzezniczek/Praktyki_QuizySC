@@ -6,8 +6,8 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Question;
 use App\Entity\Answer;
+use App\Entity\Question;
 use App\Repository\AnswerRepository;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Faker\Generator;

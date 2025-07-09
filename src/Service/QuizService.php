@@ -90,7 +90,7 @@ class QuizService implements QuizServiceInterface
 
         foreach ($quiz->getQuestions() as $question) {
             $answers = $question->getAnswers();
-            dump('Initial count: ' . $answers->count()); // Debug początkowy
+            dump('Initial count: '.$answers->count()); // Debug początkowy
 
             // Przejście po wszystkich odpowiedziach i synchronizacja
             $newAnswers = new ArrayCollection();
@@ -106,7 +106,7 @@ class QuizService implements QuizServiceInterface
             }
 
             $answers = $question->getAnswers();
-            dump('After sync: ' . $answers->count()); // Debug po synchronizacji
+            dump('After sync: '.$answers->count()); // Debug po synchronizacji
             if ($answers->count() < 2) {
                 throw new \InvalidArgumentException('Każde pytanie musi mieć co najmniej dwie odpowiedzi.');
             }

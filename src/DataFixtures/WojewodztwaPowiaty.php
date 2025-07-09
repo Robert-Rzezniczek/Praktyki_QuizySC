@@ -2,8 +2,8 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Wojewodztwo;
 use App\Entity\Powiat;
+use App\Entity\Wojewodztwo;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 

@@ -27,7 +27,7 @@ class UserProfileService implements UserProfileServiceInterface
      */
     public function __construct(
         private readonly UserProfileRepository $profileRepository,
-        private readonly FormFactoryInterface $formFactory
+        private readonly FormFactoryInterface $formFactory,
     ) {
     }
 
@@ -109,15 +109,7 @@ class UserProfileService implements UserProfileServiceInterface
         return $profile;
     }
 
-    /**
-     * Handle user profile edit form.
-     *
-     * @param Request  $request HTTP request
-     * @param UserAuth $user    Authenticated user
-     *
-     * @return FormInterface
-     */
-    public function handleEditForm(Request $request, UserAuth $user): FormInterface
+    public function buildEditForm(Request $request, UserAuth $user): FormInterface
     {
         $profile = $user->getProfile();
 
@@ -129,5 +121,37 @@ class UserProfileService implements UserProfileServiceInterface
         $form->handleRequest($request);
 
         return $form;
+    }
+
+    /**
+     * @param UserAuth $user user
+     */
+    public function processEditForm(UserAuth $user): void
+    {
+        $profile = $user->getProfile();
+
+        if (!$profile) {
+            throw new \LogicException('Brak profilu do zapisania.');
+        }
+
+        $this->save($profile);
+    }
+
+    /**
+     * Tworzy pusty profil użytkownika – np. gdy admin edytuje konto bez danych osobowych.
+     * Służy głównie do umożliwienia wyświetlenia formularza Symfony.
+     *
+     * @param UserAuth $user użytkownik bez przypisanego profilu
+     *
+     * @return UserProfile nowy profil
+     */
+    public function createEmptyProfile(UserAuth $user): UserProfile
+    {
+        $profile = new UserProfile();
+        $profile->setUserAuth($user);
+        $user->setProfile($profile);
+        $this->save($profile);
+
+        return $profile;
     }
 }

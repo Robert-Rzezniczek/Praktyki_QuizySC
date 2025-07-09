@@ -5,13 +5,13 @@
 {% block body %}
     <div class="d-flex align-items-center justify-content-center min-vh-75 text-center py-5">
         <div>
-            <h1 class="display-4 fw-bold text-warning mb-4">sudo mama wentualnie strona startowa</h1>
+            <h1 class="display-4 fw-bold text-warning mb-4">strona startowa</h1>
             <p class="h5 text-dark">{{ 'label.Hello'|trans }}</p>
             <p class="text-muted">{{ 'message.page_is_being_developed'|trans }}</p>
 
-{#            <a href="{{ path('item_index') }}" class="btn btn-outline-primary mt-3">#}
-{#                {{ 'label.back_to_home'|trans }}#}
-{#            </a>#}
+     <a href="{{ path('app_menu') }}" class="btn btn-outline-primary mt-3">
+         {{ 'Menu'|trans }}
+         </a>
 
         </div>
     </div>
