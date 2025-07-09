@@ -9,7 +9,12 @@
 
         <div class="d-flex flex-column gap-3 mt-4" style="width: 200px;">
             <a href="{{ path('app_quiz_list') }}" class="btn btn-primary w-100">Quizy</a>
-            <a href="{{ path('user_edit') }}" class="btn btn-secondary w-100">Edytuj dane</a>
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('admin_user_list') }}" class="btn btn-primary">Zarządzaj użytkownikami</a>
+            {% else %}
+                <a href="{{ path('user_edit') }}" class="btn btn-primary">Edytuj dane</a>
+            {% endif %}
+
             <a href="{{ path('app_logout') }}" class="btn btn-danger w-100">Wyloguj</a>
         </div>
     </div>

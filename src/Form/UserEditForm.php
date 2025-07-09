@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Form;
 
 use App\Entity\UserAuth;
@@ -9,16 +10,16 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserEditForm extends AbstractType
 {
-public function buildForm(FormBuilderInterface $builder, array $options): void
-{
-$builder
-->add('email', EmailType::class);
-}
+    public function buildForm(FormBuilderInterface $builder, array $options): void
+    {
+        $builder
+        ->add('email', EmailType::class);
+    }
 
-public function configureOptions(OptionsResolver $resolver): void
-{
-$resolver->setDefaults([
-'data_class' => UserAuth::class, // ✅ poprawna encja
-]);
-}
+    public function configureOptions(OptionsResolver $resolver): void
+    {
+        $resolver->setDefaults([
+            'data_class' => UserAuth::class, // ✅ poprawna encja
+        ]);
+    }
 }

@@ -8,7 +8,11 @@ namespace App\Service;
 
 use App\Entity\UserAuth;
 use App\Entity\UserProfile;
+use App\Form\UserProfileType;
 use App\Repository\UserProfileRepository;
+use Symfony\Component\Form\FormFactoryInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class UserProfileService.
@@ -19,9 +23,12 @@ class UserProfileService implements UserProfileServiceInterface
      * Constructor.
      *
      * @param UserProfileRepository $profileRepository UserProfileRepository
+     * @param FormFactoryInterface  $formFactory       Form factory
      */
-    public function __construct(private readonly UserProfileRepository $profileRepository)
-    {
+    public function __construct(
+        private readonly UserProfileRepository $profileRepository,
+        private readonly FormFactoryInterface $formFactory
+    ) {
     }
 
     /**
@@ -100,5 +107,27 @@ class UserProfileService implements UserProfileServiceInterface
         $this->save($profile);
 
         return $profile;
+    }
+
+    /**
+     * Handle user profile edit form.
+     *
+     * @param Request  $request HTTP request
+     * @param UserAuth $user    Authenticated user
+     *
+     * @return FormInterface
+     */
+    public function handleEditForm(Request $request, UserAuth $user): FormInterface
+    {
+        $profile = $user->getProfile();
+
+        if (!$profile) {
+            throw new \LogicException('Brak profilu użytkownika.');
+        }
+
+        $form = $this->formFactory->create(UserProfileType::class, $profile);
+        $form->handleRequest($request);
+
+        return $form;
     }
 }

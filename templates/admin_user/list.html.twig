@@ -1,5 +1,5 @@
 {% extends 'base.html.twig' %}
-
+{% block title %}Lista użytkowników{% endblock %}
 {% block body %}
     <h1 class="mb-4">Lista użytkowników</h1>
 
@@ -37,10 +37,20 @@
                 <td>{{ user.profile ? (user.profile.powiat ? user.profile.powiat.name : '-') : '-' }}</td>
                 <td>{{ user.profile ? (user.profile.podzialWiekowy ? user.profile.podzialWiekowy.value : '-') : '-' }}</td>
                 <td>
-                    <a href="{{ path('admin_user_edit', { id: user.id }) }}" class="btn btn-sm btn-primary me-1">Edytuj</a>
-                    <a href="{{ path('admin_user_edit', { id: user.id }) }}#haslo" class="btn btn-sm btn-warning">Zmień hasło</a>
+                    <a href="{{ path('admin_user_edit', { id: user.id }) }}" class="btn btn-sm btn-primary me-1">Edytuj dane</a>
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <form method="post"
+                              action="{{ path('admin_user_delete', { id: user.id }) }}"
+                              onsubmit="return confirm('Czy na pewno chcesz usunąć tego użytkownika?');"
+                              style="display:inline;">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete-user-' ~ user.id) }}">
+                            <button class="btn btn-sm btn-danger">Usuń</button>
+                        </form>
+                    {% endif %}
+
                 </td>
             </tr>
+
         {% else %}
             <tr>
                 <td colspan="10" class="text-center">Brak użytkowników</td>
@@ -48,4 +58,9 @@
         {% endfor %}
         </tbody>
     </table>
+
+
+<a href="{{ path('app_menu') }}" class="btn btn-secondary mt-3">
+        <i class="bi bi-arrow-left"></i> Wróć
+    </a>
 {% endblock %}

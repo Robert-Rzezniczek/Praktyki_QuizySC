@@ -47,4 +47,3 @@ class UserProfileType extends AbstractType
         ]);
     }
 }
-
