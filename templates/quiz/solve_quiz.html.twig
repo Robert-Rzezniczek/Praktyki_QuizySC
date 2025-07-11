@@ -8,7 +8,7 @@
     <div class="container my-4">
         <h1 class="display-5 text-primary mb-4">{{ quiz.title }}</h1>
         <p class="lead">{{ quiz.description }}</p>
-        <p><strong>Czas limitu:</strong> {{ quiz.timeLimit }} minut</p>
+        <p><strong>Limit czasu:</strong> {{ quiz.timeLimit/60 }} minut</p>
 
         <div id="quiz-container" class="quiz-container">
             {% for question in quiz.questions %}

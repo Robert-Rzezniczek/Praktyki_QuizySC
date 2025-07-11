@@ -8,6 +8,7 @@ namespace App\Repository;
 
 use App\Entity\Powiat;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -23,6 +24,21 @@ class PowiatRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Powiat::class);
+    }
+
+    /**
+     * Query all records.
+     *
+     * @return QueryBuilder Query builder
+     */
+    public function queryAll(): QueryBuilder
+    {
+        return $this->createQueryBuilder('powiat')
+            ->select(
+                'partial powiat.{id, wojewodztwo, name}',
+                'partial wojewodztwo.{id, name}'
+            )
+            ->join('powiat.wojewodztwo', 'wojewodztwo');
     }
 
     /**
@@ -57,5 +73,27 @@ class PowiatRepository extends ServiceEntityRepository
         }
 
         return $qb->getQuery()->getResult();
+    }
+
+    /**
+     * Save entity.
+     *
+     * @param Powiat $powiat Powiat entity
+     */
+    public function save(Powiat $powiat): void
+    {
+        $this->getEntityManager()->persist($powiat);
+        $this->getEntityManager()->flush();
+    }
+
+    /**
+     * Delete entity.
+     *
+     * @param Powiat $powiat Powiat entity
+     */
+    public function delete(Powiat $powiat): void
+    {
+        $this->getEntityManager()->remove($powiat);
+        $this->getEntityManager()->flush();
     }
 }

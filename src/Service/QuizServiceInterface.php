@@ -8,6 +8,7 @@ namespace App\Service;
 
 use App\Entity\Quiz;
 use Knp\Component\Pager\Pagination\PaginationInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
  * Interface QuizServiceInterface.
@@ -24,11 +25,23 @@ interface QuizServiceInterface
     public function getPaginatedList(int $page): PaginationInterface;
 
     /**
-     * Prepare quiz for editing by ensuring each question has exactly one correct answer.
+     * Get paginated list of published quizzes.
      *
-     * @param Quiz $quiz Quiz entity
+     * @param int $page Page number
+     *
+     * @return PaginationInterface Paginated list
      */
-    public function prepareForEdit(Quiz $quiz): void;
+    public function getPaginatedPublishedList(int $page): PaginationInterface;
+
+    /**
+     * Initialize quiz with session data.
+     */
+    public function initializeQuizFromSession(SessionInterface $session): Quiz;
+
+    /**
+     * Save quiz data temporarily to session.
+     */
+    public function saveQuizToSession(Quiz $quiz, SessionInterface $session): void;
 
     /**
      * Save entity.
@@ -45,13 +58,9 @@ interface QuizServiceInterface
     public function delete(Quiz $quiz): void;
 
     /**
-     * Get paginated list of published quizzes.
+     * Checks if Quiz can be deleted.
      *
-     * @param int $page Page number
-     *
-     * @return PaginationInterface Paginated list
+     * @param Quiz $quiz Quiz
      */
-    public function getPaginatedPublishedList(int $page): PaginationInterface;
-
     public function canBeDeleted(Quiz $quiz): bool;
 }

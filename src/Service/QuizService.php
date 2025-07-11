@@ -7,29 +7,22 @@
 namespace App\Service;
 
 use App\Entity\Answer;
+use App\Entity\Question;
 use App\Entity\Quiz;
 use App\Repository\QuizRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
+use Knp\Component\Pager\Pagination\PaginationInterface;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 /**
- * Class QuizService.
+ * QuizService class.
  */
 class QuizService implements QuizServiceInterface
 {
-    /**
-     * Items per page.
-     *
-     * @constant int
-     */
     private const PAGINATOR_ITEMS_PER_PAGE = 10;
 
     /**
-     * Constructor.
-     *
-     * @param QuizRepository     $quizRepository Quiz repository
-     * @param PaginatorInterface $paginator      Paginator
+     * Construct.
      */
     public function __construct(private readonly QuizRepository $quizRepository, private readonly PaginatorInterface $paginator)
     {
@@ -78,29 +71,82 @@ class QuizService implements QuizServiceInterface
     }
 
     /**
-     * Prepare quiz for editing by ensuring each question has exactly one correct answer.
-     *
-     * @param Quiz $quiz Quiz entity
+     * Initialize quiz with session data.
      */
-    public function prepareForEdit(Quiz $quiz): void
+    public function initializeQuizFromSession(SessionInterface $session): Quiz
     {
-        foreach ($quiz->getQuestions() as $question) {
-            $correctAnswers = $question->getAnswers()->filter(fn (Answer $answer) => $answer->isCorrect())->toArray();
-            if (empty($correctAnswers)) {
-                // Jeśli nie ma poprawnej odpowiedzi, ustaw pierwszą jako poprawną
-                $firstAnswer = $question->getAnswers()->first();
-                if ($firstAnswer) {
-                    $firstAnswer->setIsCorrect(true);
-                }
-            } elseif (count($correctAnswers) > 1) {
-                // Jeśli jest więcej niż jedna poprawna, pozostaw pierwszą i zresetuj resztę
-                foreach ($correctAnswers as $index => $answer) {
-                    if ($index > 0) {
-                        $answer->setIsCorrect(false);
+        $quiz = new Quiz();
+
+        if ($session->has('quiz_data')) {
+            $quizData = $session->get('quiz_data');
+            $quiz->setTitle($quizData['title'] ?? '');
+            $quiz->setDescription($quizData['description'] ?? '');
+
+            if (isset($quizData['questions']) && is_array($quizData['questions'])) {
+                foreach ($quizData['questions'] as $questionData) {
+                    $question = new Question();
+                    $question->setContent($questionData['content'] ?? '');
+                    $question->setPoints($questionData['points'] ?? 1);
+                    $question->setQuiz($quiz);
+
+                    // Upewnij się, że zawsze jest co najmniej 2 odpowiedzi
+                    $answers = isset($questionData['answers']) && is_array($questionData['answers']) ? $questionData['answers'] : ['xd'];
+//                    while (count($answers) < 2) {
+//                        $answers[] = ['content' => '', 'isCorrect' => false];
+//                    }
+
+                    foreach ($answers as $answerData) {
+                        $answer = new Answer();
+                        $answer->setContent($answerData['content'] ?? '');
+                        $answer->setIsCorrect($answerData['isCorrect'] ?? false);
+                        $answer->setQuestion($question);
+                        $question->addAnswer($answer);
                     }
+
+                    $quiz->addQuestion($question);
+
+                    //                    dump($quiz->getQuestions()->count()); // Liczba pytań
+                    //                    foreach ($quiz->getQuestions() as $question) {
+                    //                        dump($question->getAnswers()->count()); // Liczba odpowiedzi na każde pytanie
+                    //                    }
                 }
             }
         }
+
+        return $quiz;
+    }
+
+    /**
+     * Save quiz data temporarily to session.
+     */
+    public function saveQuizToSession(Quiz $quiz, SessionInterface $session): void
+    {
+        $quizData = $session->get('quiz_data', []);
+        $quizData['title'] = $quiz->getTitle();
+        $quizData['description'] = $quiz->getDescription();
+
+        $questionsData = [];
+        foreach ($quiz->getQuestions() as $question) {
+            $questionData = [
+                'content' => $question->getContent(),
+                'points' => $question->getPoints(),
+                'answers' => [],
+            ];
+            foreach ($question->getAnswers() as $answer) {
+                $questionData['answers'][] = [
+                    'content' => $answer->getContent(),
+                    'isCorrect' => $answer->isCorrect(),
+                ];
+            }
+            // Upewnij się, że są co najmniej 2 odpowiedzi w sesji
+            while (count($questionData['answers']) < 2) {
+                $questionData['answers'][] = ['content' => '', 'isCorrect' => false];
+            }
+            $questionsData[] = $questionData;
+        }
+        // dump($questionsData);
+        $quizData['questions'] = $questionsData;
+        $session->set('quiz_data', $quizData);
     }
 
     /**
@@ -110,30 +156,8 @@ class QuizService implements QuizServiceInterface
      */
     public function save(Quiz $quiz): void
     {
-        if ($quiz->getQuestions()->isEmpty()) {
-            throw new \InvalidArgumentException('Quiz musi mieć co najmniej jedno pytanie.');
-        }
-
-        foreach ($quiz->getQuestions() as $question) {
-            $answers = $question->getAnswers();
-            dump('Initial count: ' . $answers->count()); // Debug
-
-            // Synchronizacja odpowiedzi
-            foreach ($answers as $answer) {
-                $question->addAnswer($answer); // Upewnia się, że relacja jest ustawiona
-            }
-
-            $answers = $question->getAnswers();
-            dump('After sync: ' . $answers->count()); // Debug
-            if ($answers->count() < 2) {
-                throw new \InvalidArgumentException('Każde pytanie musi mieć co najmniej dwie odpowiedzi.');
-            }
-            $correctAnswers = $answers->filter(fn (Answer $answer) => $answer->isCorrect())->count();
-            if (1 !== $correctAnswers) {
-                throw new \InvalidArgumentException('Każde pytanie musi mieć dokładnie jedną poprawną odpowiedź.');
-            }
-        }
-
+        $this->validateQuiz($quiz);
+        $this->synchronizeRelations($quiz);
         $this->quizRepository->save($quiz);
     }
 
@@ -147,9 +171,61 @@ class QuizService implements QuizServiceInterface
         $this->quizRepository->delete($quiz);
     }
 
+    /**
+     * Checks if Quiz can be deleted.
+     *
+     * @param Quiz $quiz Quiz
+     */
     public function canBeDeleted(Quiz $quiz): bool
     {
-        // Przykład: nie można usunąć quizu, jeśli jest opublikowany
         return !$quiz->isPublished();
+    }
+
+    /**
+     * Validate quiz.
+     *
+     * @param Quiz $quiz Quiz
+     */
+    private function validateQuiz(Quiz $quiz): void
+    {
+        if ($quiz->getQuestions()->isEmpty()) {
+            throw new \InvalidArgumentException('Quiz musi mieć co najmniej jedno pytanie.');
+        }
+
+        foreach ($quiz->getQuestions() as $question) {
+            $answers = $question->getAnswers();
+            if ($answers->count() < 2) {
+                throw new \InvalidArgumentException('Każde pytanie musi mieć co najmniej dwie odpowiedzi.');
+            }
+            if ($answers->count() > 4) {
+                throw new \InvalidArgumentException('Każde pytanie może mieć maksymalnie cztery odpowiedzi.');
+            }
+
+            //            $correctCount = $answers->filter(fn (Answer $a) => $a->isCorrect())->count();
+            //            if (1 !== $correctCount) {
+            //                throw new \InvalidArgumentException('Każde pytanie musi mieć dokładnie jedną poprawną odpowiedź.');
+            //            }
+        }
+    }
+
+    /**
+     * Synchronize the relations and set positions.
+     *
+     * @param Quiz $quiz Quiz
+     */
+    private function synchronizeRelations(Quiz $quiz): void
+    {
+        $questionPosition = 1;
+        foreach ($quiz->getQuestions() as $question) {
+            $question->setPosition($questionPosition++);
+            $answers = $question->getAnswers(); // Pobierz istniejące odpowiedzi
+            $answerPosition = 1;
+            foreach ($answers as $answer) {
+                $answer->setPosition($answerPosition++);
+                $answer->setQuestion($question);
+                $question->addAnswer($answer); // Ponowne dodanie wszystkich odpowiedzi
+            }
+            $quiz->addQuestion($question);
+        }
     }
 }

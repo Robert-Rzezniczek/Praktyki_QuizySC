@@ -9,7 +9,6 @@ namespace App\Controller;
 use App\Entity\Quiz;
 use App\Form\Type\QuizType;
 use App\Service\QuizServiceInterface;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\HttpFoundation\Request;
@@ -82,26 +81,18 @@ class QuizController extends AbstractController
      *
      * @return Response HTTP response
      */
-    #[Route(
-        '/create',
-        name: 'quiz_create',
-        methods: 'GET|POST'
-    )]
-    #[IsGranted('ROLE_ADMIN')]
+    #[Route('/quiz/create', name: 'quiz_create')]
     public function create(Request $request): Response
     {
         $quiz = new Quiz();
+
         $form = $this->createForm(QuizType::class, $quiz);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            dump($quiz); // Debug całego obiektu quiz
             try {
                 $this->quizService->save($quiz);
-                $this->addFlash(
-                    'success',
-                    $this->translator->trans('message.created_successfully')
-                );
+                $this->addFlash('success', 'Quiz został utworzony.');
 
                 return $this->redirectToRoute('quiz_index');
             } catch (\InvalidArgumentException $e) {
@@ -109,10 +100,9 @@ class QuizController extends AbstractController
             }
         }
 
-        return $this->render(
-            'quiz/create.html.twig',
-            ['form' => $form->createView()]
-        );
+        return $this->render('quiz/create.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     /**
@@ -130,7 +120,7 @@ class QuizController extends AbstractController
         methods: 'GET|POST'
     )]
     #[IsGranted('ROLE_ADMIN')]
-    public function edit(Request $request, Quiz $quiz, QuizServiceInterface $quizService): Response
+    public function edit(Request $request, Quiz $quiz): Response
     {
         $form = $this->createForm(QuizType::class, $quiz, [
             'method' => 'POST',
@@ -140,7 +130,7 @@ class QuizController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                $quizService->save($quiz);
+                $this->quizService->save($quiz);
                 $this->addFlash(
                     'success',
                     $this->translator->trans('message.edited_successfully')
@@ -216,6 +206,9 @@ class QuizController extends AbstractController
         );
     }
 
+    /**
+     * Before solve, begin action.
+     */
     #[Route(
         '/{id}/view-quiz',
         name: 'quiz_view_quiz',
@@ -231,6 +224,9 @@ class QuizController extends AbstractController
         );
     }
 
+    /**
+     * Solve quiz action.
+     */
     #[Route(
         '/{id}/solve',
         name: 'quiz_solve',
@@ -243,5 +239,45 @@ class QuizController extends AbstractController
             'quiz/solve_quiz.html.twig',
             ['quiz' => $quiz]
         );
+    }
+
+    /**
+     * Create step action (step by step quiz).
+     *
+     * @param Request $request HTTP request
+     * @param int     $step    Current step (1, 2, 3, etc.)
+     *
+     * @return Response HTTP response
+     */
+    #[Route('/create/step/{step}', name: 'quiz_create_step', requirements: ['step' => '\d+'], methods: 'GET|POST')]
+    public function createStep(Request $request, int $step = 1): Response
+    {
+        $quiz = $this->quizService->initializeQuizFromSession($request->getSession());
+        $form = $this->createForm(QuizType::class, $quiz, [
+            'step' => $step,
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->quizService->saveQuizToSession($quiz, $request->getSession());
+
+            if (3 > $step) {
+                return $this->redirectToRoute('quiz_create_step', ['step' => $step + 1]);
+            }
+
+            // Ostatni krok - zapis
+            $quiz->setTimeLimit($quiz->getTimeLimit());
+            $this->quizService->save($quiz);
+            $request->getSession()->remove('quiz_data');
+            $this->addFlash('success', 'Quiz został utworzony.');
+
+            return $this->redirectToRoute('quiz_index');
+        }
+
+        return $this->render('quiz/create.html.twig', [
+            'form' => $form->createView(),
+            'step' => $step,
+            'maxSteps' => 3,
+        ]);
     }
 }

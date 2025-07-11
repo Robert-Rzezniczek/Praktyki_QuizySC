@@ -54,8 +54,7 @@ class Quiz
      *
      * @var int|null int|null
      */
-    #[ORM\Column]
-    #[Assert\NotBlank]
+    #[ORM\Column(nullable:true)]
     #[Assert\GreaterThan(0)]
     private ?int $timeLimit = null;
 

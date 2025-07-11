@@ -91,9 +91,11 @@
                         <!-- Zgoda na RODO -->
                         <div class="mb-4">
                             <div class="form-check">
-                                {{ form_label(registrationForm.agreeRodo, null, {'label_attr': {'class': 'form-check-label'}}) }}
-                                {{ form_widget(registrationForm.agreeRodo, {'attr': {'class': 'form-check-input'}}) }}
-                                {{ form_errors(registrationForm.agreeRodo) }}
+                                <label class="form-check-label">
+                                    {{ form_widget(registrationForm.agreeRodo, {'attr': {'class': 'form-check-input'}}) }}
+                                    Polityka <a href="#" data-bs-toggle="modal" data-bs-target="#rodoModal">RODO</a>
+                                    {{ form_errors(registrationForm.agreeRodo) }}
+                                </label>
                             </div>
                         </div>
 
@@ -101,6 +103,23 @@
                             <button type="submit" class="btn btn-primary btn-lg">{{ 'action.register'|trans }}</button>
                         </div>
                         {{ form_end(registrationForm) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="rodoModal" tabindex="-1" aria-labelledby="rodoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="rodoModalLabel">Polityka RODO</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {% include 'rodo.html.twig' %}
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zamknij</button>
                     </div>
                 </div>
             </div>

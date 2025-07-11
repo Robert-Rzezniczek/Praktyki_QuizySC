@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Answer type.
+ * Answer form type.
  */
 
 namespace App\Form\Type;
@@ -9,47 +9,41 @@ namespace App\Form\Type;
 use App\Entity\Answer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 /**
- * Class AnswerType.
+ * AnswerType class.
  */
 class AnswerType extends AbstractType
 {
     /**
      * Builds the form.
      *
-     * @param FormBuilderInterface $builder FormBuilderInterface
-     * @param array                $options array
+     * @param FormBuilderInterface $builder Form builder
+     * @param array                $options Form options
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('content', TextType::class, [
-                'label' => 'label.content',
+            ->add('content', TextareaType::class, [
+                'label' => 'label.answer_content',
                 'required' => true,
-                'attr' => ['max_length' => 500],
+                'attr' => [
+                    'placeholder' => 'Dodaj odpowiedź...',
+                ],
             ])
             ->add('isCorrect', CheckboxType::class, [
-                'label' => 'label.is_correct',
+                'label' => 'label.correct_answer',
                 'required' => false,
-            ])
-            ->add('position', IntegerType::class, [
-                'label' => 'label.position',
-                'required' => true,
-                'attr' => ['min' => 1],
             ]);
     }
 
     /**
-     * Configure options.
+     * Configures the options.
      *
-     * @param OptionsResolver $resolver OptionsResolver
-     *
-     * @return void void
+     * @param OptionsResolver $resolver Options resolver
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
