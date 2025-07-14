@@ -1,69 +1,60 @@
 <?php
 
 /**
- * Question form type.
+ * Question type.
  */
 
 namespace App\Form\Type;
 
 use App\Entity\Question;
-use App\Entity\Answer;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
-use Symfony\Component\Form\Extension\Core\Type\TextareaType;
+use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 
 /**
- * QuestionType class.
+ * Class QuestionType.
  */
 class QuestionType extends AbstractType
 {
     /**
      * Builds the form.
      *
-     * @param FormBuilderInterface $builder Form builder
-     * @param array                $options Form options
+     * @param FormBuilderInterface $builder FormBuilderInterface
+     * @param array                $options array
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('content', TextareaType::class, [
-                'label' => 'label.question_content',
+            ->add('content', TextType::class, [
+                'label' => false,
                 'required' => true,
-                'attr' => [
-                    'placeholder' => 'Dodaj treść pytania',
-                ],
+                'attr' => ['max_length' => 1000, 'placeholder' => 'Podaj treść pytania'],
             ])
             ->add('points', IntegerType::class, [
-                'label' => 'label.points',
+                'label' => false,
                 'required' => true,
-                'attr' => [
-                    'min' => 1,
-                    'placeholder' => 'Podaj ilość punktów',
-                ],
+                'attr' => ['min' => 0, 'placeholder' => 'Podaj ilość punktów'],
             ])
             ->add('answers', CollectionType::class, [
                 'entry_type' => AnswerType::class,
+                'entry_options' => ['label' => false],
                 'allow_add' => true,
                 'allow_delete' => true,
                 'by_reference' => false,
                 'label' => false,
+                'attr' => ['data-collection-holder' => 'answers'],
                 'prototype' => true,
-                'attr' => ['class' => 'answers-collection'],
-                'entry_options' => ['label' => false],
-                // Inicjalizacja z 4 odpowiedziami
-                'data' => array_fill(0, 4, new Answer()),
-                // Upewnij się, że formularz zawsze przesyła co najmniej 2 odpowiedzi
-                'empty_data' => fn () => array_fill(0, 4, new Answer()),
+                'prototype_name' => '__answers_name__',
             ]);
     }
 
     /**
-     * Configures the options.
+     * Configure options.
      *
-     * @param OptionsResolver $resolver Options resolver
+     * @param OptionsResolver $resolver OptionsResolver
      */
     public function configureOptions(OptionsResolver $resolver): void
     {

@@ -28,7 +28,7 @@ class Answer
     /**
      * Question (relation).
      */
-    #[ORM\ManyToOne(inversedBy: 'answers')]
+    #[ORM\ManyToOne(targetEntity: Question::class, inversedBy:'answers')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank]
     private ?Question $question = null;

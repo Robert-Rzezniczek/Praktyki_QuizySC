@@ -43,13 +43,16 @@
                                     <a class="btn btn-outline-success me-2" href="{{ url('quiz_solve', {id: quiz.id}) }}" title="{{ 'action.solve'|trans }}">
                                         {{ 'action.solve'|trans }}
                                     </a>
+                                    <a class="btn btn-outline-success me-2" href="{{ url('quiz_publish', {id: quiz.id}) }}" title="{{ 'action.publish'|trans }}">
+                                        {{ 'action.publish'|trans }}
+                                    </a>
                                     <a class="btn btn-outline-primary me-2" href="{{ url('quiz_view', {id: quiz.id}) }}" title="{{ 'action.view'|trans }}">
                                         {{ 'action.view'|trans }}
                                     </a>
                                     <a class="btn btn-outline-primary me-2" href="{{ url('quiz_view_quiz', {id: quiz.id}) }}" title="{{ 'action.preview'|trans }}">
                                         {{ 'action.preview'|trans }}
                                     </a>
-                                    <a class="btn btn-outline-warning me-2" href="{{ url('quiz_edit', {id: quiz.id}) }}" title="{{ 'action.edit'|trans }}">
+                                    <a class="btn btn-outline-warning me-2" href="{{ url('quiz_edit_step', {id: quiz.id}) }}" title="{{ 'action.edit'|trans }}">
                                         {{ 'action.edit'|trans }}
                                     </a>
                                     <a class="btn btn-outline-danger" href="{{ url('quiz_delete', {id: quiz.id}) }}" title="{{ 'action.delete'|trans }}">

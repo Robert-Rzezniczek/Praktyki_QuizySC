@@ -71,14 +71,67 @@ class QuizService implements QuizServiceInterface
     }
 
     /**
-     * Initialize quiz with session data.
+     * Initialize quiz with session data or return existing quiz for editing.
+     *
+     * @param SessionInterface $session Session
+     * @param Quiz|null        $quiz    Existing quiz entity (optional)
      */
-    public function initializeQuizFromSession(SessionInterface $session): Quiz
+    public function initializeQuizFromSession(SessionInterface $session, ?Quiz $quiz = null): Quiz
     {
-        $quiz = new Quiz();
-
-        if ($session->has('quiz_data')) {
+        if ($quiz instanceof Quiz && $quiz->getId()) {
+            // Jeśli edytujemy istniejący quiz, użyj go jako podstawy
             $quizData = $session->get('quiz_data');
+            if ($quizData && isset($quizData['id']) && $quizData['id'] === $quiz->getId()) {
+                // Aktualizuj tylko pola, które są w sesji
+                if (isset($quizData['title'])) {
+                    $quiz->setTitle($quizData['title']);
+                }
+                if (isset($quizData['description'])) {
+                    $quiz->setDescription($quizData['description']);
+                }
+                if (isset($quizData['timeLimit'])) {
+                    $quiz->setTimeLimit($quizData['timeLimit']);
+                }
+                if (isset($quizData['isPublished'])) {
+                    $quiz->setIsPublished($quizData['isPublished']);
+                }
+
+                if (isset($quizData['questions']) && is_array($quizData['questions'])) {
+                    // Zachowaj istniejące pytania, aktualizuj je danymi z sesji
+                    $existingQuestions = $quiz->getQuestions()->toArray();
+                    $quiz->getQuestions()->clear(); // Wyczyść, aby uniknąć duplikacji
+
+                    foreach ($quizData['questions'] as $index => $questionData) {
+                        $question = isset($existingQuestions[$index]) ? $existingQuestions[$index] : new Question();
+                        $question->setContent($questionData['content'] ?? '');
+                        $question->setPoints($questionData['points'] ?? 1);
+                        $question->setQuiz($quiz);
+
+                        // Zachowaj istniejące odpowiedzi
+                        $existingAnswers = $question->getAnswers()->toArray();
+                        $question->getAnswers()->clear();
+
+                        if (isset($questionData['answers']) && is_array($questionData['answers'])) {
+                            foreach ($questionData['answers'] as $answerIndex => $answerData) {
+                                $answer = isset($existingAnswers[$answerIndex]) ? $existingAnswers[$answerIndex] : new Answer();
+                                $answer->setContent($answerData['content'] ?? '');
+                                $answer->setIsCorrect($answerData['isCorrect'] ?? false);
+                                $answer->setQuestion($question);
+                                $question->addAnswer($answer);
+                            }
+                        }
+                        $quiz->addQuestion($question);
+                    }
+                }
+            }
+
+            return $quiz;
+        }
+
+        // Jeśli nie edytujemy, utwórz nowy quiz
+        $quiz = new Quiz();
+        $quizData = $session->get('quiz_data');
+        if ($quizData) {
             $quiz->setTitle($quizData['title'] ?? '');
             $quiz->setDescription($quizData['description'] ?? '');
 
@@ -89,26 +142,16 @@ class QuizService implements QuizServiceInterface
                     $question->setPoints($questionData['points'] ?? 1);
                     $question->setQuiz($quiz);
 
-                    // Upewnij się, że zawsze jest co najmniej 2 odpowiedzi
-                    $answers = isset($questionData['answers']) && is_array($questionData['answers']) ? $questionData['answers'] : ['xd'];
-//                    while (count($answers) < 2) {
-//                        $answers[] = ['content' => '', 'isCorrect' => false];
-//                    }
-
-                    foreach ($answers as $answerData) {
-                        $answer = new Answer();
-                        $answer->setContent($answerData['content'] ?? '');
-                        $answer->setIsCorrect($answerData['isCorrect'] ?? false);
-                        $answer->setQuestion($question);
-                        $question->addAnswer($answer);
+                    if (isset($questionData['answers']) && is_array($questionData['answers'])) {
+                        foreach ($questionData['answers'] as $answerData) {
+                            $answer = new Answer();
+                            $answer->setContent($answerData['content'] ?? '');
+                            $answer->setIsCorrect($answerData['isCorrect'] ?? false);
+                            $answer->setQuestion($question);
+                            $question->addAnswer($answer);
+                        }
                     }
-
                     $quiz->addQuestion($question);
-
-                    //                    dump($quiz->getQuestions()->count()); // Liczba pytań
-                    //                    foreach ($quiz->getQuestions() as $question) {
-                    //                        dump($question->getAnswers()->count()); // Liczba odpowiedzi na każde pytanie
-                    //                    }
                 }
             }
         }
@@ -118,14 +161,21 @@ class QuizService implements QuizServiceInterface
 
     /**
      * Save quiz data temporarily to session.
+     *
+     * @param Quiz             $quiz    Quiz entity
+     * @param SessionInterface $session Session
      */
     public function saveQuizToSession(Quiz $quiz, SessionInterface $session): void
     {
-        $quizData = $session->get('quiz_data', []);
-        $quizData['title'] = $quiz->getTitle();
-        $quizData['description'] = $quiz->getDescription();
+        $quizData = [
+            'id' => $quiz->getId(),
+            'title' => $quiz->getTitle(),
+            'description' => $quiz->getDescription(),
+            'timeLimit' => $quiz->getTimeLimit(),
+            'isPublished' => $quiz->isPublished(),
+            'questions' => [],
+        ];
 
-        $questionsData = [];
         foreach ($quiz->getQuestions() as $question) {
             $questionData = [
                 'content' => $question->getContent(),
@@ -138,14 +188,8 @@ class QuizService implements QuizServiceInterface
                     'isCorrect' => $answer->isCorrect(),
                 ];
             }
-            // Upewnij się, że są co najmniej 2 odpowiedzi w sesji
-            while (count($questionData['answers']) < 2) {
-                $questionData['answers'][] = ['content' => '', 'isCorrect' => false];
-            }
-            $questionsData[] = $questionData;
+            $quizData['questions'][] = $questionData;
         }
-        // dump($questionsData);
-        $quizData['questions'] = $questionsData;
         $session->set('quiz_data', $quizData);
     }
 
@@ -198,13 +242,12 @@ class QuizService implements QuizServiceInterface
                 throw new \InvalidArgumentException('Każde pytanie musi mieć co najmniej dwie odpowiedzi.');
             }
             if ($answers->count() > 4) {
-                throw new \InvalidArgumentException('Każde pytanie może mieć maksymalnie cztery odpowiedzi.');
+                throw new \InvalidArgumentException('Każde pytanie może mieć maksymalnie 4 odpowiedzi.');
             }
-
-            //            $correctCount = $answers->filter(fn (Answer $a) => $a->isCorrect())->count();
-            //            if (1 !== $correctCount) {
-            //                throw new \InvalidArgumentException('Każde pytanie musi mieć dokładnie jedną poprawną odpowiedź.');
-            //            }
+            $correctAnswers = $answers->filter(fn (Answer $answer) => $answer->isCorrect())->count();
+            if (1 !== $correctAnswers) {
+                throw new \InvalidArgumentException('Każde pytanie musi mieć dokładnie jedną poprawną odpowiedź.');
+            }
         }
     }
 
@@ -218,14 +261,65 @@ class QuizService implements QuizServiceInterface
         $questionPosition = 1;
         foreach ($quiz->getQuestions() as $question) {
             $question->setPosition($questionPosition++);
-            $answers = $question->getAnswers(); // Pobierz istniejące odpowiedzi
             $answerPosition = 1;
-            foreach ($answers as $answer) {
+            foreach ($question->getAnswers() as $answer) {
                 $answer->setPosition($answerPosition++);
-                $answer->setQuestion($question);
-                $question->addAnswer($answer); // Ponowne dodanie wszystkich odpowiedzi
+                if ($answer->getQuestion() !== $question) {
+                    $answer->setQuestion($question);
+                }
+                $question->addAnswer($answer);
+            }
+            if ($question->getQuiz() !== $quiz) {
+                $question->setQuiz($quiz);
             }
             $quiz->addQuestion($question);
         }
+    }
+
+    /**
+     * Publish quiz for a specified duration.
+     *
+     * @param Quiz             $quiz     Quiz entity
+     * @param int              $duration Duration in minutes
+     * @param SessionInterface $session  Session
+     *
+     * @throws \InvalidArgumentException If duration is invalid
+     */
+    public function publishQuiz(Quiz $quiz, int $duration, SessionInterface $session): void
+    {
+        if ($duration <= 0) {
+            throw new \InvalidArgumentException('Czas publikacji musi być większy od zera.');
+        }
+
+        $quiz->setIsPublished(true);
+        $expirationTime = new \DateTimeImmutable("+$duration minutes");
+        $session->set("quiz_{$quiz->getId()}_expiration", $expirationTime->getTimestamp());
+        $this->save($quiz);
+    }
+
+    /**
+     * Check quiz status and update if expired.
+     *
+     * @param Quiz             $quiz    Quiz entity
+     * @param SessionInterface $session Session
+     *
+     * @return array Status information
+     */
+    public function checkQuizStatus(Quiz $quiz, SessionInterface $session): array
+    {
+        $expirationTimestamp = $session->get("quiz_{$quiz->getId()}_expiration");
+        $now = (new \DateTimeImmutable())->getTimestamp();
+
+        if ($expirationTimestamp && $now > $expirationTimestamp) {
+            $quiz->setIsPublished(false);
+            $this->save($quiz);
+            $session->remove("quiz_{$quiz->getId()}_expiration");
+        }
+
+        return [
+            'isPublished' => $quiz->isPublished(),
+            'expirationTimestamp' => $expirationTimestamp,
+            'currentTimestamp' => $now,
+        ];
     }
 }

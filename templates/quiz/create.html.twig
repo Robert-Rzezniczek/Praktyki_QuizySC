@@ -1,184 +1,249 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'title.create_quiz'|trans }}{% endblock %}
+{% block title %}Create Quiz - Step {{ step }}{% endblock %}
 
 {% block body %}
-    <div class="container my-5">
-        <h1 class="display-6 text-primary text-center mb-5">{{ 'title.create_quiz'|trans }}</h1>
+    <div class="container my-4">
+        <h1 class="display-5 text-primary mb-4">Create Quiz - Step {{ step }} of {{ maxSteps }}</h1>
 
-        {% for label, messages in app.flashes %}
-            {% for message in messages %}
-                <div class="alert alert-{{ label is same as('success') ? 'success' : 'danger' }} alert-dismissible fade show" role="alert">
-                    {{ message|trans }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        {% endfor %}
-
-        <div class="card shadow-sm">
-            <div class="card-body p-4">
-                {{ form_start(form) }}
-                <div class="step-content">
-                    <h4>Krok {{ step }} z {{ maxSteps }}</h4>
-
-                    {% if 1 is same as(step) %}
-                        <div id="step1">
-                            {{ form_row(form.title) }}
-                            {{ form_row(form.description) }}
-                        </div>
-
-                    {% elseif 2 is same as(step) %}
-                        <div id="step2">
-                            <div id="questions-collection"
-                                 data-prototype="
-                                    <div class='question-item mb-4 p-4 bg-white rounded shadow-sm border'>
-                                        <h5>Pytanie</h5>
-                                        {{ form_widget(form.questions.vars.prototype.content)|e('html_attr') }}
-                                        {{ form_widget(form.questions.vars.prototype.points)|e('html_attr') }}
-                                        <div class='answers-collection mt-3' data-prototype='
-                                            <div class=&quot;answer-item mb-2 d-flex align-items-center p-3 bg-light rounded border&quot;>
-                                                <div class=&quot;me-3&quot;>{{ form_widget(form.questions.vars.prototype.answers.vars.prototype.isCorrect, {'label': false})|e('html_attr') }}</div>
-                                                <div class=&quot;flex-grow-1&quot;>{{ form_widget(form.questions.vars.prototype.answers.vars.prototype.content)|e('html_attr') }}</div>
-                                                <button type=&quot;button&quot; class=&quot;btn btn-danger btn-sm remove-answer&quot;>Usuń</button>
-                                            </div>'>
-                                        </div>
-                                        <button type='button' class='btn btn-success btn-sm add-answer'>Dodaj odpowiedź</button>
-                                        <button type='button' class='btn btn-danger btn-sm remove-question'>Usuń pytanie</button>
-                                    </div>">
-                                {% for questionForm in form.questions %}
-                                    <div class="question-item mb-4 p-4 bg-white rounded shadow-sm border">
-                                        <h5>Pytanie</h5>
-                                        {{ form_row(questionForm.content) }}
-                                        {{ form_row(questionForm.points) }}
-
-                                        <div class="answers-collection mt-3" data-prototype="{{ form_widget(questionForm.answers.vars.prototype)|e('html_attr') }}">
-                                            {% for answerForm in questionForm.answers %}
-                                                <div class="answer-item mb-2 d-flex align-items-center p-3 bg-light rounded border">
-                                                    <div class="me-3">
-                                                        {{ form_widget(answerForm.isCorrect, {'label': false}) }}
-                                                    </div>
-                                                    <div class="flex-grow-1">
-                                                        {{ form_widget(answerForm.content) }}
-                                                    </div>
-                                                    <button type="button" class="btn btn-danger btn-sm remove-answer">Usuń</button>
+        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+        {% if step == 1 %}
+            {{ form_row(form.title) }}
+            {{ form_row(form.description) }}
+        {% elseif step == 2 %}
+            <div data-collection-holder="questions"
+                 data-prototype="{{ form_widget(form.questions.vars.prototype)|e('html_attr') }}">
+                {% if form.questions is defined and form.questions|length > 0 %}
+                    {% for question in form.questions %}
+                        <div class="question-item card mt-3 p-3 border" data-question-index="{{ loop.index0 }}">
+                            <h6 class="question-header">Pytanie {{ loop.index }}</h6>
+                            {{ form_row(question.content) }}
+                            {{ form_row(question.points) }}
+                            <div data-collection-holder="answers"
+                                 data-index="{{ question.answers|length }}"
+                                 data-prototype="{% set prototype %}
+                                    <div class='answer-item card mt-2 p-2 border'>
+                                        <h6>Odp. __answers_name__</h6>
+                                        <div class='row align-items-center'>
+                                            <div class='col-md-2'>
+                                                <div class='form-check'>
+                                                    {{ form_widget(question.answers.vars.prototype.isCorrect)|replace({'__name__': '__answers_name__'})|raw }}
+                                                    {{ form_label(question.answers.vars.prototype.isCorrect)|replace({'__name__': '__answers_name__'})|raw }}
                                                 </div>
-                                            {% endfor %}
+                                            </div>
+                                            <div class='col-md-10'>
+                                                {{ form_widget(question.answers.vars.prototype.content)|replace({'__name__': '__answers_name__'})|raw }}
+                                                {{ form_errors(question.answers.vars.prototype.content)|replace({'__name__': '__answers_name__'})|raw }}
+                                            </div>
                                         </div>
-
-                                        <button type="button" class="btn btn-success btn-sm add-answer">Dodaj odpowiedź</button>
-                                        <button type="button" class="btn btn-danger btn-sm remove-question">Usuń pytanie</button>
+                                        <button type='button' class='remove-answer btn btn-danger btn-sm mt-2'>Remove</button>
+                                    </div>
+                                 {% endset %}{{ prototype|e('html_attr') }}"
+                                 class="answers-collection">
+                                {% for answer in question.answers %}
+                                    <div class="answer-item card mt-2 p-2 border">
+                                        <h6>Odp. {{ loop.index }}</h6>
+                                        <div class="row align-items-center">
+                                            <div class="col-10">
+                                                {{ form_widget(answer.content) }}
+                                            </div>
+                                            <div class="col-2">
+                                                <div class="form-check">
+                                                    {{ form_widget(answer.isCorrect) }}
+                                                    {{ form_label(answer.isCorrect) }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="remove-answer btn btn-danger btn-sm mt-2" style="display: {% if loop.index0 > 0 %}inline-block{% else %}none{% endif %};">Remove</button>
                                     </div>
                                 {% endfor %}
                             </div>
-                            <button type="button" class="btn btn-primary mt-3 add-question">Dodaj pytanie</button>
+                            <button type="button" class="add-answer btn btn-secondary mt-2 mb-2">Add Answer</button>
+                            <button type="button" class="remove-question btn btn-danger btn-sm mt-2" style="display: {% if loop.index0 > 0 %}inline-block{% else %}none{% endif %};">Remove</button>
                         </div>
-
-                    {% elseif 3 is same as(step) %}
-                        <div id="step3">
-                            {{ form_row(form.timeLimit) }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="d-flex justify-content-between mt-4">
-                    {% if 1 is not same as(step) %}
-                        <a href="{{ path('quiz_create_step', {'step': step - 1}) }}" class="btn btn-secondary">Wstecz</a>
-                    {% endif %}
-                    {% if 3 is same as(step) %}
-                        <button type="submit" class="btn btn-success">Zakończ</button>
-                    {% else %}
-                        <button type="submit" class="btn btn-primary">Dalej</button>
-                    {% endif %}
-                </div>
-
-                {{ form_end(form) }}
+                    {% endfor %}
+                {% else %}
+                    <!-- Puste pytanie, renderowane dynamicznie -->
+                {% endif %}
             </div>
+            <button type="button" class="add-question btn btn-primary mt-3 mb-2">Add Question</button>
+        {% elseif step == 3 %}
+            {{ form_row(form.timeLimit) }}
+            {{ form_row(form.isPublished) }}
+        {% endif %}
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Next</button>
+            {% if step > 1 %}
+                <a href="{{ path('quiz_create_step', {'step': step - 1}) }}" class="btn btn-secondary">Back</a>
+            {% endif %}
         </div>
-    </div>
+        {{ form_end(form) }}
 
-    <style>
-        .question-item {
-            background-color: #f9f9f9;
-            border-left: 4px solid #0d6efd;
-        }
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                const translations = {
+                    'remove_question': '{{ 'action.remove_question'|trans|escape('js') }}',
+                    'remove_answer': '{{ 'action.remove_answer'|trans|escape('js') }}'
+                };
 
-        .answer-item {
-            background-color: #e9ecef;
-            border-left: 4px solid #198754;
-        }
-
-        .answer-item input[type="checkbox"] {
-            transform: scale(1.2);
-        }
-    </style>
-
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            let questionIndex = document.querySelectorAll('.question-item').length;
-            let addQuestionBtn = document.querySelector('.add-question');
-
-            // Dodawanie pytania
-            addQuestionBtn.addEventListener('click', function() {
-                let prototype = document.getElementById('questions-collection').dataset.prototype;
-                let newQuestion = prototype.replace(/__name__/g, questionIndex);
-                document.getElementById('questions-collection').insertAdjacentHTML('beforeend', newQuestion);
-                questionIndex++;
-                updateButtons();
-            });
-
-            // Usuwanie pytania
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-question')) {
-                    e.target.closest('.question-item').remove();
-                    updateButtons();
-                }
-            });
-
-            // Dodawanie odpowiedzi
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('add-answer')) {
-                    let answersCollection = e.target.closest('.question-item').querySelector('.answers-collection');
-                    let answerItems = answersCollection.querySelectorAll('.answer-item');
-                    if (answerItems.length < 4) {
-                        let prototype = answersCollection.dataset.prototype;
-                        let index = answerItems.length;
-                        let newAnswer = prototype.replace(/__name__/g, index);
-                        answersCollection.insertAdjacentHTML('beforeend', newAnswer);
-                        updateButtons();
-                    }
-                }
-            });
-
-            // Usuwanie odpowiedzi
-            document.addEventListener('click', function(e) {
-                if (e.target.classList.contains('remove-answer')) {
-                    let answersCollection = e.target.closest('.answers-collection');
-                    let answerItems = answersCollection.querySelectorAll('.answer-item');
-                    if (answerItems.length > 2) {
-                        e.target.closest('.answer-item').remove();
-                        updateButtons();
-                    }
-                }
-            });
-
-            function updateButtons() {
-                let questions = document.querySelectorAll('.question-item');
-                questions.forEach(q => {
-                    let removeBtn = q.querySelector('.remove-question');
-                    removeBtn.style.display = questions.length > 1 ? 'inline-block' : 'none';
-
-                    let answers = q.querySelectorAll('.answer-item');
-                    let addBtn = q.querySelector('.add-answer');
-                    addBtn.disabled = answers.length >= 4;
-
-                    answers.forEach(a => {
-                        let removeBtn = a.querySelector('.remove-answer');
-                        removeBtn.style.display = answers.length > 2 ? 'inline-block' : 'none';
+                function addRemoveButton(container, type, updateIndexCallback) {
+                    const removeButton = document.createElement('button');
+                    removeButton.type = 'button';
+                    removeButton.className = 'btn btn-danger btn-sm mt-2 remove-' + type;
+                    removeButton.innerHTML = '<i class="bi bi-trash"></i> ' + (type === 'question' ? translations['remove_question'] : translations['remove_answer']);
+                    container.appendChild(removeButton);
+                    removeButton.addEventListener('click', function () {
+                        container.remove();
+                        if (updateIndexCallback) updateIndexCallback();
                     });
-                });
-            }
+                }
 
-            updateButtons();
-        });
-    </script>
+                function updateQuestionIndices() {
+                    const questionItems = questionCollectionHolder.querySelectorAll('.question-item');
+                    questionItems.forEach((item, index) => {
+                        item.dataset.questionIndex = index;
+                        const questionHeader = item.querySelector('.question-header');
+                        if (questionHeader) questionHeader.textContent = `Pytanie ${index + 1}`;
+                        const answerCollectionHolder = item.querySelector('[data-collection-holder="answers"]');
+                        if (answerCollectionHolder) {
+                            const answerItems = answerCollectionHolder.querySelectorAll('.answer-item');
+                            answerItems.forEach((answerItem, answerIndex) => {
+                                const answerHeader = answerItem.querySelector('h6');
+                                if (answerHeader) answerHeader.textContent = `Odp. ${answerIndex + 1}`;
+                            });
+                            answerCollectionHolder.dataset.index = answerItems.length;
+
+                            // Kontroluj widoczność przycisku dodawania odpowiedzi
+                            const addAnswerButton = item.querySelector('.add-answer');
+                            if (addAnswerButton) {
+                                addAnswerButton.style.display = answerItems.length >= 4 ? 'none' : 'inline-block';
+                            }
+                        }
+                    });
+                }
+
+                const questionCollectionHolder = document.querySelector('[data-collection-holder="questions"]');
+                if (questionCollectionHolder) {
+                    let questionIndex = questionCollectionHolder.querySelectorAll('.question-item').length || 0;
+                    const addQuestionButton = document.querySelector('.add-question');
+                    const questionPrototype = questionCollectionHolder.dataset.prototype;
+
+                    addQuestionButton.addEventListener('click', function () {
+                        const newForm = questionPrototype.replace(/__name__/g, questionIndex);
+                        const div = document.createElement('div');
+                        div.className = 'question-item card mt-3 p-3 border';
+                        div.innerHTML = newForm;
+
+                        const questionHeader = document.createElement('h6');
+                        questionHeader.className = 'question-header';
+                        questionHeader.textContent = `Pytanie ${questionIndex + 1}`;
+                        div.insertBefore(questionHeader, div.firstChild);
+                        questionCollectionHolder.appendChild(div);
+                        addRemoveButton(div, 'question', updateQuestionIndices);
+
+                        const answerCollectionHolder = div.querySelector('[data-collection-holder="answers"]');
+                        if (answerCollectionHolder) {
+                            answerCollectionHolder.dataset.index = 0;
+                            const addAnswerButton = document.createElement('button');
+                            addAnswerButton.type = 'button';
+                            addAnswerButton.className = 'add-answer btn btn-secondary mt-2 mb-2';
+                            addAnswerButton.innerHTML = '<i class="bi bi-plus-circle"></i> {{ 'action.add_answer'|trans }}';
+                            answerCollectionHolder.parentNode.appendChild(addAnswerButton);
+
+                            const answerPrototype = answerCollectionHolder.dataset.prototype;
+
+                            addAnswerButton.addEventListener('click', function () {
+                                const answerIndex = answerCollectionHolder.dataset.index;
+                                const currentAnswersCount = answerCollectionHolder.querySelectorAll('.answer-item').length;
+
+                                if (currentAnswersCount >= 4) {
+                                    return; // Nie dodawaj więcej niż 4
+                                }
+
+                                const newAnswerForm = answerPrototype.replace(/__answers_name__/g, answerIndex);
+                                const answerDiv = document.createElement('div');
+                                answerDiv.className = 'answer-item card mt-2 p-2 border';
+                                answerDiv.innerHTML = newAnswerForm;
+                                const answerHeader = document.createElement('h6');
+                                answerHeader.textContent = `Odp. ${parseInt(answerIndex) + 1}`;
+                                answerDiv.insertBefore(answerHeader, answerDiv.firstChild);
+                                answerCollectionHolder.appendChild(answerDiv);
+
+                                addRemoveButton(answerDiv, 'answer', () => {
+                                    answerDiv.remove();
+                                    const remainingAnswers = answerCollectionHolder.querySelectorAll('.answer-item').length;
+                                    answerCollectionHolder.dataset.index = remainingAnswers;
+                                    if (remainingAnswers < 4) {
+                                        addAnswerButton.style.display = 'inline-block';
+                                    }
+                                    updateQuestionIndices();
+                                });
+
+                                answerCollectionHolder.dataset.index = parseInt(answerIndex) + 1;
+
+                                if (answerCollectionHolder.querySelectorAll('.answer-item').length >= 4) {
+                                    addAnswerButton.style.display = 'none';
+                                }
+
+                                updateQuestionIndices();
+                            });
+                        }
+
+                        questionIndex++;
+                        updateQuestionIndices();
+                    });
+
+                    // Ukryj przyciski "Add Answer", jeśli już jest 4 odpowiedzi przy starcie
+                    document.querySelectorAll('.answers-collection').forEach(holder => {
+                        const addAnswerBtn = holder.parentNode.querySelector('.add-answer');
+                        if (holder.querySelectorAll('.answer-item').length >= 4 && addAnswerBtn) {
+                            addAnswerBtn.style.display = 'none';
+                        }
+                    });
+
+                    updateQuestionIndices();
+                }
+            });
+        </script>
+
+
+        <style>
+            .question-item {
+                position: relative;
+                background-color: #f8f9fa;
+                border-radius: 0.25rem;
+                margin-bottom: 1rem;
+            }
+            .question-item .form-label {
+                font-weight: bold;
+                color: #343a40;
+            }
+            .question-header {
+                font-weight: bold;
+                margin-bottom: 0.5rem;
+            }
+            .answer-item {
+                position: relative;
+                background-color: #e9ecef;
+                border-radius: 0.25rem;
+                margin-top: 0.5rem;
+                padding: 0.5rem;
+            }
+            .answer-item .form-label {
+                font-weight: bold;
+                color: #495057;
+            }
+            .remove-question, .remove-answer {
+                position: absolute;
+                top: 10px;
+                right: 10px;
+            }
+            .row.align-items-center .col-10 .form-control {
+                width: 100%;
+            }
+            .row.align-items-center .col-2 .form-check {
+                margin-top: 0;
+            }
+        </style>
+    </div>
 {% endblock %}

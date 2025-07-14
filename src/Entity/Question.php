@@ -30,7 +30,7 @@ class Question
     /**
      * Quiz (relation).
      */
-    #[ORM\ManyToOne(inversedBy: 'questions')]
+    #[ORM\ManyToOne(targetEntity: Quiz::class, inversedBy: 'questions')]
     #[ORM\JoinColumn(nullable: false)]
     #[Assert\NotBlank]
     private ?Quiz $quiz = null;
@@ -64,7 +64,7 @@ class Question
      *
      * @var Collection<int, Answer>
      */
-    #[ORM\OneToMany(targetEntity: Answer::class, mappedBy: 'question', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: Answer::class, mappedBy: 'question', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $answers;
 
     /**

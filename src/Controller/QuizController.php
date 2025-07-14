@@ -11,11 +11,14 @@ use App\Form\Type\QuizType;
 use App\Service\QuizServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
@@ -279,5 +282,143 @@ class QuizController extends AbstractController
             'step' => $step,
             'maxSteps' => 3,
         ]);
+    }
+
+    /**
+     * Edit step action (step by step quiz editing).
+     *
+     * @param Request $request HTTP request
+     * @param Quiz    $quiz    Quiz entity
+     * @param int     $step    Current step (1, 2, 3)
+     *
+     * @return Response HTTP response
+     */
+    #[Route(
+        '/{id}/edit/step/{step}',
+        name: 'quiz_edit_step',
+        requirements: ['id' => '[1-9]\d*', 'step' => '\d+'],
+        methods: ['GET', 'POST']
+    )]
+    #[IsGranted('ROLE_ADMIN')]
+    public function editStep(Request $request, Quiz $quiz, int $step = 1): Response
+    {
+        $maxSteps = 3;
+
+        // Walidacja kroku
+        if ($step < 1 || $step > $maxSteps) {
+            throw $this->createNotFoundException('Nieprawidłowy krok.');
+        }
+
+        // Ładowanie quizu z uwzględnieniem danych z sesji
+        $quiz = $this->quizService->initializeQuizFromSession($request->getSession(), $quiz);
+
+        // Tworzenie formularza dla danego kroku
+        $form = $this->createForm(QuizType::class, $quiz, [
+            'step' => $step,
+            'action' => $this->generateUrl('quiz_edit_step', ['id' => $quiz->getId(), 'step' => $step]),
+            'method' => 'POST',
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                // Zapis do sesji między krokami
+                $this->quizService->saveQuizToSession($quiz, $request->getSession());
+
+                if ($step < $maxSteps) {
+                    // Przejdź do następnego kroku
+                    return $this->redirectToRoute('quiz_edit_step', [
+                        'id' => $quiz->getId(),
+                        'step' => $step + 1,
+                    ]);
+                }
+
+                // Ostatni krok - zapis do bazy danych
+                $this->quizService->save($quiz);
+                $request->getSession()->remove('quiz_data');
+                $this->addFlash('success', $this->translator->trans('message.edited_successfully'));
+
+                return $this->redirectToRoute('quiz_index');
+            } catch (\InvalidArgumentException $e) {
+                $this->addFlash('danger', $e->getMessage());
+            }
+        }
+
+        return $this->render('quiz/edit.html.twig', [
+            'form' => $form->createView(),
+            'step' => $step,
+            'maxSteps' => $maxSteps,
+            'quiz' => $quiz,
+        ]);
+    }
+
+    /**
+     * Publish quiz action.
+     *
+     * @param Request $request HTTP request
+     * @param Quiz    $quiz    Quiz entity
+     *
+     * @return Response HTTP response
+     */
+    #[Route(
+        '/{id}/publish',
+        name: 'quiz_publish',
+        requirements: ['id' => '[1-9]\d*'],
+        methods: ['GET', 'POST']
+    )]
+    #[IsGranted('ROLE_ADMIN')]
+    public function publish(Request $request, Quiz $quiz): Response
+    {
+        $form = $this->createForm(FormType::class, null, [
+            'method' => 'POST',
+            'action' => $this->generateUrl('quiz_publish', ['id' => $quiz->getId()]),
+        ]);
+        $form->add('duration', IntegerType::class, [
+            'label' => 'Czas publikacji (w minutach)',
+            'required' => true,
+            'constraints' => [
+                new GreaterThan(['value' => 0, 'message' => 'Czas publikacji musi być większy od zera.']),
+            ],
+        ]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            try {
+                $duration = $form->get('duration')->getData();
+                $this->quizService->publishQuiz($quiz, $duration, $request->getSession());
+                $this->addFlash('success', $this->translator->trans('message.quiz_published_successfully'));
+
+                return $this->redirectToRoute('quiz_index');
+            } catch (\InvalidArgumentException $e) {
+                $this->addFlash('danger', $e->getMessage());
+            }
+        }
+
+        return $this->render('quiz/publish.html.twig', [
+            'form' => $form->createView(),
+            'quiz' => $quiz,
+        ]);
+    }
+
+    /**
+     * Check quiz status action.
+     *
+     * @param Request $request HTTP request
+     * @param Quiz    $quiz    Quiz entity
+     *
+     * @return JsonResponse JSON response
+     */
+    #[Route(
+        '/{id}/status',
+        name: 'quiz_check_status',
+        requirements: ['id' => '[1-9]\d*'],
+        methods: ['GET']
+    )]
+    public function checkStatus(Request $request, Quiz $quiz): JsonResponse
+    {
+        $status = $this->quizService->checkQuizStatus($quiz, $request->getSession());
+
+        return new JsonResponse($status);
     }
 }
