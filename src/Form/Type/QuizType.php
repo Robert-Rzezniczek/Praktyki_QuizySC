@@ -22,7 +22,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class QuizType extends AbstractType
 {
     /**
-     * Builds the form.cd
+     * Builds the form.cd.
      *
      * @param FormBuilderInterface $builder FormBuilderInterface
      * @param array                $options array

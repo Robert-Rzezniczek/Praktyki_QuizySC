@@ -10,9 +10,7 @@ class UserAnswerService implements UserAnswerServiceInterface
     private EntityManagerInterface $em;
 
     /**
-     * Konstruktor
-     *
-     * @param EntityManagerInterface $em
+     * Konstruktor.
      */
     public function __construct(EntityManagerInterface $em)
     {
@@ -21,8 +19,6 @@ class UserAnswerService implements UserAnswerServiceInterface
 
     /**
      * Zapis encji UserAnswer do bazy danych.
-     *
-     * @param UserAnswer $userAnswer
      */
     public function save(UserAnswer $userAnswer): void
     {
@@ -31,9 +27,7 @@ class UserAnswerService implements UserAnswerServiceInterface
     }
 
     /**
-     * Usuwaniue
-     *
-     * @param UserAnswer $userAnswer
+     * Usuwaniue.
      */
     public function delete(UserAnswer $userAnswer): void
     {

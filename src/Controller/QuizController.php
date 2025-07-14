@@ -11,6 +11,7 @@ use App\Entity\QuizResult;
 use App\Form\Type\QuizType;
 use App\Service\QuizResultServiceInterface;
 use App\Service\QuizServiceInterface;
+use App\Service\UserAnswerServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -29,12 +30,11 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/quiz')]
 class QuizController extends AbstractController
 {
-
     /**
      * Constructor.
      *
-     * @param QuizServiceInterface $quizService QuizService
-     * @param TranslatorInterface $translator TranslatorInterface
+     * @param QuizServiceInterface       $quizService       QuizService
+     * @param TranslatorInterface        $translator        TranslatorInterface
      * @param QuizResultServiceInterface $quizResultService QuizResultService
      * @param UserAnswerServiceInterface $userAnswerService UserAnswerService
      */
@@ -214,8 +214,13 @@ class QuizController extends AbstractController
         );
     }
 
+
     /**
      * Before solve, begin action.
+     *
+     * @param Quiz $quiz Quiz
+     *
+     * @return Response
      */
     #[Route(
         '/{id}/view-quiz',
@@ -232,8 +237,13 @@ class QuizController extends AbstractController
         );
     }
 
+
     /**
      * Solve quiz action.
+     *
+     * @param Quiz $quiz Quiz
+     *
+     * @return Response
      */
     #[Route(
         '/{id}/solve',
@@ -427,17 +437,17 @@ class QuizController extends AbstractController
         return new JsonResponse($status);
     }
 
+
     /**
      * Save Result action.
      *
-     * @param Quiz                       $quiz
+     * @param Quiz $quiz
      * @param QuizResultServiceInterface $quizResultService
-     * @param EntityManagerInterface     $em
      *
      * @return Response
      */
     #[Route('/{id}/save-result', name: 'quiz_save_result', methods: ['POST'])]
-    public function saveResult(Quiz $quiz, QuizResultServiceInterface $quizResultService, EntityManagerInterface $em): Response
+    public function saveResult(Quiz $quiz, QuizResultServiceInterface $quizResultService): Response
     {
         $user = $this->getUser();
 
@@ -447,9 +457,9 @@ class QuizController extends AbstractController
         $result->setScore(90);
         $result->setCorrectAnswers(18);
         $result->setTotalTime(120);
-        //$result->setStartedAt(new \DateTime('-5 minutes'));
-        //$result->setCompletedAt(new \DateTime());
-        //$result->setExpiresAt(new \DateTime('+1 hour')); bo chyba ty to zrobiles
+        // $result->setStartedAt(new \DateTime('-5 minutes'));
+        // $result->setCompletedAt(new \DateTime());
+        // $result->setExpiresAt(new \DateTime('+1 hour')); bo chyba ty to zrobiles
 
         $quizResultService->save($result);
 
@@ -457,5 +467,4 @@ class QuizController extends AbstractController
 
         return $this->redirectToRoute('quiz_view', ['id' => $quiz->getId()]);
     }
-
 }

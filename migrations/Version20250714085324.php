@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250714084743 extends AbstractMigration
+final class Version20250714085324 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -34,6 +34,9 @@ final class Version20250714084743 extends AbstractMigration
         SQL);
         $this->addSql(<<<'SQL'
             CREATE TABLE quiz_result (id INT AUTO_INCREMENT NOT NULL, user_id INT DEFAULT NULL, quiz_id INT DEFAULT NULL, score DOUBLE PRECISION NOT NULL, correct_answers INT NOT NULL, started_at DATETIME NOT NULL, completed_at DATETIME NOT NULL, expires_at DATETIME NOT NULL, INDEX IDX_FE2E314AA76ED395 (user_id), INDEX IDX_FE2E314A853CD175 (quiz_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
+        SQL);
+        $this->addSql(<<<'SQL'
+            CREATE TABLE quizzes (id INT AUTO_INCREMENT NOT NULL, title VARCHAR(255) NOT NULL, description LONGTEXT DEFAULT NULL, time_limit INT DEFAULT NULL, is_published TINYINT(1) NOT NULL, created_at DATETIME NOT NULL COMMENT '(DC2Type:datetime_immutable)', updated_at DATETIME NOT NULL COMMENT '(DC2Type:datetime_immutable)', PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
         SQL);
         $this->addSql(<<<'SQL'
             CREATE TABLE user_answer (id INT AUTO_INCREMENT NOT NULL, quiz_result_id INT DEFAULT NULL, user_id INT NOT NULL, question_id INT NOT NULL, answer_id INT NOT NULL, is_correct TINYINT(1) NOT NULL, answered_at DATETIME NOT NULL, INDEX IDX_BF8F51181C7C7A5 (quiz_result_id), INDEX IDX_BF8F5118A76ED395 (user_id), INDEX IDX_BF8F51181E27F6BF (question_id), INDEX IDX_BF8F5118AA334807 (answer_id), PRIMARY KEY(id)) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB
@@ -141,6 +144,9 @@ final class Version20250714084743 extends AbstractMigration
         SQL);
         $this->addSql(<<<'SQL'
             DROP TABLE quiz_result
+        SQL);
+        $this->addSql(<<<'SQL'
+            DROP TABLE quizzes
         SQL);
         $this->addSql(<<<'SQL'
             DROP TABLE user_answer
