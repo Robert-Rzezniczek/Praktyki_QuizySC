@@ -20,7 +20,7 @@ use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 class QuizType extends AbstractType
 {
     /**
-     * Builds the form.
+     * Builds the form.cd
      *
      * @param FormBuilderInterface $builder Form builder
      * @param array                $options Form options
