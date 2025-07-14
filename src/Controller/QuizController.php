@@ -7,7 +7,9 @@
 namespace App\Controller;
 
 use App\Entity\Quiz;
+use App\Entity\QuizResult;
 use App\Form\Type\QuizType;
+use App\Service\QuizResultServiceInterface;
 use App\Service\QuizServiceInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
@@ -27,13 +29,16 @@ use Symfony\Contracts\Translation\TranslatorInterface;
 #[Route('/quiz')]
 class QuizController extends AbstractController
 {
+
     /**
      * Constructor.
      *
-     * @param QuizServiceInterface $quizService Quiz service
-     * @param TranslatorInterface  $translator  Translator
+     * @param QuizServiceInterface $quizService QuizService
+     * @param TranslatorInterface $translator TranslatorInterface
+     * @param QuizResultServiceInterface $quizResultService QuizResultService
+     * @param UserAnswerServiceInterface $userAnswerService UserAnswerService
      */
-    public function __construct(private readonly QuizServiceInterface $quizService, private readonly TranslatorInterface $translator)
+    public function __construct(private readonly QuizServiceInterface $quizService, private readonly TranslatorInterface $translator, private readonly QuizResultServiceInterface $quizResultService, private readonly UserAnswerServiceInterface $userAnswerService)
     {
     }
 
@@ -421,4 +426,36 @@ class QuizController extends AbstractController
 
         return new JsonResponse($status);
     }
+
+    /**
+     * Save Result action.
+     *
+     * @param Quiz                       $quiz
+     * @param QuizResultServiceInterface $quizResultService
+     * @param EntityManagerInterface     $em
+     *
+     * @return Response
+     */
+    #[Route('/{id}/save-result', name: 'quiz_save_result', methods: ['POST'])]
+    public function saveResult(Quiz $quiz, QuizResultServiceInterface $quizResultService, EntityManagerInterface $em): Response
+    {
+        $user = $this->getUser();
+
+        $result = new QuizResult();
+        $result->setUser($user);
+        $result->setQuiz($quiz);
+        $result->setScore(90);
+        $result->setCorrectAnswers(18);
+        $result->setTotalTime(120);
+        //$result->setStartedAt(new \DateTime('-5 minutes'));
+        //$result->setCompletedAt(new \DateTime());
+        //$result->setExpiresAt(new \DateTime('+1 hour')); bo chyba ty to zrobiles
+
+        $quizResultService->save($result);
+
+        $this->addFlash('success', 'Wynik quizu zapisany.');
+
+        return $this->redirectToRoute('quiz_view', ['id' => $quiz->getId()]);
+    }
+
 }
