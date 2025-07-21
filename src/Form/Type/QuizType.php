@@ -15,6 +15,8 @@ use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\CollectionType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Validator\Constraints\File;
 
 /**
  * Class QuizType.
@@ -30,43 +32,72 @@ class QuizType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $step = $options['step'] ?? 1;
+        $brandingOnly = $options['branding_only'] ?? false;
 
-        if (1 === $step) {
+        if ($brandingOnly) {
+            // Formularz tylko do brandingu
             $builder
-                ->add('title', TextType::class, [
-                    'label' => false,
-                    'required' => true,
-                    'attr' => ['max_length' => 255, 'placeholder' => 'Podaj tytuł quizu'],
-                ])
-                ->add('description', TextareaType::class, [
-                    'label' => false,
+                ->add('brandName', TextType::class, [
+                    'label' => 'Nazwa marki',
                     'required' => false,
-                    'attr' => ['max_length' => 1000, 'placeholder' => 'Podaj opis quizu'],
-                ]);
-        } elseif (2 === $step) {
-            $builder
-                ->add('questions', CollectionType::class, [
-                    'entry_type' => QuestionType::class,
-                    'entry_options' => ['label' => false],
-                    'allow_add' => true,
-                    'allow_delete' => true,
-                    'by_reference' => false,
-                    'label' => false,
-                    'attr' => ['data-collection-holder' => 'questions'],
-                    'prototype' => true,
-                    'prototype_name' => '__name__',
-                ]);
-        } elseif (3 === $step) {
-            $builder
-                ->add('timeLimit', IntegerType::class, [
-                    'label' => false,
-                    'required' => true,
-                    'attr' => ['min' => 1, 'placeholder' => 'Podaj limit czasu w minutach'],
+                    'attr' => ['placeholder' => 'Wprowadź nazwę marki'],
                 ])
-                ->add('isPublished', CheckboxType::class, [
-                    'label' => 'Opublikuj quiz',
+                ->add('branddescription', TextType::class, [
+                    'label' => 'Opis',
                     'required' => false,
+                    'attr' => ['placeholder' => 'Wprowadź opis'],
+                ])
+                ->add('logoFile', FileType::class, [
+                    'label' => 'Logo (plik graficzny)',
+                    'mapped' => false, // ważne: nie jest bezpośrednio mapowane na entity
+                    'required' => false,
+                    'constraints' => [
+                        new File([
+                            'maxSize' => '2M',
+                            'mimeTypes' => ['image/jpeg', 'image/png', 'image/gif'],
+                            'mimeTypesMessage' => 'Proszę przesłać plik graficzny (jpg, png, gif)',
+                        ]),
+                    ],
                 ]);
+        } else {
+            // Formularz krokowy ten od edycji
+            if (1 === $step) {
+                $builder
+                    ->add('title', TextType::class, [
+                        'label' => false,
+                        'required' => true,
+                        'attr' => ['max_length' => 255, 'placeholder' => 'Podaj tytuł quizu'],
+                    ])
+                    ->add('description', TextareaType::class, [
+                        'label' => false,
+                        'required' => false,
+                        'attr' => ['max_length' => 1000, 'placeholder' => 'Podaj opis quizu'],
+                    ]);
+            } elseif (2 === $step) {
+                $builder
+                    ->add('questions', CollectionType::class, [
+                        'entry_type' => QuestionType::class,
+                        'entry_options' => ['label' => false],
+                        'allow_add' => true,
+                        'allow_delete' => true,
+                        'by_reference' => false,
+                        'label' => false,
+                        'attr' => ['data-collection-holder' => 'questions'],
+                        'prototype' => true,
+                        'prototype_name' => '__name__',
+                    ]);
+            } elseif (3 === $step) {
+                $builder
+                    ->add('timeLimit', IntegerType::class, [
+                        'label' => false,
+                        'required' => true,
+                        'attr' => ['min' => 1, 'placeholder' => 'Podaj limit czasu w minutach'],
+                    ])
+                    ->add('isPublished', CheckboxType::class, [
+                        'label' => 'Opublikuj quiz',
+                        'required' => false,
+                    ]);
+            }
         }
     }
 
@@ -80,6 +111,7 @@ class QuizType extends AbstractType
         $resolver->setDefaults([
             'data_class' => Quiz::class,
             'step' => 1,
+            'branding_only' => false,
         ]);
     }
 }

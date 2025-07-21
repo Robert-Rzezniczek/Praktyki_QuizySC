@@ -59,8 +59,8 @@
                                         {{ 'action.solve'|trans }}
                                     </a>
                                 {% else %}
-                                    <a class="btn btn-outline-primary me-2" href="{{ url('quiz_view', {id: quiz.id}) }}" title="{{ 'action.view'|trans }}">
-                                        {{ 'action.view'|trans }}
+                                    <a class="btn btn-outline-success me-2" href="{{ path('quiz_start_view', {id: quiz.id}) }}" title="Rozpocznij quiz">
+                                        Rozpocznij
                                     </a>
                                 {% endif %}
                             </div>

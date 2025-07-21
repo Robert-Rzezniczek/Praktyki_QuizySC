@@ -9,6 +9,7 @@ namespace App\Entity;
 use App\Repository\QuizRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -94,6 +95,23 @@ class Quiz
      */
     #[ORM\OneToMany(targetEntity: Question::class, mappedBy: 'quiz', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $questions;
+
+    /**
+     * @var string|null
+     */
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $brandName = null;
+
+    /**
+     * @var string|null
+     */
+    #[ORM\Column(type: Types::TEXT, nullable: true)]
+    private ?string $branddescription = null;
+    /**
+     * @var string|null
+     */
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $logoFilename = null;
 
     /**
      * Constructor.
@@ -299,5 +317,63 @@ class Quiz
         }
 
         return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getBrandName(): ?string
+    {
+        return $this->brandName;
+    }
+
+    /**
+     * @param string|null $brandName
+     *
+     * @return $this
+     */
+    public function setBrandName(?string $brandName): static
+    {
+        $this->brandName = $brandName;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getBranddescription(): ?string
+    {
+        return $this->branddescription;
+    }
+
+    /**
+     * @param string|null $branddescription
+     *
+     * @return $this
+     */
+    public function setBranddescription(?string $branddescription): static
+    {
+        $this->branddescription = $branddescription;
+
+        return $this;
+    }
+
+    /**
+     * @return string|null
+     */
+    public function getLogoFilename(): ?string
+    {
+        return $this->logoFilename;
+    }
+
+    /**
+     * @param string|null $filename
+     *
+     * @return void
+     */
+    public function setLogoFilename(?string $filename): void
+    {
+        $this->logoFilename = $filename;
     }
 }
