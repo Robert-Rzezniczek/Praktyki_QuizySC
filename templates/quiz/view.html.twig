@@ -1,45 +1,91 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ 'title.quiz_details'|trans({'%id%': quiz.id|default('')}) }}
+    {{ 'Szczegóły quizu'|trans({'%id%': quiz.id|default('')}) }}
 {% endblock %}
 
 {% block body %}
+    {% if step is defined %}
+        <p>Krok: {{ step }} z {{ maxSteps }}</p>
+    {% endif %}
+
     <div class="container my-4">
-        <h1 class="display-5 text-primary mb-4">{{ 'title.quiz_details'|trans({'%id%': quiz.id|default('')}) }}</h1>
+        <h1 class="display-5 text-primary mb-4">{{ 'Szczegóły quizu'|trans({'%id%': quiz.id|default('')}) }}</h1>
 
         {% if quiz is defined %}
+            {# Szczegóły główne #}
             <div class="card shadow-sm">
                 <div class="card-body">
                     <dl class="row">
                         <dt class="col-sm-3 text-muted">{{ 'label.id'|trans }}</dt>
                         <dd class="col-sm-9">{{ quiz.id }}</dd>
+
                         <dt class="col-sm-3 text-muted">{{ 'label.created_at'|trans }}</dt>
                         <dd class="col-sm-9">{{ quiz.createdAt|format_date('long') }}</dd>
+
                         <dt class="col-sm-3 text-muted">{{ 'label.updated_at'|trans }}</dt>
                         <dd class="col-sm-9">{{ quiz.updatedAt|format_date('long') }}</dd>
+
                         <dt class="col-sm-3 text-muted">{{ 'label.title'|trans }}</dt>
                         <dd class="col-sm-9">{{ quiz.title }}</dd>
+
                         <dt class="col-sm-3 text-muted">{{ 'label.is_published'|trans }}</dt>
                         <dd class="col-sm-9">{{ quiz.isPublished ? 'label.yes'|trans : 'label.no'|trans }}</dd>
+
                         <dt class="col-sm-3 text-muted">{{ 'label.question_count'|trans }}</dt>
                         <dd class="col-sm-9">{{ quiz.questions|length }}</dd>
                     </dl>
                 </div>
+
                 <div class="card-footer bg-light d-flex flex-wrap gap-2 justify-content-between">
                     {% if is_granted('ROLE_ADMIN') %}
-                        <a class="btn btn-outline-warning" href="{{ url('quiz_edit', {id: quiz.id}) }}" title="{{ 'action.edit'|trans }}">
+                        <a class="btn btn-outline-warning" href="{{ path('quiz_edit', {id: quiz.id}) }}" title="{{ 'action.edit'|trans }}">
                             <i class="bi bi-pencil"></i> {{ 'action.edit'|trans }}
                         </a>
-                        <a class="btn btn-outline-danger" href="{{ url('quiz_delete', {id: quiz.id}) }}" title="{{ 'action.delete'|trans }}">
+                        <a class="btn btn-outline-danger" href="{{ path('quiz_delete', {id: quiz.id}) }}" title="{{ 'action.delete'|trans }}">
                             <i class="bi bi-trash"></i> {{ 'action.delete'|trans }}
                         </a>
                     {% endif %}
-                    <a href="{{ url('quiz_index') }}" title="{{ 'action.back_to_list'|trans }}" class="btn btn-outline-secondary">
+                    <a href="{{ path('quiz_index') }}" title="{{ 'action.back_to_list'|trans }}" class="btn btn-outline-secondary">
                         <i class="bi bi-arrow-left"></i> {{ 'action.back_to_list'|trans }}
                     </a>
                 </div>
             </div>
+
+            {# Branding #}
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h5 class="text-primary mb-4">{{ 'label.branding'|trans }}</h5>
+
+                    <div class="text-center mb-3">
+                        <h3>{{ quiz.brandName ?? '—' }}</h3>
+                        <p>{{ quiz.brandDescription ?? '—' }}</p>
+                    </div>
+
+                    {% if quiz.logoFilename %}
+                        <div class="text-center my-3">
+                            <img src="{{ asset('uploads/' ~ quiz.logoFilename) }}" alt="Logo"
+                                 class="img-fluid" style="max-height: 120px; max-width: 100%; height: auto;">
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted">Brak logo</div>
+                    {% endif %}
+                </div>
+
+
+            <div class="card-footer bg-light d-flex justify-content-end">
+                {% if is_granted('ROLE_ADMIN') %}
+                    <a class="btn btn-outline-warning"
+                       href="{{ path('quiz_edit_branding', {id: quiz.id}) }}"
+                       title="{{ 'action.edit_branding'|trans }}">
+                        <i class="bi bi-pencil-square"></i> {{ 'action.edit_branding'|trans }}
+                    </a>
+                {% endif %}
+            </div>
+
+
+
+
         {% else %}
             <div class="alert alert-warning" role="alert">
                 {{ 'message.record_not_found'|trans }}

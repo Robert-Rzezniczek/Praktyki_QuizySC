@@ -198,10 +198,24 @@ class QuizService implements QuizServiceInterface
      *
      * @param Quiz $quiz Quiz entity
      */
-    public function save(Quiz $quiz): void
+    public function save(Quiz $quiz, bool $skipValidation = false): void
     {
-        $this->validateQuiz($quiz);
+        if (!$skipValidation) {
+            $this->validateQuiz($quiz);
+        }
+
         $this->synchronizeRelations($quiz);
+        $this->quizRepository->save($quiz);
+    }
+
+    /**
+     * Save only branding fields (without validating questions).
+     *
+     * @param Quiz $quiz Quiz entity
+     */
+    public function saveBranding(Quiz $quiz): void
+    {
+
         $this->quizRepository->save($quiz);
     }
 

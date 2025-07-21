@@ -441,7 +441,7 @@ class QuizController extends AbstractController
     /**
      * Save Result action.
      *
-     * @param Quiz $quiz
+     * @param Quiz                       $quiz
      * @param QuizResultServiceInterface $quizResultService
      *
      * @return Response
@@ -466,5 +466,60 @@ class QuizController extends AbstractController
         $this->addFlash('success', 'Wynik quizu zapisany.');
 
         return $this->redirectToRoute('quiz_view', ['id' => $quiz->getId()]);
+    }
+
+    /**
+     * Edycja brandingu (tylko dla admina).
+     */
+    #[Route('/quiz/{id}/branding/edit', name: 'quiz_edit_branding', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function editBranding(Request $request, Quiz $quiz): Response
+    {
+        $form = $this->createForm(QuizType::class, $quiz, [
+            'branding_only' => true,
+            'method' => 'POST',
+            'action' => $this->generateUrl('quiz_edit_branding', ['id' => $quiz->getId()]),
+        ]);
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $uploadedFile = $form['logoFile']->getData();
+
+            if ($uploadedFile) {
+                $newFilename = uniqid().'.'.$uploadedFile->guessExtension();
+                $uploadDir = $this->getParameter('uploads_directory');
+
+                $uploadedFile->move($uploadDir, $newFilename);
+                $quiz->setLogoFilename($newFilename);
+            }
+
+            $this->quizService->saveBranding($quiz);
+
+            $this->addFlash('success', 'Branding zapisany.');
+
+            return $this->redirectToRoute('quiz_view', ['id' => $quiz->getId()]);
+        }
+
+        return $this->render('quiz/edit.html.twig', [
+            'form' => $form->createView(),
+            'quiz' => $quiz,
+            'brandingEdit' => true,
+        ]);
+    }
+
+    /**
+     * start quizu
+     * @param Quiz $quiz quiz
+     *
+     * @return Response
+     */
+    #[Route('/{id}/start-view', name: 'quiz_start_view', requirements: ['id' => '\d+'], methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function startView(Quiz $quiz): Response
+    {
+        return $this->render('quiz/start_view.html.twig', [
+            'quiz' => $quiz,
+        ]);
     }
 }

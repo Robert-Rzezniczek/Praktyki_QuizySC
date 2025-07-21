@@ -1,12 +1,38 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edytuj Quiz - Krok {{ step }}{% endblock %}
+{% block title %}
+    {% if step is defined %}
+        Edytuj Quiz - Krok {{ step }}
+    {% else %}
+        Edytuj Quiz
+    {% endif %}
+{% endblock %}
 
 {% block body %}
     <div class="container my-4">
-        <h1 class="display-5 text-primary mb-4">Edytuj Quiz - Krok {{ step }} z {{ maxSteps }}</h1>
+        <h1 class="display-5 text-primary mb-4">
+            {% if brandingEdit is defined %}
+                Edytuj branding quizu
+            {% elseif step is defined and maxSteps is defined %}
+                Edytuj Quiz - Krok {{ step }} z {{ maxSteps }}
+            {% else %}
+                Edytuj Quiz
+            {% endif %}
+        </h1>
 
-        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+        {{ form_start(form, {
+            'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'},
+            'action': form.vars.action,
+            'method': form.vars.method,
+            'enctype': 'multipart/form-data'
+        }) }}
+
+        {% if brandingEdit is defined %}
+        {{ form_row(form.brandName) }}
+        {{ form_row(form.branddescription) }}
+        {{ form_row(form.logoFile) }}
+        {{ form_errors(form.logoFile) }}
+        {% elseif step is defined %}
         {% if step == 1 %}
             {{ form_row(form.title) }}
             {{ form_row(form.description) }}
@@ -115,14 +141,28 @@
             {{ form_row(form.timeLimit) }}
             {{ form_row(form.isPublished) }}
         {% endif %}
+        {% endif %}
         <div class="mt-3">
-            <button type="submit" class="btn btn-primary">Dalej</button>
-            {% if step > 1 %}
-                <a href="{{ path('quiz_edit_step', {'id': quiz.id, 'step': step - 1}) }}" class="btn btn-secondary">Wstecz</a>
+            {% if brandingEdit is defined %}
+                <button type="submit" class="btn btn-primary">Zapisz</button>
+                <a href="{{ path('quiz_view', {'id': quiz.id}) }}" class="btn btn-secondary">Anuluj</a>
             {% else %}
-                <a href="{{ path('quiz_index') }}" class="btn btn-secondary">Anuluj</a>
+                <button type="submit" class="btn btn-primary">
+                    {% if step is defined and step < maxSteps %}
+                        Dalej
+                    {% else %}
+                        Zapisz
+                    {% endif %}
+                </button>
+                {% if step is defined and step > 1 %}
+                    <a href="{{ path('quiz_edit_step', {'id': quiz.id, 'step': step - 1}) }}" class="btn btn-secondary">Wstecz</a>
+                {% else %}
+                    <a href="{{ path('quiz_index') }}" class="btn btn-secondary">Anuluj</a>
+                {% endif %}
             {% endif %}
         </div>
+
+
         {{ form_end(form) }}
 
         <script>

@@ -50,11 +50,16 @@
     <div class="quiz-list">
         <h1>Wybierz quiz</h1>
         {% for quiz in quizzes %}
-            <div class="quiz-item">
-                <a href="{{ path('app_quiz_start', {id: quiz.id}) }}">
-
+            <div class="mb-3">
+                <a class="btn btn-outline-primary"
+                   href="{% if is_granted('ROLE_ADMIN') %}
+             {{ path('quiz_view', { id: quiz.id }) }}
+         {% else %}
+             {{ path('app_quiz_start', { id: quiz.id }) }}
+         {% endif %}">
                     {{ quiz.title }}
                 </a>
+
             </div>
         {% else %}
             <p>Brak dostępnych quizów.</p>
