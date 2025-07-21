@@ -35,11 +35,20 @@ interface QuizServiceInterface
 
     /**
      * Initialize quiz with session data.
+     *
+     * @param SessionInterface $session SessionInterface
+     *
+     * @return Quiz Quiz
      */
     public function initializeQuizFromSession(SessionInterface $session): Quiz;
 
     /**
      * Save quiz data temporarily to session.
+     *
+     * @param Quiz             $quiz    Quiz
+     * @param SessionInterface $session SessionInterface
+     *
+     * @return void void
      */
     public function saveQuizToSession(Quiz $quiz, SessionInterface $session): void;
 

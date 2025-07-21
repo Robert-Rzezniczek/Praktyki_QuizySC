@@ -31,8 +31,9 @@ class PowiatService implements PowiatServiceInterface
     /**
      * Constructor.
      *
-     * @param PowiatRepository   $powiatRepository Powiat repository
-     * @param PaginatorInterface $paginator        Paginator
+     * @param PowiatRepository      $powiatRepository      PowiatRepository
+     * @param PaginatorInterface    $paginator             PaginatorInterface
+     * @param UserProfileRepository $userProfileRepository UserProfileRepository
      */
     public function __construct(private readonly PowiatRepository $powiatRepository, private readonly PaginatorInterface $paginator, private readonly UserProfileRepository $userProfileRepository)
     {

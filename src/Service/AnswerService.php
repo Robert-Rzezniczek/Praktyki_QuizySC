@@ -99,6 +99,13 @@ class AnswerService implements AnswerServiceInterface
         $this->answerRepository->delete($answer);
     }
 
+    /**
+     * Checks if Answer can be deleted.
+     *
+     * @param Answer $answer Answer
+     *
+     * @return bool bool
+     */
     public function canBeDeleted(Answer $answer): bool
     {
         $question = $answer->getQuestion();

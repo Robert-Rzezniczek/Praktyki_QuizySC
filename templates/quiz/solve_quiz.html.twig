@@ -1,192 +1,141 @@
 {% extends 'base.html.twig' %}
 
+{% block meta %}
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+{% endblock %}
+
 {% block title %}
-    {{ 'title.solve_quiz'|trans }}
+    {{ 'title.solve_quiz'|trans }} {{ quiz.title }}
 {% endblock %}
 
 {% block body %}
-    <div class="container my-4">
-        <h1 class="display-5 text-primary mb-4">{{ quiz.title }}</h1>
-        <p class="lead">{{ quiz.description }}</p>
-        <p><strong>Limit czasu:</strong> {{ quiz.timeLimit/60 }} minut</p>
+    <h1>{{ 'title.solve_quiz'|trans }} {{ quiz.title }}</h1>
 
-        <div id="quiz-container" class="quiz-container">
-            {% for question in quiz.questions %}
-                <div class="question-page card p-3 border" style="display: none;" data-index="{{ loop.index0 }}">
-                    <h5 class="card-title">Pytanie {{ loop.index }}</h5>
-                    <p class="card-text">{{ question.content }}</p>
-                    <p><strong>Punkty:</strong> {{ question.points }}</p>
-                    <div class="answer-buttons mt-3">
-                        {% for answer in question.answers %}
-                            {% set original_class =
-                                loop.index0 == 0 ? 'btn-danger' :
-                                loop.index0 == 1 ? 'btn-warning' :
-                                loop.index0 == 3 ? 'btn-primary' : 'btn-success'
-                            %}
-                            <button
-                                    type="button"
-                                    class="btn {{ original_class }} w-100 mb-2 answer-btn"
-                                    data-original-class="{{ original_class }}"
-                                    data-question="{{ loop.parent.loop.index0 }}"
-                                    data-answer="{{ answer.id }}"
-                            >
-                                {{ answer.content }}
-                            </button>
-                        {% endfor %}
-                    </div>
-                    <div class="d-flex justify-content-between mt-4">
-                        <button class="btn btn-purple prev-btn" style="display: {{ loop.first ? 'none' : 'inline-block' }};">Cofnij</button>
-                        <div class="ml-auto">
-                            <button class="btn btn-purple next-btn" style="display: {{ loop.last ? 'none' : 'inline-block' }};">Następny</button>
-                            {% if loop.last %}
-                                <button class="btn btn-purple submit-btn" style="display: inline-block;">Zakończ</button>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
+    {% if app.flashes('error') is not empty %}
+        <div class="alert alert-danger">
+            {% for message in app.flashes('error') %}
+                {{ message|trans }}
             {% endfor %}
         </div>
-    </div>
+    {% endif %}
+
+    {% if question %}
+        <div class="quiz-question">
+            <h2>{{ question.content }}</h2>
+            <div id="timer" class="alert alert-info">Pozostały czas: <span id="time-remaining">00:00</span></div>
+            {{ form_start(form, {'attr': {'id': 'quiz-solve-form'}}) }}
+            {{ form_widget(form.answer) }}
+            {{ form_widget(form.question_index) }}
+            <button type="submit" class="btn btn-primary">
+                {% if is_last_question %}
+                    {{ 'action.finish'|trans }}
+                {% else %}
+                    {{ 'action.next'|trans }}
+                {% endif %}
+            </button>
+            {{ form_end(form) }}
+        </div>
+    {% else %}
+        <p>{{ 'message.quiz_completed'|trans }}</p>
+        <a href="{{ path('quiz_index') }}" class="btn btn-secondary">{{ 'action.back_to_list'|trans }}</a>
+    {% endif %}
 
     <script>
         document.addEventListener('DOMContentLoaded', function () {
-            const pages = document.querySelectorAll('.question-page');
-            let currentPage = 0;
-            let selectedAnswers = {};
+            const quizId = {{ quiz.id }};
+            const startedAt = {{ started_at|default(0) }};
+            const timeLimit = {{ time_limit }} * 60; // Konwersja minut na sekundy
+            const checkStatusUrl = '{{ path('quiz_check_status', {'id': quiz.id}) }}';
+            const timerElement = document.getElementById('time-remaining');
+            const form = document.getElementById('quiz-solve-form');
+            const questionIndexInput = form.querySelector('input[name="quiz_solve[question_index]"]');
+            let timeRemaining = timeLimit - (Date.now() / 1000 - startedAt);
+            let quizEnded = false;
 
-            function showPage(index) {
-                pages.forEach((page, i) => {
-                    page.style.display = i === index ? 'block' : 'none';
-                });
-
-                const questionIndex = index.toString();
-                document.querySelectorAll(`.answer-btn[data-question="${questionIndex}"]`).forEach(btn => {
-                    const originalClass = btn.dataset.originalClass;
-                    btn.classList.remove('btn-dark-danger', 'btn-dark-warning', 'btn-dark-success', 'btn-dark-primary', 'btn-danger', 'btn-warning', 'btn-success', 'btn-primary');
-                    btn.classList.add(originalClass);
-                });
-
-                if (selectedAnswers[questionIndex]) {
-                    const selectedBtn = document.querySelector(`.answer-btn[data-question="${questionIndex}"][data-answer="${selectedAnswers[questionIndex]}"]`);
-                    if (selectedBtn) {
-                        const originalClass = selectedBtn.dataset.originalClass;
-                        selectedBtn.classList.remove(originalClass);
-                        if (originalClass === 'btn-danger') selectedBtn.classList.add('btn-dark-danger');
-                        else if (originalClass === 'btn-warning') selectedBtn.classList.add('btn-dark-warning');
-                        else if (originalClass === 'btn-success') selectedBtn.classList.add('btn-dark-success');
-                        else if (originalClass === 'btn-primary') selectedBtn.classList.add('btn-dark-primary');
+            function updateTimer() {
+                if (quizEnded || timeRemaining <= 0) {
+                    if (!quizEnded) {
+                        endQuizDueToTime();
                     }
+                    return;
                 }
+                const minutes = Math.floor(timeRemaining / 60);
+                const seconds = Math.floor(timeRemaining % 60);
+                timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+                timeRemaining--;
             }
 
-            showPage(currentPage);
+            function endQuizDueToTime() {
+                if (quizEnded) return;
+                quizEnded = true;
+                alert('{{ 'message.time_limit_exceeded'|trans }}');
+                submitFormAndFinalize();
+            }
 
-            document.querySelectorAll('.next-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    if (currentPage < pages.length - 1) {
-                        currentPage++;
-                        showPage(currentPage);
-                    }
-                });
+            function submitFormAndFinalize() {
+                fetch('{{ path('quiz_solve', {'id': quiz.id}) }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    },
+                    body: new URLSearchParams({
+                        'quiz_solve[question_index]': questionIndexInput.value,
+                        '_token': '{{ csrf_token('quiz_solve_' ~ quiz.id) }}'
+                    })
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            window.location.href = '{{ path('quiz_index') }}';
+                        } else if (data.error) {
+                            alert(data.error);
+                            window.location.href = '{{ path('quiz_index') }}';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error ending quiz:', error);
+                        window.location.href = '{{ path('quiz_index') }}';
+                    });
+            }
+
+            // Aktualizuj timer co sekundę
+            const timerInterval = setInterval(updateTimer, 1000);
+            updateTimer();
+
+            // Sprawdzaj status quizu co 10 sekund
+            const statusInterval = setInterval(() => {
+                fetch(checkStatusUrl, {
+                    method: 'GET',
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.isPublished) {
+                            clearInterval(timerInterval);
+                            clearInterval(statusInterval);
+                            alert('{{ 'message.quiz_expired'|trans }}');
+                            submitFormAndFinalize();
+                        }
+                    })
+                    .catch(error => console.error('Error checking status:', error));
+            }, 10000);
+
+            // Zatrzymaj timer i sprawdzanie statusu, jeśli quiz się zakończy
+            form.addEventListener('submit', () => {
+                clearInterval(timerInterval);
+                clearInterval(statusInterval);
             });
 
-            document.querySelectorAll('.prev-btn').forEach(button => {
-                button.addEventListener('click', () => {
-                    if (currentPage > 0) {
-                        currentPage--;
-                        showPage(currentPage);
-                    }
-                });
-            });
-
-            document.querySelector('.submit-btn').addEventListener('click', () => {
-                alert('Quiz zakończony! Wyniki zostaną przesłane.');
-                console.log(selectedAnswers);
-            });
-
-            document.querySelectorAll('.answer-btn').forEach(button => {
-                button.addEventListener('click', function () {
-                    const questionIndex = this.getAttribute('data-question');
-                    const answerId = this.getAttribute('data-answer');
-                    const buttons = document.querySelectorAll(`.answer-btn[data-question="${questionIndex}"]`);
-
-                    if (selectedAnswers[questionIndex] === answerId) {
-                        selectedAnswers[questionIndex] = null;
-                        buttons.forEach(btn => {
-                            const originalClass = btn.dataset.originalClass;
-                            btn.classList.remove('btn-dark-danger', 'btn-dark-warning', 'btn-dark-success', 'btn-dark-primary');
-                            btn.classList.remove('btn-danger', 'btn-warning', 'btn-success', 'btn-primary');
-                            btn.classList.add(originalClass);
-                        });
-                    } else {
-                        selectedAnswers[questionIndex] = answerId;
-                        buttons.forEach(btn => {
-                            const originalClass = btn.dataset.originalClass;
-                            btn.classList.remove('btn-dark-danger', 'btn-dark-warning', 'btn-dark-success', 'btn-dark-primary');
-                            btn.classList.remove('btn-danger', 'btn-warning', 'btn-success', 'btn-primary');
-                            btn.classList.add(originalClass);
-                        });
-
-                        const originalClass = this.dataset.originalClass;
-                        this.classList.remove(originalClass);
-                        if (originalClass === 'btn-danger') this.classList.add('btn-dark-danger');
-                        else if (originalClass === 'btn-warning') this.classList.add('btn-dark-warning');
-                        else if (originalClass === 'btn-success') this.classList.add('btn-dark-success');
-                        else if (originalClass === 'btn-primary') this.classList.add('btn-dark-primary');
-                    }
-                });
-            });
-
-            const body = document.body;
-            window.changeTextSize = function(direction) {
-                let currentFontSize = parseFloat(window.getComputedStyle(body).fontSize) || 1;
-                if (direction === 'increase' && currentFontSize < 2) currentFontSize += 0.1;
-                else if (direction === 'decrease' && currentFontSize > 0.7) currentFontSize -= 0.1;
-                body.style.fontSize = currentFontSize + 'em';
+            // Blokada cofania
+            window.onpopstate = function(event) {
+                if (event.state) {
+                    window.location.href = '{{ path('quiz_index') }}';
+                }
             };
-
-            window.toggleClass = function(className) {
-                body.classList.toggle(className);
-            };
-
-            window.resetAccessibility = function() {
-                body.style.fontSize = '1em';
-                body.classList.remove('grayscale', 'high-contrast', 'light-bg', 'underline-links');
-                body.style.backgroundColor = '';
-                body.style.color = '';
-            };
+            history.pushState(null, document.title, window.location.href);
         });
     </script>
-
-    <style>
-        .quiz-container { max-width: 800px; margin: 0 auto; }
-        .question-page { background-color: #f8f9fa; border: 1px solid #dee2e6; border-radius: 0.25rem; padding: 1.5rem; margin-bottom: 1rem; }
-        .card-title { font-size: 1.25rem; font-weight: bold; }
-        .card-text { margin-bottom: 1rem; }
-        .answer-buttons .btn { padding: 0.75rem; font-size: 1rem; text-align: left; white-space: normal; }
-        .btn-purple { background-color: #6f42c1; border-color: #6f42c1; color: #fff; }
-        .btn-purple:hover { background-color: #5a2f9d; border-color: #5a2f9d; }
-        .btn-danger { background-color: #dc3545; border-color: #dc3545; color: #fff; }
-        .btn-danger:hover { background-color: #c82333; }
-        .btn-warning { background-color: #ffc107; border-color: #ffc107; color: #000; }
-        .btn-warning:hover { background-color: #e0a800; }
-        .btn-success { background-color: #28a745; border-color: #28a745; color: #fff; }
-        .btn-success:hover { background-color: #218838; }
-        .btn-primary { background-color: #007bff; border-color: #007bff; color: #fff; }
-        .btn-primary:hover { background-color: #0056b3; }
-        .btn-dark-danger { background-color: #a71d2a; border-color: #a71d2a; color: #fff; }
-        .btn-dark-warning { background-color: #b38703; border-color: #b38703; color: #fff; }
-        .btn-dark-success { background-color: #1e6e32; border-color: #1e6e32; color: #fff; }
-        .btn-dark-primary { background-color: #004085; border-color: #004085; color: #fff; }
-        .mt-3 { margin-top: 1rem; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .answer-btn.btn-dark-danger:hover,
-        .answer-btn.btn-dark-warning:hover,
-        .answer-btn.btn-dark-success:hover,
-        .answer-btn.btn-dark-primary:hover {
-            background-color: inherit;
-            border-color: inherit;
-            color: inherit;
-        }
-    </style>
 {% endblock %}

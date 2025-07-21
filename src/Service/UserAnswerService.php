@@ -1,16 +1,25 @@
 <?php
 
+/**
+ * UserAnswer Service.
+ */
+
 namespace App\Service;
 
 use App\Entity\UserAnswer;
 use Doctrine\ORM\EntityManagerInterface;
 
+/**
+ * UserAnswerService class.
+ */
 class UserAnswerService implements UserAnswerServiceInterface
 {
     private EntityManagerInterface $em;
 
     /**
-     * Konstruktor.
+     * Construct.
+     *
+     * @param EntityManagerInterface $em EntityManager
      */
     public function __construct(EntityManagerInterface $em)
     {
@@ -18,7 +27,11 @@ class UserAnswerService implements UserAnswerServiceInterface
     }
 
     /**
-     * Zapis encji UserAnswer do bazy danych.
+     * Save entity.
+     *
+     * @param UserAnswer $userAnswer UserAnswer
+     *
+     * @return void void
      */
     public function save(UserAnswer $userAnswer): void
     {
@@ -27,7 +40,11 @@ class UserAnswerService implements UserAnswerServiceInterface
     }
 
     /**
-     * Usuwaniue.
+     * Delete entity.
+     *
+     * @param UserAnswer $userAnswer UserAnswer
+     *
+     * @return void void
      */
     public function delete(UserAnswer $userAnswer): void
     {

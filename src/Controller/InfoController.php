@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Info controller.
+ */
+
 namespace App\Controller;
 
 use App\Entity\Faq;
@@ -9,6 +13,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * InfoController class.
+ */
 class InfoController extends AbstractController
 {
     /**
@@ -47,7 +54,9 @@ class InfoController extends AbstractController
     }
 
     /**
-     * about.
+     * About.
+     *
+     * @return Response Response
      */
     #[Route('/about', name: 'app_about')]
     public function about(): Response
@@ -56,7 +65,9 @@ class InfoController extends AbstractController
     }
 
     /**
-     * rules.
+     * Rules.
+     *
+     * @return Response Response
      */
     #[Route('/rules', name: 'app_rules')]
     public function rules(): Response
@@ -65,7 +76,9 @@ class InfoController extends AbstractController
     }
 
     /**
-     * contact.
+     * Contact.
+     *
+     * @return Response Response
      */
     #[Route('/contact', name: 'app_contact')]
     public function contact(): Response
@@ -74,7 +87,9 @@ class InfoController extends AbstractController
     }
 
     /**
-     * menu.
+     * Menu.
+     *
+     * @return Response Response
      */
     #[Route('/menu', name: 'app_menu')]
     public function menu(): Response

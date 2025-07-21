@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Wojewodztwa i Powiaty.
+ */
+
 namespace App\DataFixtures;
 
 use App\Entity\Powiat;
@@ -7,8 +11,18 @@ use App\Entity\Wojewodztwo;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Persistence\ObjectManager;
 
+/**
+ * WojewodztwaPowiaty class.
+ */
 class WojewodztwaPowiaty extends Fixture
 {
+    /**
+     * Loads the data.
+     *
+     * @param ObjectManager $manager ObjectManager
+     *
+     * @return void void
+     */
     public function load(ObjectManager $manager): void
     {
         $data = [

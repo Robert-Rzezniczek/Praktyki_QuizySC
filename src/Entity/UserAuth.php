@@ -165,12 +165,16 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface, Two
      */
     public function eraseCredentials(): void
     {
-        // If you store any temporary, sensitive data on the user, clear it here
+        // If you store any start, sensitive data on the user, clear it here
         // $this->plainPassword = null;
     }
 
     /**
      * Setter for UserProfile.
+     *
+     * @param UserProfile|null $profile UserProfile|null
+     *
+     * @return void void
      */
     public function setProfile(?UserProfile $profile): void
     {
@@ -183,6 +187,8 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface, Two
 
     /**
      * Getter for UserProfile.
+     *
+     * @return UserProfile|null UserProfile|null
      */
     public function getProfile(): ?UserProfile
     {
@@ -191,6 +197,8 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface, Two
 
     /**
      * Is TwoFactorEnabled.
+     *
+     * @return bool|null bool|null
      */
     public function isTwoFactorEnabled(): ?bool
     {
@@ -200,7 +208,9 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface, Two
     /**
      * Setter for isTwoFactorEnabled.
      *
-     * @return $this
+     * @param bool|null $isTwoFactorEnabled bool|null
+     *
+     * @return $this this
      */
     public function setIsTwoFactorEnabled(?bool $isTwoFactorEnabled): static
     {
@@ -211,6 +221,8 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface, Two
 
     /**
      * Get email for authorization.
+     *
+     * @return string string
      */
     public function getEmailAuthRecipient(): string
     {
@@ -219,6 +231,8 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface, Two
 
     /**
      * Get the current email authentication code.
+     *
+     * @return string|null string|null
      */
     public function getEmailAuthCode(): ?string
     {
@@ -231,6 +245,10 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface, Two
 
     /**
      * Set the email authentication code.
+     *
+     * @param string|null $authCode string|null
+     *
+     * @return void void
      */
     public function setEmailAuthCode(?string $authCode): void
     {
@@ -239,6 +257,8 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface, Two
 
     /**
      * Check if email-based two-factor authentication is enabled.
+     *
+     * @return bool bool
      */
     public function isEmailAuthEnabled(): bool
     {

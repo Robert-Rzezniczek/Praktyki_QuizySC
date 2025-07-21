@@ -7,7 +7,8 @@
 namespace App\Controller;
 
 use App\Entity\Quiz;
-use App\Entity\QuizResult;
+use App\Entity\UserAuth;
+use App\Form\Type\QuizSolveType;
 use App\Form\Type\QuizType;
 use App\Service\QuizResultServiceInterface;
 use App\Service\QuizServiceInterface;
@@ -17,9 +18,12 @@ use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\HttpKernel\Attribute\MapQueryParameter;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Validator\Constraints\GreaterThan;
 use Symfony\Contracts\Translation\TranslatorInterface;
@@ -33,12 +37,13 @@ class QuizController extends AbstractController
     /**
      * Constructor.
      *
-     * @param QuizServiceInterface       $quizService       QuizService
+     * @param QuizServiceInterface       $quizService       QuizServiceInterface
      * @param TranslatorInterface        $translator        TranslatorInterface
-     * @param QuizResultServiceInterface $quizResultService QuizResultService
-     * @param UserAnswerServiceInterface $userAnswerService UserAnswerService
+     * @param QuizResultServiceInterface $quizResultService QuizResultServiceInterface
+     * @param UserAnswerServiceInterface $userAnswerService UserAnswerServiceInterface
+     * @param RequestStack               $requestStack      RequestStack
      */
-    public function __construct(private readonly QuizServiceInterface $quizService, private readonly TranslatorInterface $translator, private readonly QuizResultServiceInterface $quizResultService, private readonly UserAnswerServiceInterface $userAnswerService)
+    public function __construct(private readonly QuizServiceInterface $quizService, private readonly TranslatorInterface $translator, private readonly QuizResultServiceInterface $quizResultService, private readonly UserAnswerServiceInterface $userAnswerService, private readonly RequestStack $requestStack)
     {
     }
 
@@ -55,6 +60,7 @@ class QuizController extends AbstractController
     )]
     public function index(#[MapQueryParameter] int $page = 1): Response
     {
+        $this->quizService->updateExpiredQuizzes();
         $pagination = $this->quizService->getPaginatedList($page);
 
         return $this->render('quiz/index.html.twig', ['pagination' => $pagination]);
@@ -214,13 +220,12 @@ class QuizController extends AbstractController
         );
     }
 
-
     /**
      * Before solve, begin action.
      *
      * @param Quiz $quiz Quiz
      *
-     * @return Response
+     * @return Response Response
      */
     #[Route(
         '/{id}/view-quiz',
@@ -237,26 +242,172 @@ class QuizController extends AbstractController
         );
     }
 
-
     /**
      * Solve quiz action.
      *
-     * @param Quiz $quiz Quiz
+     * @param Request            $request Request
+     * @param Quiz               $quiz    Quiz
+     * @param SessionInterface   $session SessionInterface
+     * @param UserInterface|null $user    UserInterface|null
      *
-     * @return Response
+     * @return Response Response
      */
-    #[Route(
-        '/{id}/solve',
-        name: 'quiz_solve',
-        requirements: ['id' => '[1-9]\d*'],
-        methods: 'GET'
-    )]
-    public function solve(Quiz $quiz): Response
+    #[Route('/{id}/solve', name: 'quiz_solve', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function solve(Request $request, Quiz $quiz, SessionInterface $session, ?UserInterface $user): Response
     {
-        return $this->render(
-            'quiz/solve_quiz.html.twig',
-            ['quiz' => $quiz]
-        );
+        if (!$user instanceof UserAuth) {
+            throw $this->createAccessDeniedException('Użytkownik nie jest zalogowany.');
+        }
+
+        // Sprawdź, czy quiz jest opublikowany
+        if (!$this->quizService->isQuizPublished($quiz, $session)) {
+            try {
+                $startedAtTimestamp = $session->get(sprintf('quiz_%d_start_time', $quiz->getId()));
+                $startedAt = $startedAtTimestamp ? (new \DateTime())->setTimestamp($startedAtTimestamp) : new \DateTime();
+                $quizResult = $this->quizService->finalizeQuiz($quiz, $user, $session, $quiz->getTimeLimit() ?? 30, $startedAt);
+                $this->addFlash('warning', 'message.quiz_expired');
+
+                return $this->redirectToRoute('quiz_index');
+            } catch (\InvalidArgumentException $e) {
+                $this->addFlash('error', $e->getMessage());
+            }
+        }
+
+        if (!$this->quizService->canUserSolveQuiz($quiz, $user)) {
+            $this->addFlash('error', 'message.quiz_already_solved');
+
+            return $this->redirectToRoute('quiz_index');
+        }
+
+        // Inicjalizuj sesję quizu i zapisz czas rozpoczęcia
+        $questionIds = $this->quizService->initializeQuizSession($quiz, $session);
+        $currentIndex = $request->query->getInt('question_index', $request->request->getInt('question_index', 0));
+
+        // Zapisz czas rozpoczęcia, jeśli to pierwsze pytanie
+        if (0 === $currentIndex && !$session->has(sprintf('quiz_%d_start_time', $quiz->getId()))) {
+            $session->set(sprintf('quiz_%d_start_time', $quiz->getId()), (new \DateTime())->getTimestamp());
+        }
+
+        // Pobierz kolejne pytanie
+        $question = $this->quizService->getNextQuestion($quiz, $currentIndex, $session);
+
+        // Sprawdź, czy czas się skończył
+        if ($question && $this->quizService->isTimeLimitExceeded($quiz, $session)) {
+            try {
+                $startedAtTimestamp = $session->get(sprintf('quiz_%d_start_time', $quiz->getId()));
+                $startedAt = $startedAtTimestamp ? (new \DateTime())->setTimestamp($startedAtTimestamp) : new \DateTime();
+                $quizResult = $this->quizService->finalizeQuiz($quiz, $user, $session, $quiz->getTimeLimit() ?? 30, $startedAt);
+                $this->addFlash('warning', 'message.time_limit_exceeded_saved');
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse(['success' => true]);
+                }
+
+                return $this->redirectToRoute('quiz_index');
+            } catch (\InvalidArgumentException $e) {
+                $this->addFlash('error', $e->getMessage());
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse(['error' => $e->getMessage()], 400);
+                }
+            }
+        }
+
+        // Sprawdź, czy wszystkie pytania zostały odpowiedziane
+        if (!$question) {
+            // Zapisz wynik quizu
+            try {
+                $startedAtTimestamp = $session->get(sprintf('quiz_%d_start_time', $quiz->getId()));
+                $startedAt = $startedAtTimestamp ? (new \DateTime())->setTimestamp($startedAtTimestamp) : new \DateTime();
+                $quizResult = $this->quizService->finalizeQuiz($quiz, $user, $session, $quiz->getTimeLimit() ?? 30, $startedAt);
+                $this->addFlash('success', 'message.quiz_completed');
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse(['success' => true]);
+                }
+
+                return $this->redirectToRoute('quiz_result', ['id' => $quizResult->getId()]);
+            } catch (\InvalidArgumentException $e) {
+                $this->addFlash('error', $e->getMessage());
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse(['error' => $e->getMessage()], 400);
+                }
+            }
+
+            return $this->redirectToRoute('quiz_index');
+        }
+
+        // Obsługa przesłanego formularza (w tym żądanie AJAX z JS)
+        $form = $this->createForm(QuizSolveType::class, null, [
+            'question' => $question,
+            'question_index' => $currentIndex,
+        ]);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+            try {
+                $this->quizService->saveUserAnswer($quiz, $user, $question->getId(), $data['answer'], $session);
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse(['success' => true]);
+                }
+
+                return $this->redirectToRoute('quiz_solve', [
+                    'id' => $quiz->getId(),
+                    'question_index' => $currentIndex + 1,
+                ]);
+            } catch (\InvalidArgumentException $e) {
+                $this->addFlash('error', $e->getMessage());
+                if ($request->isXmlHttpRequest()) {
+                    return new JsonResponse(['error' => $e->getMessage()], 400);
+                }
+            }
+        }
+
+        // Przekazanie czasu rozpoczęcia i limitu do szablonu
+        $startedAtTimestamp = $session->get(sprintf('quiz_%d_start_time', $quiz->getId()));
+        $timeLimit = $quiz->getTimeLimit() ?? 30; // Domyślny limit 30 minut, jeśli nie ustawiono
+
+        return $this->render('quiz/solve_quiz.html.twig', [
+            'quiz' => $quiz,
+            'question' => $question,
+            'form' => $form->createView(),
+            'is_last_question' => $currentIndex === count($questionIds) - 1,
+            'started_at' => $startedAtTimestamp,
+            'time_limit' => $timeLimit,
+        ]);
+    }
+
+    /**
+     * Show quiz result action.
+     *
+     * @param int $id QuizResult ID
+     *
+     * @return Response HTTP response
+     */
+    #[Route('/result/{id}', name: 'quiz_result', requirements: ['id' => '[1-9]\d*'], methods: 'GET')]
+    #[IsGranted('ROLE_USER')]
+    public function showResult(int $id): Response
+    {
+        $quizResult = $this->quizResultService->getQuizResultForUser($id, $this->getUser());
+        if (!$quizResult) {
+            throw $this->createAccessDeniedException('Nie masz dostępu do tych wyników.');
+        }
+
+        $quiz = $quizResult->getQuiz();
+        $score = $quizResult->getScore();
+        $correctAnswers = $quizResult->getCorrectAnswers();
+        $totalQuestions = $quiz->getQuestions()->count();
+        $startedAt = $quizResult->getStartedAt() ? $quizResult->getStartedAt()->getTimestamp() : (new \DateTime())->getTimestamp();
+        $completedAt = $quizResult->getCompletedAt() ? $quizResult->getCompletedAt()->getTimestamp() : (new \DateTime())->getTimestamp();
+        $duration = $completedAt - $startedAt;
+
+        return $this->render('quiz/result.html.twig', [
+            'quiz' => $quiz,
+            'quizResult' => $quizResult,
+            'score' => $score,
+            'correctAnswers' => $correctAnswers,
+            'totalQuestions' => $totalQuestions,
+            'duration' => $duration,
+        ]);
     }
 
     /**
@@ -267,26 +418,32 @@ class QuizController extends AbstractController
      *
      * @return Response HTTP response
      */
-    #[Route('/create/step/{step}', name: 'quiz_create_step', requirements: ['step' => '\d+'], methods: 'GET|POST')]
+    #[Route('/create/step/{step}', name: 'quiz_create_step', requirements: ['step' => '\d+'], methods: ['GET', 'POST'])]
     public function createStep(Request $request, int $step = 1): Response
     {
-        $quiz = $this->quizService->initializeQuizFromSession($request->getSession());
+        $session = $request->getSession();
+
+        // Quiz z sesji – TYLKO DO WYŚWIETLENIA FORMULARZA
+        $quiz = $this->quizService->initializeQuizFromSession($session);
+
+        // Formularz z tym quizem
         $form = $this->createForm(QuizType::class, $quiz, [
             'step' => $step,
         ]);
+
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->quizService->saveQuizToSession($quiz, $request->getSession());
+            // Zapisz TYLKO wtedy, gdy formularz został przesłany i jest poprawny
+            $this->quizService->saveQuizToSession($quiz, $session);
 
-            if (3 > $step) {
+            if ($step < 3) {
                 return $this->redirectToRoute('quiz_create_step', ['step' => $step + 1]);
             }
 
-            // Ostatni krok - zapis
-            $quiz->setTimeLimit($quiz->getTimeLimit());
+            // Ostatni krok – zapisz do bazy
             $this->quizService->save($quiz);
-            $request->getSession()->remove('quiz_data');
+            $session->remove('quiz_data');
             $this->addFlash('success', 'Quiz został utworzony.');
 
             return $this->redirectToRoute('quiz_index');
@@ -425,7 +582,7 @@ class QuizController extends AbstractController
      * @return JsonResponse JSON response
      */
     #[Route(
-        '/{id}/status',
+        '/{id}/check-status',
         name: 'quiz_check_status',
         requirements: ['id' => '[1-9]\d*'],
         methods: ['GET']
@@ -437,34 +594,11 @@ class QuizController extends AbstractController
         return new JsonResponse($status);
     }
 
-
-    /**
-     * Save Result action.
-     *
-     * @param Quiz $quiz
-     * @param QuizResultServiceInterface $quizResultService
-     *
-     * @return Response
-     */
-    #[Route('/{id}/save-result', name: 'quiz_save_result', methods: ['POST'])]
-    public function saveResult(Quiz $quiz, QuizResultServiceInterface $quizResultService): Response
+    #[Route('/create/cancel', name: 'quiz_create_cancel')]
+    public function cancelCreate(SessionInterface $session): Response
     {
-        $user = $this->getUser();
+        $session->remove('quiz_data');
 
-        $result = new QuizResult();
-        $result->setUser($user);
-        $result->setQuiz($quiz);
-        $result->setScore(90);
-        $result->setCorrectAnswers(18);
-        $result->setTotalTime(120);
-        // $result->setStartedAt(new \DateTime('-5 minutes'));
-        // $result->setCompletedAt(new \DateTime());
-        // $result->setExpiresAt(new \DateTime('+1 hour')); bo chyba ty to zrobiles
-
-        $quizResultService->save($result);
-
-        $this->addFlash('success', 'Wynik quizu zapisany.');
-
-        return $this->redirectToRoute('quiz_view', ['id' => $quiz->getId()]);
+        return $this->redirectToRoute('quiz_index');
     }
 }

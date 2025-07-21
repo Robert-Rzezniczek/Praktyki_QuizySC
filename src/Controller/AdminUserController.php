@@ -1,5 +1,9 @@
 <?php
 
+/**
+ *  AdminUser controller.
+ */
+
 namespace App\Controller;
 
 use App\Service\UserAuthService;
@@ -15,16 +19,28 @@ use App\Form\UserProfileType;
 use App\Form\AdminPasswordType;
 use App\Entity\UserAuth;
 
+/**
+ * AdminUserController class.
+ */
 #[Route('/admin/user')]
 #[IsGranted('ROLE_ADMIN')]
 class AdminUserController extends AbstractController
 {
-    public function __construct(
-        private readonly UserAuthService $userService,
-        private readonly UserProfileService $profileService,
-    ) {
+    /**
+     * Constructor.
+     *
+     * @param UserAuthService    $userService    UserAuthService
+     * @param UserProfileService $profileService UserProfileService
+     */
+    public function __construct(private readonly UserAuthService $userService, private readonly UserProfileService $profileService)
+    {
     }
 
+    /**
+     * List action.
+     *
+     * @return Response Response
+     */
     #[Route('/', name: 'admin_user_list')]
     public function list(): Response
     {
@@ -33,6 +49,14 @@ class AdminUserController extends AbstractController
         return $this->render('admin_user/list.html.twig', ['users' => $users]);
     }
 
+    /**
+     * Edit action.
+     *
+     * @param UserAuth $user    UserAuth
+     * @param Request  $request Request
+     *
+     * @return Response Response
+     */
     #[Route('/{id}/edit', name: 'admin_user_edit')]
     public function edit(UserAuth $user, Request $request): Response
     {
@@ -70,9 +94,8 @@ class AdminUserController extends AbstractController
                 $this->addFlash('success', 'Hasło zostało zmienione.');
 
                 return $this->redirectToRoute('admin_user_edit', ['id' => $user->getId()]);
-            } else {
-                $passwordForm->get('plainPassword')->addError(new FormError('Hasło nie może być puste.'));
             }
+            $passwordForm->get('plainPassword')->addError(new FormError('Hasło nie może być puste.'));
         }
 
         return $this->render('admin_user/edit.html.twig', [
@@ -83,6 +106,14 @@ class AdminUserController extends AbstractController
         ]);
     }
 
+    /**
+     * Delete action.
+     *
+     * @param UserAuth $user    UserAuth
+     * @param Request  $request Request
+     *
+     * @return Response Response
+     */
     #[Route('/{id}/delete', name: 'admin_user_delete', methods: ['POST'])]
     public function delete(UserAuth $user, Request $request): Response
     {

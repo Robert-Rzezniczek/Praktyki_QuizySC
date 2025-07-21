@@ -105,7 +105,9 @@ class UserProfile
     /**
      * Setter for imie.
      *
-     * @return $this
+     * @param string $imie string
+     *
+     * @return $this this
      */
     public function setImie(string $imie): static
     {

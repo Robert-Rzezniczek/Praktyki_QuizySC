@@ -58,6 +58,8 @@ class Answer
 
     /**
      * Getter for Id.
+     *
+     * @return int|null int|null
      */
     public function getId(): ?int
     {
@@ -66,6 +68,8 @@ class Answer
 
     /**
      * Getter for question.
+     *
+     * @return Question|null Question|null
      */
     public function getQuestion(): ?Question
     {
@@ -75,7 +79,9 @@ class Answer
     /**
      * Setter for question.
      *
-     * @return $this
+     * @param Question|null $question Question|null
+     *
+     * @return $this this
      */
     public function setQuestion(?Question $question): static
     {
@@ -86,6 +92,8 @@ class Answer
 
     /**
      * Getter for content.
+     *
+     * @return string|null string|null
      */
     public function getContent(): ?string
     {
@@ -95,7 +103,9 @@ class Answer
     /**
      * Setter for content.
      *
-     * @return $this
+     * @param string $content string
+     *
+     * @return $this this
      */
     public function setContent(string $content): static
     {
@@ -106,6 +116,8 @@ class Answer
 
     /**
      * Is correct?
+     *
+     * @return bool bool
      */
     public function isCorrect(): bool
     {
@@ -115,7 +127,9 @@ class Answer
     /**
      * Setter for isCorrect.
      *
-     * @return $this
+     * @param bool $isCorrect bool
+     *
+     * @return $this this
      */
     public function setIsCorrect(bool $isCorrect): static
     {
@@ -126,6 +140,8 @@ class Answer
 
     /**
      * Getter for position.
+     *
+     * @return int|null int|null
      */
     public function getPosition(): ?int
     {
@@ -135,7 +151,9 @@ class Answer
     /**
      * Setter for position.
      *
-     * @return $this
+     * @param int $position int
+     *
+     * @return $this this
      */
     public function setPosition(int $position): static
     {

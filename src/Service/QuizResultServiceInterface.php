@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use App\Entity\QuizResult;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 interface QuizResultServiceInterface
 {
@@ -15,4 +16,6 @@ interface QuizResultServiceInterface
      * Usuwanie.
      */
     public function delete(QuizResult $quizResult): void;
+
+    public function getQuizResultForUser(int $id, UserInterface $user): ?QuizResult;
 }

@@ -121,7 +121,11 @@ class UserAuthService implements UserAuthServiceInterface
     }
 
     /**
-     * delete account.
+     * Delete account.
+     *
+     * @param UserAuth $user UserAuth
+     *
+     * @return void void
      */
     public function processDeleteAccount(UserAuth $user): void
     {
@@ -129,8 +133,12 @@ class UserAuthService implements UserAuthServiceInterface
     }
 
     /**
-     * @return void
-     *              change password
+     * Change password.
+     *
+     * @param UserAuth $user          UserAuth
+     * @param string   $plainPassword string
+     *
+     * @return void void
      */
     public function changePassword(UserAuth $user, string $plainPassword): void
     {
@@ -138,6 +146,11 @@ class UserAuthService implements UserAuthServiceInterface
         $this->save($user);
     }
 
+    /**
+     * Get all users.
+     *
+     * @return array array
+     */
     public function getAll(): array
     {
         return $this->userRepository->findAll();

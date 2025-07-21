@@ -10,7 +10,7 @@ use Doctrine\Migrations\AbstractMigration;
 /**
  * Auto-generated Migration: Please modify to your needs!
  */
-final class Version20250714085324 extends AbstractMigration
+final class Version20250714124930 extends AbstractMigration
 {
     public function getDescription(): string
     {
@@ -63,7 +63,7 @@ final class Version20250714085324 extends AbstractMigration
             ALTER TABLE questions ADD CONSTRAINT FK_8ADC54D5853CD175 FOREIGN KEY (quiz_id) REFERENCES quizzes (id)
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE quiz_result ADD CONSTRAINT FK_FE2E314AA76ED395 FOREIGN KEY (user_id) REFERENCES user_profile (id)
+            ALTER TABLE quiz_result ADD CONSTRAINT FK_FE2E314AA76ED395 FOREIGN KEY (user_id) REFERENCES user_auth (id)
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE quiz_result ADD CONSTRAINT FK_FE2E314A853CD175 FOREIGN KEY (quiz_id) REFERENCES quizzes (id)
@@ -72,7 +72,7 @@ final class Version20250714085324 extends AbstractMigration
             ALTER TABLE user_answer ADD CONSTRAINT FK_BF8F51181C7C7A5 FOREIGN KEY (quiz_result_id) REFERENCES quiz_result (id)
         SQL);
         $this->addSql(<<<'SQL'
-            ALTER TABLE user_answer ADD CONSTRAINT FK_BF8F5118A76ED395 FOREIGN KEY (user_id) REFERENCES user_profile (id)
+            ALTER TABLE user_answer ADD CONSTRAINT FK_BF8F5118A76ED395 FOREIGN KEY (user_id) REFERENCES user_auth (id)
         SQL);
         $this->addSql(<<<'SQL'
             ALTER TABLE user_answer ADD CONSTRAINT FK_BF8F51181E27F6BF FOREIGN KEY (question_id) REFERENCES questions (id)

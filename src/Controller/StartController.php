@@ -12,10 +12,10 @@ use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
- * Class TempController.
+ * Class StartController.
  */
-#[Route('/temp')]
-class TempController extends AbstractController
+#[Route('/start')]
+class StartController extends AbstractController
 {
     /**
      * Constructor.
@@ -32,11 +32,11 @@ class TempController extends AbstractController
      * @return Response HTTP response
      */
     #[Route(
-        name: 'temp_index',
+        name: 'start_index',
         methods: 'GET'
     )]
     public function index(): Response
     {
-        return $this->render('temporary/index.html.twig');
+        return $this->render('start/index.html.twig');
     }
 }

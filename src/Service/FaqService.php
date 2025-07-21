@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Faq service.
+ */
+
 namespace App\Service;
 
 use App\Entity\Faq;
@@ -9,24 +13,35 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 
+/**
+ * Class FaqService.
+ */
 class FaqService
 {
     private FormFactoryInterface $formFactory;
     private EntityManagerInterface $entityManager;
     private FaqRepository $faqRepository;
 
-    public function __construct(
-        FormFactoryInterface $formFactory,
-        EntityManagerInterface $entityManager,
-        FaqRepository $faqRepository,
-    ) {
+    /**
+     * Constructor.
+     *
+     * @param FormFactoryInterface   $formFactory   FormFactoryInterface
+     * @param EntityManagerInterface $entityManager EntityManagerInterface
+     * @param FaqRepository          $faqRepository FaqRepository
+     */
+    public function __construct(FormFactoryInterface $formFactory, EntityManagerInterface $entityManager, FaqRepository $faqRepository)
+    {
         $this->formFactory = $formFactory;
         $this->entityManager = $entityManager;
         $this->faqRepository = $faqRepository;
     }
 
     /**
-     * Tworzy i przetwarza formularz dodawania FAQ.
+     * Builds the faq form.
+     *
+     * @param Faq $faq Faq
+     *
+     * @return FormInterface FormInterface
      */
     public function buildForm(Faq $faq): FormInterface
     {
@@ -35,6 +50,10 @@ class FaqService
 
     /**
      * Zapisuje nowy wpis FAQ.
+     *
+     * @param Faq $faq Faq
+     *
+     * @return void void
      */
     public function save(Faq $faq): void
     {
@@ -44,6 +63,8 @@ class FaqService
 
     /**
      * Zwraca listę FAQ posortowaną wg pozycji.
+     *
+     * @return array array
      */
     public function getAll(): array
     {

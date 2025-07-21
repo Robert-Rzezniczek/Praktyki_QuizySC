@@ -8,7 +8,7 @@
     <div class="container my-4">
         <h1 class="display-5 text-primary mb-4">{{ quiz.title }}</h1>
         <p class="lead">{{ quiz.description }}</p>
-        <p><strong>Limit czasu:</strong> {{ quiz.timeLimit }} sekund</p>
+        <p><strong>Limit czasu:</strong> {{ quiz.timeLimit }} minut/y</p>
         <p><strong>Opublikowany:</strong> {% if quiz.isPublished %}Tak{% else %}Nie{% endif %}</p>
 
         {% for question in quiz.questions %}

@@ -64,7 +64,7 @@ class Question
      *
      * @var Collection<int, Answer>
      */
-    #[ORM\OneToMany(targetEntity: Answer::class, mappedBy: 'question', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: Answer::class, mappedBy: 'question', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $answers;
 
     /**
@@ -77,6 +77,8 @@ class Question
 
     /**
      * Getter for Id.
+     *
+     * @return int|null int|null
      */
     public function getId(): ?int
     {
@@ -85,6 +87,8 @@ class Question
 
     /**
      * Getter for quiz.
+     *
+     * @return Quiz|null Quiz|null
      */
     public function getQuiz(): ?Quiz
     {
@@ -94,7 +98,9 @@ class Question
     /**
      * Setter for quiz.
      *
-     * @return $this
+     * @param Quiz|null $quiz Quiz|null
+     *
+     * @return $this this
      */
     public function setQuiz(?Quiz $quiz): static
     {
@@ -105,6 +111,8 @@ class Question
 
     /**
      * Getter for content.
+     *
+     * @return string|null string|null
      */
     public function getContent(): ?string
     {
@@ -114,7 +122,9 @@ class Question
     /**
      * Setter for content.
      *
-     * @return $this
+     * @param string $content string
+     *
+     * @return $this this
      */
     public function setContent(string $content): static
     {
@@ -125,6 +135,8 @@ class Question
 
     /**
      * Getter for points.
+     *
+     * @return int|null int|null
      */
     public function getPoints(): ?int
     {
@@ -134,7 +146,9 @@ class Question
     /**
      * Setter for points.
      *
-     * @return $this
+     * @param int $points int
+     *
+     * @return $this this
      */
     public function setPoints(int $points): static
     {
@@ -145,6 +159,8 @@ class Question
 
     /**
      * Getter for position.
+     *
+     * @return int|null int|null
      */
     public function getPosition(): ?int
     {
@@ -154,7 +170,9 @@ class Question
     /**
      * Setter for position.
      *
-     * @return $this
+     * @param int $position int'
+     *
+     * @return $this this
      */
     public function setPosition(int $position): static
     {
@@ -176,6 +194,8 @@ class Question
     /**
      * Add answer.
      *
+     * @param Answer $answer Answer
+     *
      * @return $this
      */
     public function addAnswer(Answer $answer): static
@@ -191,7 +211,9 @@ class Question
     /**
      * Remove answer.
      *
-     * @return $this
+     * @param Answer $answer Answer
+     *
+     * @return $this this
      */
     public function removeAnswer(Answer $answer): static
     {

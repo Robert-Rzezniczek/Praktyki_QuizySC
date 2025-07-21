@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}
+    {{ 'title.quiz_result'|trans }} - {{ quiz.title }}
+{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        <h1 class="text-center mb-4">{{ 'title.quiz_result'|trans }}: {{ quiz.title }}</h1>
+
+        <div class="card mx-auto" style="max-width: 600px;">
+            <div class="card-body text-center">
+                <h2 class="card-title">{{ 'label.score'|trans }}: {{ score }}%</h2>
+                <p class="card-text">
+                    {{ 'label.correct_answers'|trans }}: {{ correctAnswers }} / {{ totalQuestions }}<br>
+                    {{ 'label.duration'|trans }}: {{ duration }} {{ 'label.seconds'|trans }}
+                </p>
+                <div class="progress mt-3">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: {{ score }}%;" aria-valuenow="{{ score }}" aria-valuemin="0" aria-valuemax="100">{{ score }}%</div>
+                </div>
+                <a href="{{ path('quiz_index') }}" class="btn btn-primary mt-4">{{ 'action.back_to_list'|trans }}</a>
+            </div>
+        </div>
+    </div>
+{% endblock %}

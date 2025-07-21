@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * UserProfile type.
+ */
+
 namespace App\Form;
 
 use App\Entity\Enum\EducationLevel;
@@ -13,8 +17,19 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Class UserProfileType.
+ */
 class UserProfileType extends AbstractType
 {
+    /**
+     * Builds the form.
+     *
+     * @param FormBuilderInterface $builder FormBuilderInterface
+     * @param array                $options array
+     *
+     * @return void void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
@@ -40,6 +55,11 @@ class UserProfileType extends AbstractType
             ]);
     }
 
+    /**
+     * Configures the options.
+     *
+     * @param OptionsResolver $resolver OptionsResolver
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([

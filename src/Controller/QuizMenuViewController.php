@@ -1,13 +1,25 @@
 <?php
 
+/**
+ * QuizMenuView controller.
+ */
+
 namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+/**
+ * QuizMenuViewController class.
+ */
 class QuizMenuViewController extends AbstractController
 {
+    /**
+     * List action.
+     *
+     * @return Response Response
+     */
     #[Route('/quizzes', name: 'app_quiz_list')]
     public function list(): Response
     {
@@ -22,6 +34,13 @@ class QuizMenuViewController extends AbstractController
         ]);
     }
 
+    /**
+     * Start action.
+     *
+     * @param int $id int
+     *
+     * @return Response Response
+     */
     #[Route('/quiz/{id}', name: 'app_quiz_start')]
     public function start(int $id): Response
     {

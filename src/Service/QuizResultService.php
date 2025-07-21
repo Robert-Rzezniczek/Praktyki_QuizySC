@@ -1,20 +1,30 @@
 <?php
 
+/**
+ * QuizResult Service.
+ */
+
 namespace App\Service;
 
 use App\Entity\QuizResult;
+use App\Repository\QuizResultRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
+/**
+ * Class QuizResultService.
+ */
 class QuizResultService implements QuizResultServiceInterface
 {
     private EntityManagerInterface $em;
 
     /**
-     * Konstruktor przyjmujący EntityManager jako zależność.
+     * Construct.
+     *
+     * @param QuizResultRepository $quizResultRepository QuizResultRepository
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(private readonly QuizResultRepository $quizResultRepository)
     {
-        $this->em = $em;
     }
 
     /**
@@ -33,5 +43,23 @@ class QuizResultService implements QuizResultServiceInterface
     {
         $this->em->remove($quizResult);
         $this->em->flush();
+    }
+
+    /**
+     * Get quiz result for user.
+     *
+     * @param int           $id   int
+     * @param UserInterface $user UserInterface
+     *
+     * @return QuizResult|null QuizResult|null
+     */
+    public function getQuizResultForUser(int $id, UserInterface $user): ?QuizResult
+    {
+        $quizResult = $this->quizResultRepository->find($id);
+        if ($quizResult && $quizResult->getUser() === $user) {
+            return $quizResult;
+        }
+
+        return null;
     }
 }

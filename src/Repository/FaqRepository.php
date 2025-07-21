@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Faq repository.
+ */
+
 namespace App\Repository;
 
 use App\Entity\Faq;
@@ -7,10 +11,15 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Faq>
+ * FaqRepository class.
  */
 class FaqRepository extends ServiceEntityRepository
 {
+    /**
+     * Constructor.
+     *
+     * @param ManagerRegistry $registry ManagerRegistry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Faq::class);
@@ -26,6 +35,14 @@ class FaqRepository extends ServiceEntityRepository
         return $this->findBy([], ['position' => 'ASC']);
     }
 
+    /**
+     * Save entity.
+     *
+     * @param Faq  $faq   Faq
+     * @param bool $flush bool
+     *
+     * @return void void
+     */
     public function save(Faq $faq, bool $flush = true): void
     {
         $this->_em->persist($faq);

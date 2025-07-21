@@ -25,10 +25,8 @@ class UserProfileService implements UserProfileServiceInterface
      * @param UserProfileRepository $profileRepository UserProfileRepository
      * @param FormFactoryInterface  $formFactory       Form factory
      */
-    public function __construct(
-        private readonly UserProfileRepository $profileRepository,
-        private readonly FormFactoryInterface $formFactory,
-    ) {
+    public function __construct(private readonly UserProfileRepository $profileRepository, private readonly FormFactoryInterface $formFactory)
+    {
     }
 
     /**
@@ -109,6 +107,14 @@ class UserProfileService implements UserProfileServiceInterface
         return $profile;
     }
 
+    /**
+     * Build the edit form.
+     *
+     * @param Request  $request Request
+     * @param UserAuth $user    UserAuth
+     *
+     * @return FormInterface FormInterface
+     */
     public function buildEditForm(Request $request, UserAuth $user): FormInterface
     {
         $profile = $user->getProfile();

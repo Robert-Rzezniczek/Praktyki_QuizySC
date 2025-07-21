@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * UserAnswer Repository.
+ */
+
 namespace App\Repository;
 
 use App\Entity\UserAnswer;
@@ -7,10 +11,15 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<UserAnswer>
+ * UserAnswerRepository class.
  */
 class UserAnswerRepository extends ServiceEntityRepository
 {
+    /**
+     * Construct.
+     *
+     * @param ManagerRegistry $registry ManagerRegistry
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, UserAnswer::class);
