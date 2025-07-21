@@ -96,20 +96,11 @@ class Quiz
     #[ORM\OneToMany(targetEntity: Question::class, mappedBy: 'quiz', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $questions;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $brandName = null;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(type: Types::TEXT, nullable: true)]
     private ?string $branddescription = null;
-    /**
-     * @var string|null
-     */
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $logoFilename = null;
 
@@ -319,17 +310,12 @@ class Quiz
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getBrandName(): ?string
     {
         return $this->brandName;
     }
 
     /**
-     * @param string|null $brandName
-     *
      * @return $this
      */
     public function setBrandName(?string $brandName): static
@@ -339,17 +325,12 @@ class Quiz
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getBranddescription(): ?string
     {
         return $this->branddescription;
     }
 
     /**
-     * @param string|null $branddescription
-     *
      * @return $this
      */
     public function setBranddescription(?string $branddescription): static
@@ -359,19 +340,11 @@ class Quiz
         return $this;
     }
 
-    /**
-     * @return string|null
-     */
     public function getLogoFilename(): ?string
     {
         return $this->logoFilename;
     }
 
-    /**
-     * @param string|null $filename
-     *
-     * @return void
-     */
     public function setLogoFilename(?string $filename): void
     {
         $this->logoFilename = $filename;

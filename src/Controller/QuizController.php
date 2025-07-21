@@ -643,10 +643,9 @@ class QuizController extends AbstractController
     }
 
     /**
-     * start quizu
-     * @param Quiz $quiz quiz
+     * start quizu.
      *
-     * @return Response
+     * @param Quiz $quiz quiz
      */
     #[Route('/{id}/start-view', name: 'quiz_start_view', requirements: ['id' => '\d+'], methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
@@ -656,5 +655,4 @@ class QuizController extends AbstractController
             'quiz' => $quiz,
         ]);
     }
-
 }

@@ -19,19 +19,20 @@ security:
             form_login:
                 login_path: app_login
                 check_path: app_login
-                default_target_path: start_index
+                default_target_path: app_menu
                 enable_csrf: true
 
             logout:
                 path: app_logout
                 # where to redirect after logout
-                target: app_login
+                target: start_index
     role_hierarchy:
         ROLE_ADMIN: [ROLE_USER]
     access_control:
         - { path: ^/start, roles: PUBLIC_ACCESS }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/menu, roles: ROLE_USER }
         - { path: ^/faq/new, roles: ROLE_ADMIN }
         - { path: ^/, roles: ROLE_USER }
 
