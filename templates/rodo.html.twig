@@ -1,3 +1,71 @@
+{% block stylesheets %}
+    <style>
+        /* Styl samego modala */
+        #rodoModal .modal-content {
+            border-radius: 20px;
+            border: none;
+            padding: 20px;
+            font-family: 'Jost', sans-serif;
+            background-color: #fff9f9;
+        }
+
+        #rodoModal .modal-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 2rem;
+            color: #d51b60;
+        }
+
+        #rodoModal .modal-body {
+            font-size: 1.1rem;
+            color: #333;
+            line-height: 1.6;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        #rodoModal ol {
+            padding-left: 20px;
+        }
+
+        #rodoModal li {
+            margin-bottom: 10px;
+        }
+
+        #rodoModal .modal-footer .btn {
+            border-radius: 30px;
+            padding: 10px 24px;
+            font-size: 1rem;
+        }
+
+        #rodoModal a {
+            color: #8e24aa;
+            text-decoration: underline;
+        }
+
+        #rodoModal a:hover {
+            color: #9c27b0;
+        }
+        #rodoModal .modal-footer .btn-secondary {
+            background-color: #8e24aa;
+            color: white;
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 1.2rem;
+            padding: 12px 24px;
+            border-radius: 40px;
+            border: none;
+            transition: background 0.2s ease, transform 0.2s ease;
+        }
+
+        #rodoModal .modal-footer .btn-secondary:hover {
+            background-color: #9c27b0;
+            transform: scale(1.05);
+            color: white;
+        }
+
+    </style>
+
+{% endblock %}
+
 {% block body %}
         <div class="rodo-content">
             <h2 class="rodo-title">Polityka RODO</h2>

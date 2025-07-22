@@ -1,176 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'title.register'|trans }}{% endblock %}
-
+{% block title %}{{ 'Rejestracja'|trans }}{% endblock %}
 {% block stylesheets %}
     {{ parent() }}
     <style>
-
-        header, .navbar, .topbar {
-            z-index: 10;
-            position: sticky;
-            top: 0;
-            background-color: white;
-        }
-        .register-container {
-            position: relative;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem;
-            background: #fff;
-            border-radius: 1rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            position: relative;
-            top: 120px;
-            z-index: 1;
+        .register-form {
+            margin-top: 140px;
         }
 
-        .register-container h1 {
-            font-family: 'Luckiest Guy', cursive;
-            font-size: clamp(2rem, 5vw, 3rem);
-            color: #d32f2f;
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .card {
-            border: none;
-            border-radius: 1rem;
-            padding: 1.5rem;
-        }
-
-        .form-label {
-            font-family: 'Jost', sans-serif;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-control {
-            font-family: 'Jost', sans-serif;
-            border: 2px solid #ddd;
-            border-radius: 0.5rem;
-            padding: 0.75rem 1rem;
-            transition: border-color 0.2s ease;
-        }
-
-        .form-control:focus {
-            border-color: #039be5;
-            box-shadow: 0 0 0 0.2rem rgba(3, 155, 229, 0.25);
-            outline: none;
-        }
-
-        .form-check {
-            display: flex;
-            align-items: center;
-            width: 100%; /* Stała szerokość kontenera */
-            padding: 0.5rem 1rem 0.5rem 1rem ;
-            background: #f8f9fa;
-            border-radius: 0.5rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .form-check-label {
-            font-family: 'Jost', sans-serif;
-            color: #555;
-            flex-grow: 1; /* Rozciąga tekst, aby wypełnić przestrzeń */
-            margin-left: 0.5rem;
-        }
-
-        .form-check-input {
-            margin-top: 0.3rem;
-            margin-right: 0.5rem;
-        }
-
-        .btn-primary {
-            background-color: #43a047;
-            border: none;
-            padding: 0.75rem 2rem;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 30px;
-            transition: transform 0.2s ease;
-            font-family: 'Luckiest Guy', cursive;
-            width: 100%;
-        }
-
-        .btn-primary:hover {
-            transform: scale(1.05);
-            background-color: #2e7d32;
-        }
-
-        .alert {
-            border-radius: 0.5rem;
-            padding: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .alert-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-danger {
-            background-color: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .btn-close {
-            font-size: 1.2rem;
-        }
-
-        .modal-content {
-            border-radius: 1rem;
-        }
-
-        .modal-header {
-            border-bottom: 1px solid #eee;
-        }
-
-        .modal-footer {
-            border-top: 1px solid #eee;
-        }
-
-        /* Responsywność */
-        @media (max-width: 768px) {
-            .register-container {
-                padding: 1rem;
-                top: 80px;
-            }
-
-            .register-container h1 {
-                font-size: clamp(1.5rem, 5vw, 2.5rem);
-            }
-
-            .form-control {
-                padding: 0.5rem 1rem;
-            }
-
-            .btn-primary {
-                width: 100%;
-            }
-
-            .form-check {
-                padding: 0.3rem;
-            }
-
-            .form-check-input {
-                margin-top: 0.3rem;
-                flex-shrink: 0;
-            }
-
-            .d-flex.align-items-start > .form-check {
-                margin-right: 0.75rem;
-            }
-        }
     </style>
 {% endblock %}
-
 {% block body %}
-    <div class="register-container">
-        <div class="row justify-content-center">
+    <div class="container register-form">
+    <div class="row justify-content-center">
             <div class="col-md-6">
                 <h1 class="display-6 text-primary text-center mb-5">{{ 'title.register'|trans }}</h1>
 
@@ -246,28 +88,22 @@
                         </div>
 
                         <!-- Zgoda na regulamin -->
-                        <div class="mb-4 d-flex align-items-start">
+                        <div class="mb-4">
                             <div class="form-check">
-                                {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input me-2'}}) }}
-                            </div>
-                            <div>
-                                <label class="form-check-label">
-                                    {{ form_label(registrationForm.agreeTerms, 'label.agree_terms'|trans, {'label_attr': {'class': 'form-check-label'}}) }}
-                                </label>
+                                {{ form_label(registrationForm.agreeTerms, null, {'label_attr': {'class': 'form-check-label'}}) }}
+                                {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
                                 {{ form_errors(registrationForm.agreeTerms) }}
                             </div>
                         </div>
 
                         <!-- Zgoda na RODO -->
-                        <div class="mb-4 d-flex align-items-center flex-column">
+                        <div class="mb-4">
                             <div class="form-check">
-                                {{ form_widget(registrationForm.agreeRodo, {'attr': {'class': 'form-check-input me-2'}}) }}
-                            </div>
-                            <div>
                                 <label class="form-check-label">
+                                    {{ form_widget(registrationForm.agreeRodo, {'attr': {'class': 'form-check-input'}}) }}
                                     Polityka <a href="#" data-bs-toggle="modal" data-bs-target="#rodoModal">RODO</a>
+                                    {{ form_errors(registrationForm.agreeRodo) }}
                                 </label>
-                                {{ form_errors(registrationForm.agreeRodo) }}
                             </div>
                         </div>
 

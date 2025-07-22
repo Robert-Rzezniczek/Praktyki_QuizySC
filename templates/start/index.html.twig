@@ -1,24 +1,107 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ 'label.hello'|trans }}{% endblock %}
+{% block title %}
+    {{ 'Strona startowa'|trans }}
+{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .start-page {
+            margin-top: 40px;
+        }
+
+        .start-page h1 {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: 5rem;
+            color: #f37b00;
+        }
+
+        .start-page .intro-text {
+            font-family: 'Luckiest Guy', sans-serif;
+            font-size: 1.5rem;
+            color: #f37b00;
+            white-space: normal;
+            overflow-wrap: break-word;
+            margin-bottom: 40px;
+        }
+
+        .start-page .buttons-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .start-page .btn {
+            display: block;
+            width: 600px;
+            max-width: 90%;
+            padding: 20px 32px;
+            font-size: 2rem;
+            font-family: 'Luckiest Guy', cursive;
+            border-radius: 50px;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: white;
+            background-color: #c82123;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+
+        .start-page .btn:hover {
+            transform: scale(1.05);
+        }
+
+        /* Pełne nadpisanie stanów */
+        .btn-rejestracja,
+        .btn-login,
+        .btn-menu {
+            background-color: #c82123;
+            color: white !important;
+            border: none;
+            box-shadow: none;
+            text-decoration: none !important;
+        }
+
+        .btn-rejestracja:hover,
+        .btn-login:hover,
+        .btn-menu:hover,
+        .btn-rejestracja:focus,
+        .btn-login:focus,
+        .btn-menu:focus,
+        .btn-rejestracja:active,
+        .btn-login:active,
+        .btn-menu:active,
+        .btn-rejestracja:visited,
+        .btn-login:visited,
+        .btn-menu:visited {
+            background-color: #c82123 !important;
+            color: white !important;
+            box-shadow: none !important;
+            outline: none !important;
+            text-decoration: none !important;
+        }
+    </style>
+{% endblock %}
 
 {% block body %}
-    <div class="d-flex align-items-center justify-content-center min-vh-75 text-center py-5">
+    <div class="d-flex align-items-center justify-content-center min-vh-75 text-center py-5 start-page">
         <div>
-            <h1 class="display-4 fw-bold text-warning mb-4">strona startowa</h1>
-            <p class="h5 text-dark">{{ 'label.Hello'|trans }}</p>
-            <p class="text-muted">{{ 'message.page_is_being_developed'|trans }}</p>
+            <h1>Cześć!</h1>
+            <p class="intro-text">
+                {{ 'Zaloguj się lub zarejestruj, by przejść dalej.'|trans }}
+            </p>
 
-     <a href="{{ path('app_menu') }}" class="btn btn-outline-primary mt-3">
-         {{ 'Menu'|trans }}
-         </a>
-            <a href="{{ path('app_register') }}" class="btn btn-outline-primary mt-3">
-                {{ 'Rejestracja'|trans }}
-            </a>
-            <a href="{{ path('app_login') }}" class="btn btn-outline-primary mt-3">
-                {{ 'Login'|trans }}
-            </a>
-
+            <div class="buttons-container">
+                <a href="{{ path('app_register') }}" class="btn btn-rejestracja">
+                    {{ 'Rejestracja'|trans }}
+                </a>
+                <a href="{{ path('app_login') }}" class="btn btn-login">
+                    {{ 'Login'|trans }}
+                </a>
+            </div>
         </div>
     </div>
 {% endblock %}

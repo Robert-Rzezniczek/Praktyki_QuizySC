@@ -32,6 +32,10 @@ security:
         - { path: ^/start, roles: PUBLIC_ACCESS }
         - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/faq, roles: PUBLIC_ACCESS }
+        - { path: ^/about, roles: PUBLIC_ACCESS }
+        - { path: ^/contact, roles: PUBLIC_ACCESS }
+        - { path: ^/rules, roles: PUBLIC_ACCESS }
         - { path: ^/menu, roles: ROLE_USER }
         - { path: ^/faq/new, roles: ROLE_ADMIN }
         - { path: ^/, roles: ROLE_USER }
