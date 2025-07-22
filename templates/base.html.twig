@@ -409,7 +409,11 @@
         {# Nagłówek z logo i menu #}
         <header>
             <nav class="menu-bar">
-                <a href="{{ path('app_menu') }}" class="menu-button menu">MENU</a>
+                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                    <a href="{{ path('app_menu') }}" class="menu-button menu">MENU</a>
+                {% else %}
+                    <a href="{{ path('start_index') }}" class="menu-button menu">MENU</a>
+                {% endif %}
                 <a href="{{ path('app_rules') }}" class="menu-button zasady">ZASADY</a>
                 <a href="{{ path('app_about') }}" class="menu-button onas">O NAS</a>
                 <a href="{{ path('app_faq') }}" class="menu-button faq">FAQ</a>
@@ -420,7 +424,11 @@
         </header>
 
         <div class="logo">
-            <a href="{{ path('start_index') }}">
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <a href="{{ path('app_menu') }}">
+            {% else %}
+                <a href="{{ path('start_index') }}">
+            {% endif %}
                 <img src="{{ asset('images/sursum-logo.png') }}" alt="Sursum Corda Logo">
             </a>
         </div>
