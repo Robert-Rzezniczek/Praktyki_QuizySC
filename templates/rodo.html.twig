@@ -1,24 +1,104 @@
 {% block body %}
-    <div class="container">
-        <ol>
-            <li>Administratorem podanych w formularzu danych osobowych jest Stowarzyszenie Sursum Corda, ul. Lwowska 11, 33-300 Nowy Sącz, tel.: 18 44 11 994. </li>
-            <li>Dane osobowe będziemy przetwarzać w celu przeprowadzenia konkursu. </li>
-            <li>Dane osobowe będą przetwarzane na podstawie prawnie uzasadnionego interesu Stowarzyszenia, którym jest realizacja działań statutowych Stowarzyszenia (art. 6 ust. 1 lit f) RODO).</li>
-            <li>Ponadto dane osobowe mogą być przetwarzane w celach sprawozdawczych i dokumentacyjnych oraz w celu obrony i dochodzenia przez Administratora ewentualnych roszczeń, co również stanowi prawnie uzasadniony interes Administratora (art. 6 ust. 1 lit f) RODO).</li>
-            <li>Podanie danych jest dobrowolne, ale konieczne w celu podjęcia współpracy. Brak podania danych będzie wiązał się z niemożliwością podjęcia współpracy.</li>
-            <li>Dane osobowe mogą być przekazywane innym podmiotom współpracującym ze Stowarzyszeniem w zakresie i w celu, w jakim podmioty te udzielają nam wsparcia (np. dostawcy aplikacji wykorzystywanych do realizacji szkolenia).</li>
-            <li>Twoje dane osobowe nie będą przekazywane do innych krajów poza Unią Europejską (państwa trzeciego).</li>
-            <li>Twoje dane osobowe będą przechowywane przez okres 5 lat.</li>
-            <li>Masz prawo żądać dostępu do swoich danych osobowych, ich sprostowania, usunięcia, ograniczenia przetwarzania oraz do przenoszenia danych na zasadach wynikających z art. 20 RODO.</li>
-            <li>Masz prawo do wniesienia sprzeciwu z przyczyn związanych z jego szczególną sytuacją wobec przetwarzania danych w celu wynikającym z prawnie uzasadnionych interesów Stowarzyszenia.</li>
-            <li>Przysługuje Ci skarga do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa).</li>
-        </ol>
-        <p>
-            Szczegółowe informacje dotyczące przetwarzania danych, praw użytkownika oraz kontaktów znajdują się
-            w naszej polityce prywatności. Jeśli masz pytania, skontaktuj się z nami pod adresem: <a href="mailto:privacy@example.com">przyszły_adres</a>.
-        </p>
-        <p>
-            Not sure czy to potrzebne, czy nie, ale na razie dałem, jakby chcieli dać odnośnik do swojej polityki ;?
-        </p>
-    </div>
+        <div class="rodo-content">
+            <h2 class="rodo-title">Polityka RODO</h2>
+            <ol class="rodo-list">
+                <li>Administratorem podanych w formularzu danych osobowych jest Stowarzyszenie Sursum Corda, ul. Lwowska 11, 33-300 Nowy Sącz, tel.: 18 44 11 994.</li>
+                <li>Dane osobowe będziemy przetwarzać w celu przeprowadzenia konkursu.</li>
+                <li>Dane osobowe będą przetwarzane na podstawie prawnie uzasadnionego interesu Stowarzyszenia, którym jest realizacja działań statutowych Stowarzyszenia (art. 6 ust. 1 lit f) RODO).</li>
+                <li>Ponadto dane osobowe mogą być przetwarzane w celach sprawozdawczych i dokumentacyjnych oraz w celu obrony i dochodzenia przez Administratora ewentualnych roszczeń, co również stanowi prawnie uzasadniony interes Administratora (art. 6 ust. 1 lit f) RODO).</li>
+                <li>Podanie danych jest dobrowolne, ale konieczne w celu podjęcia współpracy. Brak podania danych będzie wiązał się z niemożliwością podjęcia współpracy.</li>
+                <li>Dane osobowe mogą być przekazywane innym podmiotom współpracującym ze Stowarzyszeniem w zakresie i w celu, w jakim podmioty te udzielają nam wsparcia (np. dostawcy aplikacji wykorzystywanych do realizacji szkolenia).</li>
+                <li>Twoje dane osobowe nie będą przekazywane do innych krajów poza Unią Europejską (państwa trzeciego).</li>
+                <li>Twoje dane osobowe będą przechowywane przez okres 5 lat.</li>
+                <li>Masz prawo żądać dostępu do swoich danych osobowych, ich sprostowania, usunięcia, ograniczenia przetwarzania oraz do przenoszenia danych na zasadach wynikających z art. 20 RODO.</li>
+                <li>Masz prawo do wniesienia sprzeciwu z przyczyn związanych z jego szczególną sytuacją wobec przetwarzania danych w celu wynikającym z prawnie uzasadnionych interesów Stowarzyszenia.</li>
+                <li>Przysługuje Ci skarga do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa).</li>
+            </ol>
+            <p class="rodo-text">
+                Szczegółowe informacje dotyczące przetwarzania danych, praw użytkownika oraz kontaktów znajdują się
+                w naszej polityce prywatności. Jeśli masz pytania, skontaktuj się z nami pod adresem: <a href="mailto:privacy@example.com">przyszły_adres</a>.
+            </p>
+            <p class="rodo-note">
+                Not sure czy to potrzebne, czy nie, ale na razie dałem, jakby chcieli dać odnośnik do swojej polityki ;?
+            </p>
+        </div>
+{% endblock %}
+
+{% block stylesheets %}
+    <style>
+        .rodo-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #fff;
+            border-radius: 1rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: relative;
+            top: 120px;
+        }
+
+        .rodo-title {
+            font-family: 'Luckiest Guy', cursive;
+            font-size: clamp(2rem, 5vw, 2.5rem);
+            color: #d32f2f;
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .rodo-list {
+            font-family: 'Jost', sans-serif;
+            font-size: 1.1rem;
+            color: #333;
+            line-height: 1.6;
+            padding-left: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .rodo-text,
+        .rodo-note {
+            font-family: 'Jost', sans-serif;
+            font-size: 1rem;
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 1rem;
+        }
+
+        .rodo-text a {
+            color: #039be5;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .rodo-text a:hover {
+            color: #0277bd;
+            text-decoration: underline;
+        }
+
+        .rodo-note {
+            font-style: italic;
+            color: #777;
+        }
+
+        /* Responsywność */
+        @media (max-width: 768px) {
+            .rodo-container {
+                padding: 1rem;
+                top: 80px;
+            }
+
+            .rodo-title {
+                font-size: clamp(1.5rem, 5vw, 2rem);
+            }
+
+            .rodo-list {
+                font-size: 1rem;
+                padding-left: 1rem;
+            }
+
+            .rodo-text,
+            .rodo-note {
+                font-size: 0.95rem;
+            }
+        }
+    </style>
 {% endblock %}

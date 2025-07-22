@@ -39,7 +39,6 @@
                 background: transparent;
             }
 
-
             .logo {
                 position: fixed;
                 top: 0;
@@ -51,7 +50,7 @@
 
             .logo img {
                 display: block;
-                width: clamp(120px, 15vw, 180px);
+                width: clamp(120px, 19vw, 190px);
                 height: auto;
             }
 
@@ -68,61 +67,59 @@
                 box-shadow: none;
                 border-radius: 0;
                 order: 2;
+                z-index: 1050;
             }
-
             .menu-bar a,
             .menu-button {
                 display: block;
-                padding: 12px 60px;
+                padding: 11px 60px;
                 border-radius: 40px;
                 font-weight: bold;
                 color: white;
                 text-decoration: none;
                 font-family: 'Luckiest Guy', cursive;
                 transition: transform 0.2s ease;
-                box-shadow: 0px 0px 0 rgba(0, 0, 0, 0);
-                width: clamp(300px, 70%, 600px);
+                width: clamp(400px, 30vw, 650px);
                 max-width: 600px;
                 margin: 0 auto 20px auto;
                 text-align: center;
-                font-size: clamp(1.5rem, 5vw, 2.5rem);
+                font-size: clamp(2.2rem, 6vw, 3.5rem);
                 position: relative;
                 z-index: 1;
                 white-space: nowrap;
             }
-
             .menu-bar a:hover,
             .menu-button:hover {
                 transform: scale(1.05);
                 z-index: 11;
             }
 
-            /* === MAIN BUTTON === */
-            .main-btn {
-                background-color: #d32f2f;
-                color: white;
-                font-size: clamp(2rem, 6vw, 3rem);
-                padding: 10px 60px;
-                border: none;
-                border-radius: 30px;
-                box-shadow: 3px 4px 0 rgba(0, 0, 0, 0.3);
-                cursor: pointer;
-                font-weight: bold;
-                font-family: 'Luckiest Guy', cursive;
-                width: clamp(300px, 70%, 600px);
-                position: relative;
-                z-index: 10;
-                margin-bottom: 20px;
-                order: 1;
-                transition: transform 0.2s ease;
+            .logout-btn-container {
+                position: fixed;
+                top: 80px; /* pod nawigacją */
+                right: 20px;
+                z-index: 1001;
             }
 
-            .main-btn:hover {
+            .logout-btn {
+                background-color: #d51b60;
+                color: white;
+                font-family: 'Luckiest Guy', cursive;
+                border: none;
+                padding: 12px 24px;
+                font-size: 1.2rem;
+                border-radius: 40px;
+                transition: background 0.2s ease, transform 0.2s ease;
+            }
+
+            .logout-btn:hover {
+                background-color: #b0154f;
                 transform: scale(1.05);
-                z-index: 11;
+                cursor: pointer;
             }
 
             /* === KOLORY PRZYCISKÓW === */
+            .menu     { background-color: #c82123; }
             .zasady     { background-color: #f57c00; }
             .onas       { background-color: #fbc02d; }
             .faq        { background-color: #43a047; }
@@ -234,7 +231,7 @@
                 }
 
                 .logo img {
-                    width: clamp(250px, 18vw, 200px);
+                    width: clamp(260px, 19vw, 200px);
                 }
 
                 .menu-bar {
@@ -251,10 +248,10 @@
 
                 .menu-bar a,
                 .menu-button {
-                    padding: 10px clamp(10px, 6vw, 90px);
+                    padding: 11px clamp(10px, 6vw, 90px);
                     border-radius: 30px;
-                    font-size: clamp(1rem, 2vw, 1.2rem);
-                    width: clamp(350px, 25vw, 600px);
+                    font-size: clamp(1.85rem, 4vw, 1.2rem);
+                    width: clamp(400px, 30vw, 650px);
                     margin-bottom: 0;
                     margin-right: -50px;
                     position: relative;
@@ -394,10 +391,14 @@
     {# ... #}
     <div class="container-fluid">
         {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-            <div class="mb-3">
-                {{ 'message.logged_in_as'|trans }} {{ app.user.email }}
-                <a href="{{ url('app_logout') }}" class="ms-2">{{ 'action.logout'|trans }}</a>
+            <div class="logout-btn-container">
+                <form action="{{ path('app_logout') }}" method="post">
+                    <button type="submit" class="logout-btn">
+                        {{ 'Wyloguj'|trans }}
+                    </button>
+                </form>
             </div>
+
         {% else %}
             <div class="mb-3">
                 <a href="{{ url('app_login') }}">{{ 'action.login'|trans }}</a>
@@ -407,6 +408,7 @@
         {# Nagłówek z logo i menu #}
         <header>
             <nav class="menu-bar">
+                <a href="{{ path('app_menu') }}" class="menu-button menu">MENU</a>
                 <a href="{{ path('app_rules') }}" class="menu-button zasady">ZASADY</a>
                 <a href="{{ path('app_about') }}" class="menu-button onas">O NAS</a>
                 <a href="{{ path('app_faq') }}" class="menu-button faq">FAQ</a>
@@ -417,10 +419,11 @@
         </header>
 
         <div class="logo">
-            <div class="sursum-shape">
+            <a href="{{ path('start_index') }}">
                 <img src="{{ asset('images/sursum-logo.png') }}" alt="Sursum Corda Logo">
-            </div>
+            </a>
         </div>
+
         <footer>
             <div class="serduszka"></div>
         </footer>

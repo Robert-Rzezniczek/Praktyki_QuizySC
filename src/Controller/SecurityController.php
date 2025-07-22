@@ -27,7 +27,7 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
-            return $this->redirectToRoute('temp_index');
+            return $this->redirectToRoute('start_index');
         }
 
         $error = $authenticationUtils->getLastAuthenticationError();

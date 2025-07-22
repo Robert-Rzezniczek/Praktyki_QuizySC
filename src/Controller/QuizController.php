@@ -89,37 +89,6 @@ class QuizController extends AbstractController
     }
 
     /**
-     * Create action.
-     *
-     * @param Request $request HTTP request
-     *
-     * @return Response HTTP response
-     */
-    #[Route('/quiz/create', name: 'quiz_create')]
-    public function create(Request $request): Response
-    {
-        $quiz = new Quiz();
-
-        $form = $this->createForm(QuizType::class, $quiz);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            try {
-                $this->quizService->save($quiz);
-                $this->addFlash('success', 'Quiz został utworzony.');
-
-                return $this->redirectToRoute('quiz_index');
-            } catch (\InvalidArgumentException $e) {
-                $this->addFlash('danger', $e->getMessage());
-            }
-        }
-
-        return $this->render('quiz/create.html.twig', [
-            'form' => $form->createView(),
-        ]);
-    }
-
-    /**
      * Edit action.
      *
      * @param Request $request HTTP request

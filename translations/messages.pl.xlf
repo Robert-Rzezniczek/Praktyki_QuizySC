@@ -1,0 +1,278 @@
+<?xml version="1.0"?>
+<xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+  <file source-language="pl" datatype="plaintext" original="messages.pl.xlf">
+    <body>
+      <!-- Labels -->
+      <trans-unit id="label.actions">
+        <source>label.actions</source>
+        <target>Akcje</target>
+      </trans-unit>
+      <trans-unit id="label.id">
+        <source>label.id</source>
+        <target>#</target>
+      </trans-unit>
+      <trans-unit id="label.title">
+        <source>label.title</source>
+        <target>Tytuł</target>
+      </trans-unit>
+      <trans-unit id="label.content">
+        <source>label.content</source>
+        <target>Treść</target>
+      </trans-unit>
+      <trans-unit id="label.is_correct">
+        <source>label.is_correct</source>
+        <target>Poprawna</target>
+      </trans-unit>
+      <trans-unit id="label.position">
+        <source>label.position</source>
+        <target>Pozycja</target>
+      </trans-unit>
+      <trans-unit id="label.question">
+        <source>label.question</source>
+        <target>Pytanie</target>
+      </trans-unit>
+      <trans-unit id="label.yes">
+        <source>label.yes</source>
+        <target>Tak</target>
+      </trans-unit>
+      <trans-unit id="label.no">
+        <source>label.no</source>
+        <target>Nie</target>
+      </trans-unit>
+      <trans-unit id="label.created_at">
+        <source>label.created_at</source>
+        <target>Utworzono</target>
+      </trans-unit>
+      <trans-unit id="label.updated_at">
+        <source>label.updated_at</source>
+        <target>Zaktualizowano</target>
+      </trans-unit>
+      <trans-unit id="label.score">
+        <source>label.score</source>
+        <target>Wynik</target>
+      </trans-unit>
+      <trans-unit id="label.correct_answers">
+        <source>label.correct_answers</source>
+        <target>Poprawne odpowiedzi</target>
+      </trans-unit>
+      <trans-unit id="label.duration">
+        <source>label.duration</source>
+        <target>Czas trwania</target>
+      </trans-unit>
+      <trans-unit id="label.seconds">
+        <source>label.seconds</source>
+        <target>Sekundy</target>
+      </trans-unit>
+      <trans-unit id="label.is_published">
+        <source>label.is_published</source>
+        <target>Opublikowany</target>
+      </trans-unit>
+      <trans-unit id="label.question_count">
+        <source>label.question_count</source>
+        <target>Liczba pytań</target>
+      </trans-unit>
+      <trans-unit id="label.branding">
+        <source>label.branding</source>
+        <target>Branding</target>
+      </trans-unit>
+      <trans-unit id="label.email">
+        <source>label.email</source>
+        <target>E-mail</target>
+      </trans-unit>
+      <trans-unit id="label.password">
+        <source>label.password</source>
+        <target>Hasło</target>
+      </trans-unit>
+      <trans-unit id="label.imie">
+        <source>label.imie</source>
+        <target>Imię</target>
+      </trans-unit>
+      <trans-unit id="label.nazwisko">
+        <source>label.nazwisko</source>
+        <target>Nazwisko</target>
+      </trans-unit>
+      <trans-unit id="label.szkola">
+        <source>label.szkola</source>
+        <target>Szkoła</target>
+      </trans-unit>
+      <trans-unit id="label.wojewodztwo">
+        <source>label.wojewodztwo</source>
+        <target>Województwo</target>
+      </trans-unit>
+      <trans-unit id="label.powiat">
+        <source>label.powiat</source>
+        <target>Powiat</target>
+      </trans-unit>
+      <trans-unit id="label.poziom_edukacji">
+        <source>label.poziom_edukacji</source>
+        <target>Poziom edukacji</target>
+      </trans-unit>
+      <trans-unit id="label.hello">
+        <source>label.hello</source>
+        <target>Cześć</target>
+      </trans-unit>
+
+      <!-- Actions -->
+      <trans-unit id="action.save">
+        <source>action.save</source>
+        <target>Zapisz</target>
+      </trans-unit>
+      <trans-unit id="action.delete">
+        <source>action.delete</source>
+        <target>Usuń</target>
+      </trans-unit>
+      <trans-unit id="action.edit">
+        <source>action.edit</source>
+        <target>Edytuj</target>
+      </trans-unit>
+      <trans-unit id="action.create">
+        <source>action.create</source>
+        <target>Utwórz</target>
+      </trans-unit>
+      <trans-unit id="action.view">
+        <source>action.view</source>
+        <target>Wyświetl</target>
+      </trans-unit>
+      <trans-unit id="action.publish">
+        <source>action.publish</source>
+        <target>Opublikuj</target>
+      </trans-unit>
+      <trans-unit id="action.preview">
+        <source>action.preview</source>
+        <target>Podgląd</target>
+      </trans-unit>
+      <trans-unit id="action.solve">
+        <source>action.solve</source>
+        <target>Rozwiąż</target>
+      </trans-unit>
+      <trans-unit id="action.finish">
+        <source>action.finish</source>
+        <target>Zakończ</target>
+      </trans-unit>
+      <trans-unit id="action.next">
+        <source>action.next</source>
+        <target>Dalej</target>
+      </trans-unit>
+      <trans-unit id="action.back_to_list">
+        <source>action.back_to_list</source>
+        <target>Powrót do listy</target>
+      </trans-unit>
+      <trans-unit id="action.logout">
+        <source>action.logout</source>
+        <target>Wyloguj</target>
+      </trans-unit>
+      <trans-unit id="action.login">
+        <source>action.login</source>
+        <target>Zaloguj</target>
+      </trans-unit>
+      <trans-unit id="action.sign_in">
+        <source>action.sign_in</source>
+        <target>Zaloguj się</target>
+      </trans-unit>
+      <trans-unit id="action.register">
+        <source>action.register</source>
+        <target>Zarejestruj się</target>
+      </trans-unit>
+      <trans-unit id="action.edit_branding">
+        <source>action.edit_branding</source>
+        <target>Edytuj branding</target>
+      </trans-unit>
+
+      <!-- Messages -->
+      <trans-unit id="message.created_successfully">
+        <source>message.created_successfully</source>
+        <target>Pomyślnie utworzono.</target>
+      </trans-unit>
+      <trans-unit id="message.edited_successfully">
+        <source>message.edited_successfully</source>
+        <target>Pomyślnie edytowano.</target>
+      </trans-unit>
+      <trans-unit id="message.answer_cannot_be_deleted">
+        <source>message.answer_cannot_be_deleted</source>
+        <target>Odpowiedź nie może być usunięta.</target>
+      </trans-unit>
+      <trans-unit id="message.deleted_successfully">
+        <source>message.deleted_successfully</source>
+        <target>Pomyślnie usunięto.</target>
+      </trans-unit>
+      <trans-unit id="message.cannot_delete_powiat_with_user_profiles">
+        <source>message.cannot_delete_powiat_with_user_profiles</source>
+        <target>Nie można usunąć powiatu z przypisanymi profilami użytkowników.</target>
+      </trans-unit>
+      <trans-unit id="message.question_cannot_be_deleted">
+        <source>message.question_cannot_be_deleted</source>
+        <target>Pytanie nie może być usunięte.</target>
+      </trans-unit>
+      <trans-unit id="message.quiz_cannot_be_deleted">
+        <source>message.quiz_cannot_be_deleted</source>
+        <target>Quiz nie może być usunięty.</target>
+      </trans-unit>
+      <trans-unit id="message.quiz_published_successfully">
+        <source>message.quiz_published_successfully</source>
+        <target>Quiz został opublikowany.</target>
+      </trans-unit>
+      <trans-unit id="message.empty_list">
+        <source>message.empty_list</source>
+        <target>Lista jest pusta.</target>
+      </trans-unit>
+      <trans-unit id="message.record_not_found">
+        <source>message.record_not_found</source>
+        <target>Rekord nie znaleziono.</target>
+      </trans-unit>
+      <trans-unit id="message.logged_in_as">
+        <source>message.logged_in_as</source>
+        <target>Zalogowano jako</target>
+      </trans-unit>
+      <trans-unit id="message.form_error">
+        <source>message.form_error</source>
+        <target>Wystąpił błąd w formularzu.</target>
+      </trans-unit>
+      <trans-unit id="message.quiz_completed">
+        <source>message.quiz_completed</source>
+        <target>Quiz zakończony.</target>
+      </trans-unit>
+      <trans-unit id="message.time_limit_exceeded">
+        <source>message.time_limit_exceeded</source>
+        <target>Przekroczono limit czasu.</target>
+      </trans-unit>
+      <trans-unit id="message.quiz_expired">
+        <source>message.quiz_expired</source>
+        <target>Quiz wygasł.</target>
+      </trans-unit>
+      <trans-unit id="message.email_required">
+        <source>message.email_required</source>
+        <target>Wymagany jest e-mail.</target>
+      </trans-unit>
+      <trans-unit id="message.password_required">
+        <source>message.password_required</source>
+        <target>Wymagane jest hasło.</target>
+      </trans-unit>
+      <trans-unit id="message.page_is_being_developed">
+        <source>message.page_is_being_developed</source>
+        <target>Strona jest w trakcie разработки.</target>
+      </trans-unit>
+      <trans-unit id="message.confirm_delete">
+        <source>message.confirm_delete</source>
+        <target>Czy na pewno chcesz usunąć?</target>
+      </trans-unit>
+
+      <!-- Validators -->
+      <trans-unit id="validators.Czas publikacji musi być większy od zera.">
+        <source>Czas publikacji musi być większy od zera.</source>
+        <target>Czas publikacji musi być większy od zera.</target>
+      </trans-unit>
+      <trans-unit id="validators.Hasło nie może być puste.">
+        <source>Hasło nie może być puste.</source>
+        <target>Hasło nie może być puste.</target>
+      </trans-unit>
+      <trans-unit id="validators.Hasło musi mieć co najmniej {{ limit }} znaków.">
+        <source>Hasło musi mieć co najmniej {{ limit }} znaków.</source>
+        <target>Hasło musi mieć co najmniej {{ limit }} znaków.</target>
+      </trans-unit>
+      <trans-unit id="validators.Proszę przesłać plik graficzny (jpg, png, gif)">
+        <source>Proszę przesłać plik graficzny (jpg, png, gif)</source>
+        <target>Proszę przesłać plik graficzny (jpg, png, gif)</target>
+      </trans-unit>
+    </body>
+  </file>
+</xliff>

@@ -3,16 +3,81 @@
 {% block title %}Zasady{% endblock %}
 
 {% block body %}
-    <div class="container my-5">
-        <h1 class="mb-4">Zasady korzystania</h1>
+    <style>
+        header, .navbar, .topbar {
+            z-index: 10;
+            position: sticky;
+            top: 0;
+            background-color: white;
+        }
 
-        <p>Zasady gry i użytkowania.</p>
+        .rules-list {
+            position: relative;
+            z-index: 1;
+        }
+    </style>
 
-        <ul>
-            <li>Nie spamuj.</li>
-            <li>Szanuj innych użytkowników.</li>
-            <li>Nie używaj aplikacji do celów niezgodnych z prawem.</li>
-            <li>do uzupelnienia.</li>
-        </ul>
+    <div class="container mt-1 mb-2">
+        <h1 class="mb-3 display-5">Zasady korzystania</h1>
+        <div class="mx-auto rules-list" style="max-width: 750px;">
+            <ul class="list-group list-group-flush text-start">
+                <li class="list-group-item">
+                    <i class="fa-solid fa-user me-2 text-info"></i>
+                    Każdy użytkownik ma swoje własne konto (np. utworzone przez szkołę lub rodzica). </li>
+                <li class="list-group-item">
+                    <i class="fa-solid fa-lock me-2 text-danger"></i>
+                    Nie udostępniaj nikomu swoich danych do logowania.
+                </li>
+                <li class="list-group-item">
+                    <i class="fa-solid fa-shield-halved me-2 text-success"></i>
+                    Twoje dane są chronione – nie są przekazywane osobom trzecim.
+                </li>
+                <li class="list-group-item">
+                    <i class="fa-solid fa-user-xmark me-2 text-warning"></i>
+                    Nie używaj cudzych kont – każde konto jest przypisane do jednej osoby.
+                </li>
+                <li class="list-group-item">
+                    <i class="fa-solid fa-brain me-2 text-secondary"></i>
+                    Staraj się rozwiązywać quizy samodzielnie – uczysz się dla siebie!
+                </li>
+                <li class="list-group-item">
+                    <i class="fa-solid fa-copy me-2 text-danger"></i>
+                    Nie kopiuj odpowiedzi od innych osób i nie korzystaj z podpowiedzi w Internecie.
+                </li>
+                <li class="list-group-item">
+                    <i class="fa-solid fa-gamepad me-2 text-primary"></i>
+                    Korzystaj z aplikacji w sposób zgodny z przeznaczeniem – do nauki i zabawy.
+                </li>
+                <li class="list-group-item">
+                    <i class="fa-solid fa-ban me-2 text-danger"></i>
+                    Nie wolno przesyłać nieodpowiednich treści, pisać obraźliwych komentarzy ani zakłócać działania aplikacji.
+                </li>
+                <li class="list-group-item">
+                    <i class="fa-solid fa-circle-check me-2 text-success"></i>
+                    Po wybraniu odpowiedzi, kliknij "Dalej", żeby przejść dalej.
+                </li>
+                <li class="list-group-item">
+                    <i class="fa-solid fa-clock me-2 text-warning"></i>
+                    Niektóre quizy mogą mieć limit czasu lub możliwość podejścia tylko raz.
+                </li>
+                <li class="list-group-item">
+                    <i class="fa-solid fa-hourglass-end me-2 text-danger"></i>
+                    W przypadku przekroczenia czasu, odpowiedzi potwierdzone po upłynięciu limitu czasowego zostają niezapisane.
+                </li>
+                <li class="list-group-item">
+                    <i class="fa-solid fa-book-open me-2 text-primary"></i>
+                    Przeczytaj dokładnie instrukcje przed rozpoczęciem quizu.
+                </li>
+                <li class="list-group-item">
+                    <i class="fa-solid fa-envelope-open-text me-2 text-info"></i>
+                    Jeśli coś nie działa napisz do nas przez formularz kontaktowy.
+                </li>
+            </ul>
+
+            <div class="alert alert-warning mt-4" role="alert">
+                Naruszenie zasad regulaminu może skutkować zablokowaniem konta przez administratora.
+            </div>
+
+        </div>
     </div>
 {% endblock %}
