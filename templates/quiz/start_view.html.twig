@@ -2,42 +2,121 @@
 
 {% block title %}{{ quiz.title }} - Start{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+
+        <style>
+            .quiz-start-card {
+                z-index: 10;
+                position: relative;
+                max-width: 800px;
+                margin: 60px auto;
+                padding: 40px 60px;
+                border: 4px solid #4CAF50;
+                border-radius: 100px;
+                background-color: white;
+                font-family: 'Luckiest Guy', cursive;
+                letter-spacing: 1.5px;
+                box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            }
+
+            .quiz-branding {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 40px;
+                flex-wrap: wrap;
+            }
+
+            .quiz-branding-text {
+                text-align: left;
+                margin: 0 auto;
+                max-width: 500px; /* lub dostosuj do szerokości quizu */
+            }
+
+
+            .quiz-start-title {
+                font-size: 2.6rem;
+                color: #2c3e50;
+                margin-bottom: 16px;
+            }
+
+            .quiz-description {
+                font-size: 1.3rem;
+                color: #444;
+            }
+
+            .quiz-start-logo {
+                max-height: 160px;
+                width: auto;
+            }
+
+            .quiz-info {
+                font-size: 1.5rem;
+                text-align: center;
+                margin-top: 40px;
+                color: #111;
+            }
+
+            .quiz-start-button {
+                margin-top: 40px;
+                padding: 24px 60px;
+                font-size: 2rem;
+                border-radius: 100px;
+                font-weight: bold;
+                background-color: #43a047;
+                color: white;
+                border: none;
+                transition: transform 0.2s ease, background-color 0.2s ease;
+                text-decoration: none;
+                display: inline-block;
+            }
+
+            .quiz-start-button:hover {
+                transform: scale(1.07);
+                background-color: #388e3c;
+            }
+
+            @media (max-width: 768px) {
+                .quiz-branding {
+                    flex-direction: column;
+                    align-items: center;
+                    text-align: center;
+                }
+            }
+        </style>
+{%  endblock %}
 {% block body %}
-    <div class="container my-5">
-        <div class="card p-4">
-            <div class="row align-items-center">
-                <div class="col-md-8">
-                    <h2 class="text-primary">{{ quiz.brandName }}</h2>
-
-                    {% if quiz.branddescription %}
-                        <p class="mt-2">{{ quiz.branddescription }}</p>
-                    {% endif %}
-                </div>
-
-                <div class="col-md-4 text-center">
-                    {% if quiz.logoFilename %}
-                        <img src="{{ asset('uploads/' ~ quiz.logoFilename) }}"
-                             alt="{{ quiz.brandName }}"
-                             class="img-fluid"
-                             style="max-height: 120px; width: auto;">
-                    {% endif %}
-                </div>
-            </div>
-
-            <hr class="my-4">
-
-            <div class="text-center mt-5">
-                <p class="fs-5"><strong>Liczba pytań:</strong> {{ quiz.questions|length }}</p>
-
-                {% if quiz.timeLimit %}
-                    <p class="fs-5"><strong>Czas na rozwiązanie:</strong> {{ quiz.timeLimit }} minut</p>
+    <div class="quiz-start-card">
+        <div class="quiz-branding">
+            <div class="quiz-branding-text">
+                {% if quiz.branddescription %}
+                    <p class="quiz-description">{{ quiz.branddescription }}</p>
                 {% endif %}
 
-                <a href="{{ path('quiz_solve', {'id': quiz.id}) }}" class="btn btn-success btn-lg px-5 py-3 mt-3">
-                    Rozpocznij quiz
-                </a>
+                <h2 class="quiz-start-title">{{ quiz.brandName }}</h2>
             </div>
 
+
+            {% if quiz.logoFilename %}
+                <img src="{{ asset('uploads/' ~ quiz.logoFilename) }}"
+                     alt="{{ quiz.brandName }}"
+                     class="quiz-start-logo">
+            {% endif %}
+        </div>
+
+        <div class="quiz-info">
+            <p><strong>Liczba pytań:</strong> {{ quiz.questions|length }}</p>
+
+            {% if quiz.timeLimit %}
+                <p><strong>Czas na rozwiązanie:</strong> {{ quiz.timeLimit }} minut</p>
+            {% endif %}
+        </div>
+
+        <div style="text-align: center;">
+            <a href="{{ path('quiz_solve', {'id': quiz.id}) }}" class="quiz-start-button">
+                Rozpocznij quiz
+            </a>
         </div>
     </div>
 {% endblock %}

@@ -68,7 +68,7 @@
                 border-radius: 0;
                 order: 2;
                 z-index: 1050;
-                    }
+            }
             .menu-bar a,
             .menu-button {
                 display: block;
@@ -103,7 +103,7 @@
             }
 
             .logout-btn {
-                background-color: #d51b60; /*tutaj*/
+                background-color: #d51b60;
                 color: white;
                 font-family: 'Luckiest Guy', cursive;
                 border: none;
@@ -265,6 +265,7 @@
                 .menu-button:nth-child(4) { z-index: 1; }
                 .menu-button:nth-child(5) { z-index: 0; }
 
+
                 .menu-button:hover {
                     z-index: 5;
                 }
@@ -396,7 +397,7 @@
             <div class="logout-btn-container">
                 <form action="{{ path('app_logout') }}" method="post">
                     <button type="submit" class="logout-btn">
-                        {{ 'Wyloguj' }}
+                        {{ 'Wyloguj'|trans }}
                     </button>
                 </form>
             </div>
@@ -412,7 +413,7 @@
                     <a href="{{ path('start_index') }}" class="menu-button menu">MENU</a>
                 {% endif %}
                 <a href="{{ path('app_rules') }}" class="menu-button zasady">ZASADY</a>
-                <a href="{{ path('app_about') }}" class="menu-button onas">O NAS</a>
+                <a href="https://www.sc.org.pl/o-nas/" class="menu-button onas" target="_blank" rel="noopener">O NAS</a>
                 <a href="{{ path('app_faq') }}" class="menu-button faq">FAQ</a>
                 <a href="{{ path('app_contact') }}" class="menu-button kontakt">KONTAKT</a>
 
@@ -422,12 +423,12 @@
 
         <div class="logo">
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                <a href="{{ path('app_menu') }}">
-            {% else %}
+            <a href="{{ path('app_menu') }}">
+                {% else %}
                 <a href="{{ path('start_index') }}">
-            {% endif %}
-                <img src="{{ asset('images/sursum-logo.png') }}" alt="Sursum Corda Logo">
-            </a>
+                    {% endif %}
+                    <img src="{{ asset('images/sursum-logo.png') }}" alt="Sursum Corda Logo">
+                </a>
         </div>
 
         <footer>

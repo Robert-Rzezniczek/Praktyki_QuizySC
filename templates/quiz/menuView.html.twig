@@ -2,67 +2,105 @@
 
 {% block title %}Wybór quizu{% endblock %}
 
-{% block body %}
+{% block stylesheets %}
+    {{ parent() }}
     <style>
-        .menu-button {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background-color: #333;
-            color: white;
-            padding: 10px 15px;
-            border-radius: 5px;
+        .quiz-box-link {
+            display: block;
             text-decoration: none;
+            color: inherit;
+            margin-bottom: 30px;
         }
 
-
-        .quiz-list {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            margin-top: 100px;
-        }
-
-        .quiz-item {
-            background: #f0f0f0;
-            padding: 15px 25px;
-            margin: 10px 0;
-            width: 300px;
+        .quiz-box {
+            position: relative;
+            width: 520px; /* było 400px */
+            padding: 32px 40px; /* było 20px 24px */
+            margin: 0 auto;
+            border: 4px solid;
+            border-radius: 40px; /* było 20px */
+            font-family: 'Luckiest Guy', cursive;
             text-align: center;
-            border-radius: 8px;
-            transition: background 0.2s;
+            background-color: white;
+            letter-spacing: 1.5px;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
         }
 
-        .quiz-item:hover {
-            background: #ddd;
+        .quiz-box.completed {
+            border-color: #388e3c;
         }
 
-        .quiz-item a {
-            text-decoration: none;
-            color: #333;
+        .quiz-box.not-completed {
+            border-color: #d32f2f;
+        }
+
+        .quiz-title {
+            font-size: 2rem; /* było 1.6rem */
             font-weight: bold;
+            color: #000;
+            margin-bottom: 14px;
+        }
+
+        .quiz-status.green,
+        .quiz-status.red {
+            font-size: 1.3rem; /* było 1.1rem */
+        }
+
+        .quiz-status.green {
+            color: green;
+        }
+
+        .quiz-status.red {
+            color: red;
+        }
+
+        .quiz-score {
+            color: black;
+            font-weight: bold;
+            font-size: 1.3rem; /* było 1.1rem */
+            margin-top: 12px;
+        }
+
+        .quiz-link {
+            color: red;
+            font-weight: bold;
+        }
+
+        .quiz-box-link:hover .quiz-box {
+            transform: scale(1.03);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.12);
         }
     </style>
 
+
+
+{% endblock %}
+{% block body %}
     <a href="{{ path('app_menu') }}" class="menu-button">☰ Menu</a>
 
+    {% for quiz in quizzes %}
+        <a href="{% if is_granted('ROLE_ADMIN') %}
+                     {{ path('quiz_view', { id: quiz.id }) }}
+                 {% else %}
+                     {% if quiz.completed %}
+                         {{ path('quiz_result', { id: quiz.id }) }}
+                     {% else %}
+                         {{ path('app_quiz_start', { id: quiz.id }) }}
+                     {% endif %}
+                 {% endif %}"
+           class="quiz-box-link">
+            <div class="quiz-box {{ quiz.completed ? 'completed' : 'not-completed' }}">
+                <div class="quiz-title">{{ quiz.title }}</div>
 
-    <div class="quiz-list">
-        <h1>Wybierz quiz</h1>
-        {% for quiz in quizzes %}
-            <div class="mb-3">
-                <a class="btn btn-outline-primary"
-                   href="{% if is_granted('ROLE_ADMIN') %}
-             {{ path('quiz_view', { id: quiz.id }) }}
-         {% else %}
-             {{ path('app_quiz_start', { id: quiz.id }) }}
-         {% endif %}">
-                    {{ quiz.title }}
-                </a>
-
+                {% if quiz.completed %}
+                    <div class="quiz-status green">Test wypełniony 🏆</div>
+                    <div class="quiz-score">Wynik: {{ quiz.score }}%</div>
+                {% else %}
+                    <div class="quiz-status red">Test niewypełniony</div>
+                    <div class="quiz-link">Kliknij aby wypełnić</div>
+                {% endif %}
             </div>
-        {% else %}
-            <p>Brak dostępnych quizów.</p>
-        {% endfor %}
-    </div>
+        </a>
+    {% endfor %}
 {% endblock %}
+
