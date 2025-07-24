@@ -38,9 +38,6 @@
                         <td>
                             <div class="btn-group" role="group">
                                 {% if is_granted('ROLE_ADMIN') %}
-                                    <a class="btn btn-outline-primary me-2" href="{{ url('powiat_view', {id: powiat.id}) }}" title="{{ 'action.view'|trans }}">
-                                        {{ 'action.view'|trans }}
-                                    </a>
                                     <a class="btn btn-outline-warning me-2" href="{{ url('powiat_edit', {id: powiat.id}) }}" title="{{ 'action.edit'|trans }}">
                                         {{ 'action.edit'|trans }}
                                     </a>

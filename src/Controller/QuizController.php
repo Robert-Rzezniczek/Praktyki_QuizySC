@@ -563,6 +563,13 @@ class QuizController extends AbstractController
         return new JsonResponse($status);
     }
 
+    /**
+     * Cancel create quiz action. (clears the session).
+     *
+     * @param SessionInterface $session SessionInterface
+     *
+     * @return Response Response
+     */
     #[Route('/create/cancel', name: 'quiz_create_cancel')]
     public function cancelCreate(SessionInterface $session): Response
     {
@@ -573,6 +580,9 @@ class QuizController extends AbstractController
 
     /**
      * Edycja brandingu (tylko dla admina).
+     *
+     * @param Request $request Request
+     * @param Quiz    $quiz    Quiz
      */
     #[Route('/quiz/{id}/branding/edit', name: 'quiz_edit_branding', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
@@ -614,7 +624,9 @@ class QuizController extends AbstractController
     /**
      * start quizu.
      *
-     * @param Quiz $quiz quiz
+     * @param Quiz $quiz Quiz
+     *
+     * @return Response Response
      */
     #[Route('/{id}/start-view', name: 'quiz_start_view', requirements: ['id' => '\d+'], methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
@@ -622,6 +634,41 @@ class QuizController extends AbstractController
     {
         return $this->render('quiz/start_view.html.twig', [
             'quiz' => $quiz,
+        ]);
+    }
+
+    /**
+     * Show quiz ranking action.
+     *
+     * @param Quiz                 $quiz        Quiz entity
+     * @param QuizServiceInterface $quizService QuizService
+     *
+     * @return Response HTTP response
+     */
+    #[Route(
+        '/{id}/ranking',
+        name: 'quiz_ranking',
+        requirements: ['id' => '[1-9]\d*'],
+        methods: 'GET'
+    )]
+    #[IsGranted('ROLE_USER')]
+    public function showRanking(Quiz $quiz, QuizServiceInterface $quizService): Response
+    {
+        $user = $this->getUser();
+
+        if (!$user instanceof UserAuth) {
+            throw $this->createAccessDeniedException('Musisz być zalogowany, aby zobaczyć ranking.');
+        }
+
+        $rankingData = $quizService->getQuizRanking($quiz, $user);
+        //        dump($rankingData); // Tymczasowe debugowanie
+        //        die; // Zatrzymaj wykonanie, aby zobaczyć wyniki
+
+        return $this->render('quiz/ranking.html.twig', [
+            'quiz' => $quiz,
+            'ranking' => $rankingData['ranking'],
+            'userPosition' => $rankingData['userPosition'],
+            'userScore' => $rankingData['userScore'],
         ]);
     }
 }

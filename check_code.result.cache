@@ -1,0 +1,137 @@
+Running php-cbf... 
+WARNING: The Symfony standard uses 1 deprecated sniff
+-------------------------------------------------------------------------------
+-  Generic.Functions.CallTimePassByReference
+   This sniff has been deprecated since v3.12.1 and will be removed in v4.0.0.
+
+Deprecated sniffs are still run, but will stop working at some point in the
+future.
+
+
+No fixable errors were found
+
+Time: 832ms; Memory: 14MB
+
+Running php-cs-fixer... 
+PHP CS Fixer 3.75.0 Persian Successor by Fabien Potencier, Dariusz Ruminski and contributors.
+PHP runtime: 8.2.12
+Running analysis on 1 core sequentially.
+You can enable parallel runner and speed up the analysis! Please see https://cs.symfony.com/doc/usage.html for more information.
+Loaded config default from "C:\xampp\htdocs\TestPortal\app\.php-cs-fixer.dist.php".
+Using cache file ".php-cs-fixer.cache".
+Paths from configuration file have been overridden by paths provided as command arguments.
+  0/68 [░░░░░░░░░░░░░░░░░░░░░░░░░░░░]   0%
+ 68/68 [▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓] 100%
+
+
+Found 0 of 68 files that can be fixed in 0.011 seconds, 18.00 MB memory used
+Running phpcs... 
+WARNING: The Symfony standard uses 1 deprecated sniff
+-------------------------------------------------------------------------------
+-  Generic.Functions.CallTimePassByReference
+   This sniff has been deprecated since v3.12.1 and will be removed in v4.0.0.
+
+Deprecated sniffs are still run, but will stop working at some point in the
+future.
+
+
+FILE: C:\xampp\htdocs\TestPortal\app\src\Controller\QuizController.php
+----------------------------------------------------------------------
+FOUND 1 ERROR AFFECTING 1 LINE
+----------------------------------------------------------------------
+ 586 | ERROR | Missing @return tag in function comment
+----------------------------------------------------------------------
+
+
+FILE: C:\xampp\htdocs\TestPortal\app\src\Controller\QuizMenuViewController.php
+------------------------------------------------------------------------------
+FOUND 4 ERRORS AND 1 WARNING AFFECTING 5 LINES
+------------------------------------------------------------------------------
+  3 | WARNING | The license block has to be present at the top
+    |         |                 of every PHP file, before the namespace
+ 10 | ERROR   | Missing doc comment for class QuizMenuViewController
+ 12 | ERROR   | Missing doc comment for function __construct()
+ 17 | ERROR   | Missing doc comment for function list()
+ 33 | ERROR   | Missing doc comment for function start()
+------------------------------------------------------------------------------
+
+
+FILE: C:\xampp\htdocs\TestPortal\app\src\Entity\Quiz.php
+----------------------------------------------------------------------
+FOUND 6 ERRORS AFFECTING 6 LINES
+----------------------------------------------------------------------
+ 313 | ERROR | Missing doc comment for function getBrandName()
+ 318 | ERROR | Doc comment for parameter "$brandName" missing
+ 328 | ERROR | Missing doc comment for function getBranddescription()
+ 333 | ERROR | Doc comment for parameter "$branddescription" missing
+ 343 | ERROR | Missing doc comment for function getLogoFilename()
+ 348 | ERROR | Missing doc comment for function setLogoFilename()
+----------------------------------------------------------------------
+
+
+FILE: C:\xampp\htdocs\TestPortal\app\src\Service\QuizResultService.php
+----------------------------------------------------------------------
+FOUND 2 ERRORS AFFECTING 2 LINES
+----------------------------------------------------------------------
+ 30 | ERROR | Doc comment for parameter "$quizResult" missing
+ 39 | ERROR | Doc comment for parameter "$quizResult" missing
+----------------------------------------------------------------------
+
+
+FILE: C:\xampp\htdocs\TestPortal\app\src\Service\QuizResultServiceInterface.php
+-------------------------------------------------------------------------------
+FOUND 4 ERRORS AND 1 WARNING AFFECTING 5 LINES
+-------------------------------------------------------------------------------
+  3 | WARNING | The license block has to be present at the top
+    |         |                 of every PHP file, before the namespace
+  8 | ERROR   | Missing doc comment for interface QuizResultServiceInterface
+ 10 | ERROR   | Doc comment for parameter "$quizResult" missing
+ 15 | ERROR   | Doc comment for parameter "$quizResult" missing
+ 20 | ERROR   | Missing doc comment for function getQuizResultForUser()
+-------------------------------------------------------------------------------
+
+
+FILE: C:\xampp\htdocs\TestPortal\app\src\Service\QuizService.php
+-------------------------------------------------------------------------
+FOUND 12 ERRORS AFFECTING 7 LINES
+-------------------------------------------------------------------------
+  30 | ERROR | Doc comment for parameter "$quizRepository" missing
+  30 | ERROR | Doc comment for parameter "$paginator" missing
+  30 | ERROR | Doc comment for parameter "$quizResultRepository" missing
+  30 | ERROR | Doc comment for parameter "$questionRepository" missing
+  30 | ERROR | Doc comment for parameter "$requestStack" missing
+  80 | ERROR | Doc comment for parameter "$session" missing
+  80 | ERROR | Doc comment for parameter "$quiz" missing
+  82 | ERROR | Missing @return tag in function comment
+ 185 | ERROR | Doc comment for parameter "$skipValidation" missing
+ 225 | ERROR | Missing @return tag in function comment
+ 306 | ERROR | Missing @return tag in function comment
+ 467 | ERROR | Missing @return tag in function comment
+-------------------------------------------------------------------------
+
+Time: 814ms; Memory: 14MB
+
+Running debug:translation (pl)... 
+ ----------- ------------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ------------------------------------------ 
+  State       Domain       Id                                                                                                                                                                                                                                                                                                                                                                                                            Message Preview (pl)                      
+ ----------- ------------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ------------------------------------------ 
+   missing    validators   message.prosze_podac_imie                                                                                                                                                                                                                                                                                                                                                                                     message.prosze_podac_imie                 
+   missing    validators   Imię musi mieć co najmniej {{ limit }} znaki.                                                                                                                                                                                                                                                                                                                                                                 Imię musi mieć co najmniej {{ limit }...  
+   missing    validators   Imię może zawierać tylko litery, polskie znaki i myślniki.                                                                                                                                                                                                                                                                                                                                                    Imię może zawierać tylko litery, pols...  
+   missing    validators   Nazwisko musi mieć co najmniej {{ limit }} znaki.                                                                                                                                                                                                                                                                                                                                                             Nazwisko musi mieć co najmniej {{ lim...  
+   missing    validators   Nazwisko może zawierać tylko litery, polskie znaki i myślniki.                                                                                                                                                                                                                                                                                                                                                Nazwisko może zawierać tylko litery, ...  
+   missing    validators   Nazwa szkoły musi mieć co najmniej {{ limit }} znaki.                                                                                                                                                                                                                                                                                                                                                         Nazwa szkoły musi mieć co najmniej {{...  
+   missing    validators   Nazwa szkoły może zawierać tylko litery, cyfry, polskie znaki, spacje, kropki, przecinki i myślniki.                                                                                                                                                                                                                                                                                                          Nazwa szkoły może zawierać tylko lite...  
+   missing    messages     O nas                                                                                                                                                                                                                                                                                                                                                                                                         O nas                                     
+   missing    messages     Od 2000 roku przekazujemy dobro innym na wszelkie sposoby i zamieniamy je w konkretną pomoc. To wtedy połączyliśmy siły, pomysły i energię osób, które kilka lat wcześniej tworzyły grupę wsparcia dla Młodzieżowego Ośrodka Wychowawczego w Mszanie Dolnej.                                                                                                                                                  Od 2000 roku przekazujemy dobro innym...  
+   missing    messages     W Stowarzyszeniu Sursum Corda (łac. „w górę serca”) zamieniamy dobre myśli w czyn - tworząc i realizując mądrą pomoc oraz inicjatywy obywatelskie. Wspieramy osoby w trudnych sytuacjach życiowych, organizujemy wolontariat, pomoc prawną, rehabilitacyjną, medyczną i społeczną. Działamy zwłaszcza na rzecz dzieci, młodzieży, seniorów, osób z niepełnosprawnościami oraz opuszczających zakłady karne.   W Stowarzyszeniu Sursum Corda (łac. „...  
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   
+                           Jesteśmy aktywną organizacją pozarządową, z siedzibą w Nowym Sączu, działającą od 2000 r. Są dla nas ważne: wzajemny szacunek, drugi człowiek, rozwiązania systemowe, odpowiedzialność, samodzielność, empatia, przyjazna komunikacja oraz zaangażowanie i efekty. Korzystamy z nowych technologii, ale zawsze najważniejsi są ludzie. Cenimy liderów umiejących współpracować w grupie.                                                                
+   missing    messages     team do uzupelnienia                                                                                                                                                                                                                                                                                                                                                                                          team do uzupelnienia                      
+   missing    messages     Szczegóły quizu                                                                                                                                                                                                                                                                                                                                                                                               Szczegóły quizu                           
+   missing    messages     Strona startowa                                                                                                                                                                                                                                                                                                                                                                                               Strona startowa                           
+   missing    messages     Zaloguj się lub zarejestruj, by przejść dalej.                                                                                                                                                                                                                                                                                                                                                                Zaloguj się lub zarejestruj, by przej...  
+   missing    messages     Rejestracja                                                                                                                                                                                                                                                                                                                                                                                                   Rejestracja                               
+   missing    messages     Login                                                                                                                                                                                                                                                                                                                                                                                                         Login                                     
+ ----------- ------------ ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- ------------------------------------------ 
+

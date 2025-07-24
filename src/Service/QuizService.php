@@ -602,6 +602,49 @@ class QuizService implements QuizServiceInterface
         }
     }
 
+    public function getQuizRanking(Quiz $quiz, UserAuth $currentUser): array
+    {
+        $results = $this->quizResultRepository->getQuizRanking($quiz);
+
+        $ranking = [];
+        $userPosition = null;
+        $userScore = null;
+        $currentUserId = (int) $currentUser->getId();
+
+
+        dump([
+            'currentUserId' => $currentUserId,
+            'results' => $results,
+        ]);
+        foreach ($results as $index => $result) {
+            $position = $index + 1;
+            $resultUserId = (int) $result['user_id'];
+            $isCurrentUser = $resultUserId === $currentUserId;
+
+            $fullName = trim($result['imie'].' '.$result['nazwisko']);
+            $displayName = $isCurrentUser
+                ? $fullName.' (to ja)'
+                : $this->maskName($result['imie'], $result['nazwisko']);
+
+            if ($isCurrentUser) {
+                $userPosition = $position;
+                $userScore = $result['score'];
+            }
+
+            $ranking[] = [
+                'position' => $position,
+                'name' => $displayName,
+                'score' => $result['score'],
+            ];
+        }
+
+        return [
+            'ranking' => $ranking,
+            'userPosition' => $userPosition,
+            'userScore' => $userScore,
+        ];
+    }
+
     /**
      * Synchronize the relations and set positions.
      *
@@ -625,5 +668,16 @@ class QuizService implements QuizServiceInterface
             }
             $quiz->addQuestion($question);
         }
+    }
+
+    private function maskName(?string $imie, ?string $nazwisko): string
+    {
+        if (!$imie || !$nazwisko) {
+            return 'Ukryte';
+        }
+        $maskedImie = substr($imie, 0, 1).str_repeat('*', 3);
+        $maskedNazwisko = substr($nazwisko, 0, 1).str_repeat('*', 5);
+
+        return $maskedImie.' '.$maskedNazwisko;
     }
 }

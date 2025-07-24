@@ -85,4 +85,25 @@ class QuizResultRepository extends ServiceEntityRepository
             ->getQuery()
             ->getOneOrNullResult();
     }
+
+    /**
+     * Pobiera ranking wyników dla danego quizu.
+     *
+     * @param Quiz $quiz Quiz entity
+     *
+     * @return array Lista wyników z informacjami o użytkownikach
+     */
+    public function getQuizRanking(Quiz $quiz): array
+    {
+        return $this->createQueryBuilder('qr')
+            ->select('qr.score', 'up.imie', 'up.nazwisko', 'up.id as profile_id', 'u.id as user_id')
+            ->leftJoin('qr.user', 'u')
+            ->leftJoin('u.profile', 'up')
+            ->where('qr.quiz = :quiz')
+            ->setParameter('quiz', $quiz)
+            ->orderBy('qr.score', 'DESC')
+            ->addOrderBy('qr.completedAt', 'ASC')
+            ->getQuery()
+            ->getResult();
+    }
 }

@@ -11,6 +11,7 @@
             <a href="{{ path('app_quiz_list') }}" class="btn btn-primary w-100">Quizy</a>
             {% if is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('admin_user_list') }}" class="btn btn-primary">Zarządzaj użytkownikami</a>
+                <a href="{{ path('powiat_index') }}" class="btn btn-primary">Zarządzaj powiatami</a>
             {% else %}
                 <a href="{{ path('user_edit') }}" class="btn btn-primary">Edytuj dane</a>
             {% endif %}

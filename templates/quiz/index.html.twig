@@ -58,6 +58,9 @@
                                     <a class="btn btn-outline-success me-2" href="{{ url('quiz_solve', {id: quiz.id}) }}" title="{{ 'action.solve'|trans }}">
                                         {{ 'action.solve'|trans }}
                                     </a>
+                                    <a class="btn btn-outline-success me-2" href="{{ url('quiz_ranking', {id: quiz.id}) }}" title="{{ 'action.check_ranking'|trans }}">
+                                        {{ 'action.check_ranking'|trans }}
+                                    </a>
                                 {% else %}
                                     <a class="btn btn-outline-success me-2" href="{{ path('quiz_start_view', {id: quiz.id}) }}" title="Rozpocznij quiz">
                                         Rozpocznij

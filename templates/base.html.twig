@@ -103,7 +103,7 @@
             }
 
             .logout-btn {
-                background-color: #d51b60;
+                background-color: #d51b60; /*tutaj*/
                 color: white;
                 font-family: 'Luckiest Guy', cursive;
                 border: none;
@@ -263,6 +263,7 @@
                 .menu-button:nth-child(2) { z-index: 3; }
                 .menu-button:nth-child(3) { z-index: 2; }
                 .menu-button:nth-child(4) { z-index: 1; }
+                .menu-button:nth-child(5) { z-index: 0; }
 
                 .menu-button:hover {
                     z-index: 5;
@@ -395,15 +396,11 @@
             <div class="logout-btn-container">
                 <form action="{{ path('app_logout') }}" method="post">
                     <button type="submit" class="logout-btn">
-                        {{ 'Wyloguj'|trans }}
+                        {{ 'Wyloguj' }}
                     </button>
                 </form>
             </div>
 
-        {% else %}
-            <div class="mb-3">
-                <a href="{{ url('app_login') }}">{{ 'action.login'|trans }}</a>
-            </div>
         {% endif %}
 
         {# Nagłówek z logo i menu #}

@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+ <xliff version="1.2" xmlns="urn:oasis:names:tc:xliff:document:1.2">
+     <file source-language="pl" datatype="plaintext" original="validators">
+         <body>
+         <!-- Validators -->
+              <trans-unit id="validators.Czas publikacji musi być większy od zera.">
+                <source>Czas publikacji musi być większy od zera.</source>
+                <target>Czas publikacji musi być większy od zera.</target>
+              </trans-unit>
+              <trans-unit id="validators.Hasło nie może być puste.">
+                <source>Hasło nie może być puste.</source>
+                <target>Hasło nie może być puste.</target>
+              </trans-unit>
+              <trans-unit id="validators.Hasło musi mieć co najmniej {{ limit }} znaków.">
+                <source>Hasło musi mieć co najmniej {{ limit }} znaków.</source>
+                <target>Hasło musi mieć co najmniej {{ limit }} znaków.</target>
+              </trans-unit>
+              <trans-unit id="validators.Proszę przesłać plik graficzny (jpg, png, gif)">
+                <source>Proszę przesłać plik graficzny (jpg, png, gif)</source>
+                <target>Proszę przesłać plik graficzny (jpg, png, gif)</target>
+              </trans-unit>
+              <trans-unit id="validators.message.enter_password">
+                <source>message.enter_password</source>
+                <target>Proszę podać hasło</target>
+              </trans-unit>
+              <trans-unit id="validators.message.password_too_short">
+                <source>message.password_too_short</source>
+                <target>Hasło jest za krótkie</target>
+              </trans-unit>
+              <trans-unit id="validators.massage.prosze_podac_imie">
+                <source>massage.prosze_podac_imie</source>
+                <target>Proszę podać imię</target>
+              </trans-unit>
+              <trans-unit id="validators.message.prosze_podac_nazwisko">
+                <source>message.prosze_podac_nazwisko</source>
+                <target>Proszę podać nazwisko</target>
+              </trans-unit>
+              <trans-unit id="validators.message.prosze_podac_nazwe_szkoly">
+                <source>message.prosze_podac_nazwe_szkoly</source>
+                <target>Proszę podać nazwę szkoły</target>
+              </trans-unit>
+              <trans-unit id="validators.message.prosze_podac_wojewodztwo">
+                <source>message.prosze_podac_wojewodztwo</source>
+                <target>Proszę podać województwo</target>
+              </trans-unit>
+              <trans-unit id="validators.message.prosze_podac_powiat">
+                <source>message.prosze_podac_powiat</source>
+                <target>Proszę podać powiat</target>
+              </trans-unit>
+              <trans-unit id="validators.message.nie_powinno_byc_puste">
+                <source>message.nie_powinno_byc_puste</source>
+                <target>Pole nie powinno być puste</target>
+              </trans-unit>
+              <trans-unit id="validators.message.you_should_agree_to_terms">
+                <source>message.you_should_agree_to_terms</source>
+                <target>Musisz wyrazić zgodę na regulamin</target>
+              </trans-unit>
+              <trans-unit id="validators.message.you_should_agree_to_rodo">
+                <source>message.you_should_agree_to_rodo</source>
+                <target>Musisz wyrazić zgodę na politykę RODO</target>
+              </trans-unit>
+        </body>
+    </file>
+</xliff>

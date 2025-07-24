@@ -20,6 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 /**
  * RegistrationForm class.
@@ -92,9 +93,20 @@ class RegistrationForm extends AbstractType
                 'label' => 'label.imie',
                 'constraints' => [
                     new NotBlank([
-                        'message' => 'massage.prosze_podac_imie',
+                        'message' => 'message.prosze_podac_imie',
+                    ]),
+                    new Length([
+                        'min' => 2,
+                        'minMessage' => 'Imię musi mieć co najmniej {{ limit }} znaki.',
+                        'max' => 50,
+                        'maxMessage' => 'Imię nie może mieć więcej niż {{ limit }} znaków.',
+                    ]),
+                    new Regex([
+                        'pattern' => '/^[a-zA-ZąęćłńóśźżĄĘĆŁŃÓŚŹŻ\s-]+$/u',
+                        'message' => 'Imię może zawierać tylko litery, polskie znaki i myślniki.',
                     ]),
                 ],
+                'trim' => true,
             ])
             ->add('nazwisko', TextType::class, [
                 'mapped' => false,
@@ -103,7 +115,18 @@ class RegistrationForm extends AbstractType
                     new NotBlank([
                         'message' => 'message.prosze_podac_nazwisko',
                     ]),
+                    new Length([
+                        'min' => 2,
+                        'minMessage' => 'Nazwisko musi mieć co najmniej {{ limit }} znaki.',
+                        'max' => 50,
+                        'maxMessage' => 'Nazwisko nie może mieć więcej niż {{ limit }} znaków.',
+                    ]),
+                    new Regex([
+                        'pattern' => '/^[a-zA-ZąęćłńóśźżĄĘĆŁŃÓŚŹŻ\s-]+$/u',
+                        'message' => 'Nazwisko może zawierać tylko litery, polskie znaki i myślniki.',
+                    ]),
                 ],
+                'trim' => true,
             ])
             ->add('szkola', TextType::class, [
                 'mapped' => false,
@@ -112,7 +135,18 @@ class RegistrationForm extends AbstractType
                     new NotBlank([
                         'message' => 'message.prosze_podac_nazwe_szkoly',
                     ]),
+                    new Length([
+                        'min' => 3,
+                        'minMessage' => 'Nazwa szkoły musi mieć co najmniej {{ limit }} znaki.',
+                        'max' => 100,
+                        'maxMessage' => 'Nazwa szkoły nie może mieć więcej niż {{ limit }} znaków.',
+                    ]),
+                    new Regex([
+                        'pattern' => '/^[a-zA-Z0-9ąęćłńóśźżĄĘĆŁŃÓŚŹŻ\s\.,-]+$/u',
+                        'message' => 'Nazwa szkoły może zawierać tylko litery, cyfry, polskie znaki, spacje, kropki, przecinki i myślniki.',
+                    ]),
                 ],
+                'trim' => true,
             ])
             ->add('wojewodztwo', ChoiceType::class, [
                 'mapped' => false,

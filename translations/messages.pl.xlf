@@ -111,6 +111,30 @@
         <source>label.hello</source>
         <target>Cześć</target>
       </trans-unit>
+      <trans-unit id="label.agree_terms">
+        <source>label.agree_terms</source>
+        <target>Wyrażam zgodę na regulamin</target>
+      </trans-unit>
+      <trans-unit id="label.agree_rodo">
+        <source>label.agree_rodo</source>
+        <target>Wyrażam zgodę na przetwarzanie moich danych osobowych[...]</target>
+      </trans-unit>
+      <trans-unit id="label.powiat_name">
+        <source>label.powiat_name</source>
+        <target>Nazwa powiatu</target>
+      </trans-unit>
+      <trans-unit id="label.wojewodztwo_name">
+        <source>label.wojewodztwo_name</source>
+        <target>Nazwa województwa</target>
+      </trans-unit>
+      <trans-unit id="label.points">
+        <source>label.points</source>
+        <target>Punkty</target>
+      </trans-unit>
+      <trans-unit id="label.quiz">
+        <source>label.quiz</source>
+        <target>Quiz</target>
+      </trans-unit>
 
       <!-- Actions -->
       <trans-unit id="action.save">
@@ -255,23 +279,133 @@
         <source>message.confirm_delete</source>
         <target>Czy na pewno chcesz usunąć?</target>
       </trans-unit>
-
-      <!-- Validators -->
-      <trans-unit id="validators.Czas publikacji musi być większy od zera.">
-        <source>Czas publikacji musi być większy od zera.</source>
-        <target>Czas publikacji musi być większy od zera.</target>
+      <trans-unit id="message.enter_password">
+        <source>message.enter_password</source>
+        <target>Proszę podać hasło</target>
       </trans-unit>
-      <trans-unit id="validators.Hasło nie może być puste.">
-        <source>Hasło nie może być puste.</source>
-        <target>Hasło nie może być puste.</target>
+      <trans-unit id="message.password_too_short">
+        <source>message.password_too_short</source>
+        <target>Hasło jest za krótkie</target>
       </trans-unit>
-      <trans-unit id="validators.Hasło musi mieć co najmniej {{ limit }} znaków.">
-        <source>Hasło musi mieć co najmniej {{ limit }} znaków.</source>
-        <target>Hasło musi mieć co najmniej {{ limit }} znaków.</target>
+      <trans-unit id="message.prosze_podac_imie">
+        <source>message.prosze_podac_imie</source>
+        <target>Proszę podać imię</target>
       </trans-unit>
-      <trans-unit id="validators.Proszę przesłać plik graficzny (jpg, png, gif)">
-        <source>Proszę przesłać plik graficzny (jpg, png, gif)</source>
-        <target>Proszę przesłać plik graficzny (jpg, png, gif)</target>
+      <trans-unit id="message.prosze_podac_nazwisko">
+        <source>message.prosze_podac_nazwisko</source>
+        <target>Proszę podać nazwisko</target>
+      </trans-unit>
+      <trans-unit id="message.prosze_podac_nazwe_szkoly">
+        <source>message.prosze_podac_nazwe_szkoly</source>
+        <target>Proszę podać nazwę szkoły</target>
+      </trans-unit>
+      <trans-unit id="message.prosze_podac_wojewodztwo">
+        <source>message.prosze_podac_wojewodztwo</source>
+        <target>Proszę podać województwo</target>
+      </trans-unit>
+      <trans-unit id="message.prosze_podac_powiat">
+        <source>message.prosze_podac_powiat</source>
+        <target>Proszę podać powiat</target>
+      </trans-unit>
+      <trans-unit id="message.nie_powinno_byc_puste">
+        <source>message.nie_powinno_byc_puste</source>
+        <target>Pole nie powinno być puste</target>
+      </trans-unit>
+      <trans-unit id="message.you_should_agree_to_terms">
+        <source>message.you_should_agree_to_terms</source>
+        <target>Musisz wyrazić zgodę na regulamin</target>
+      </trans-unit>
+      <trans-unit id="message.you_should_agree_to_rodo">
+        <source>message.you_should_agree_to_rodo</source>
+        <target>Musisz wyrazić zgodę na politykę RODO</target>
+      </trans-unit>
+      <trans-unit id="title.answer_create">
+        <source>title.answer_create</source>
+        <target>Tworzenie odpowiedzi</target>
+      </trans-unit>
+      <trans-unit id="title.answer_delete">
+        <source>title.answer_delete</source>
+        <target>Usuwanie odpowiedzi</target>
+      </trans-unit>
+      <trans-unit id="title.answer_edit">
+        <source>title.answer_edit</source>
+        <target>Edycja odpowiedzi</target>
+      </trans-unit>
+      <trans-unit id="title.answer_list">
+        <source>title.answer_list</source>
+        <target>Lista odpowiedzi</target>
+      </trans-unit>
+      <trans-unit id="title.answer_details">
+        <source>title.answer_details</source>
+        <target>Szczegóły odpowiedzi</target>
+      </trans-unit>
+      <trans-unit id="title.about">
+        <source>title.about</source>
+        <target>O nas</target>
+      </trans-unit>
+      <trans-unit id="title.powiat_create">
+        <source>title.powiat_create</source>
+        <target>Tworzenie powiatu</target>
+      </trans-unit>
+      <trans-unit id="title.powiat_delete">
+        <source>title.powiat_delete</source>
+        <target>Usuwanie powiatu</target>
+      </trans-unit>
+      <trans-unit id="title.powiat_edit">
+        <source>title.powiat_edit</source>
+        <target>Edycja powiatu</target>
+      </trans-unit>
+      <trans-unit id="title.powiat_list">
+        <source>title.powiat_list</source>
+        <target>Lista powiatów</target>
+      </trans-unit>
+      <trans-unit id="title.question_create">
+        <source>title.question_create</source>
+        <target>Tworzenie pytania</target>
+      </trans-unit>
+      <trans-unit id="title.question_delete">
+        <source>title.question_delete</source>
+        <target>Usuwanie pytania</target>
+      </trans-unit>
+      <trans-unit id="title.question_edit">
+        <source>title.question_edit</source>
+        <target>Edycja pytania</target>
+      </trans-unit>
+      <trans-unit id="title.question_list">
+        <source>title.question_list</source>
+        <target>Lista pytań</target>
+      </trans-unit>
+      <trans-unit id="title.question_details">
+        <source>title.question_details</source>
+        <target>Szczegóły pytania</target>
+      </trans-unit>
+      <trans-unit id="title.quiz_delete">
+        <source>title.quiz_delete</source>
+        <target>Usuwanie quizu</target>
+      </trans-unit>
+      <trans-unit id="title.quiz_list">
+        <source>title.quiz_list</source>
+        <target>Lista quizów</target>
+      </trans-unit>
+      <trans-unit id="title.quiz_result">
+        <source>title.quiz_result</source>
+        <target>Wyniki quizu</target>
+      </trans-unit>
+      <trans-unit id="title.solve_quiz">
+        <source>title.solve_quiz</source>
+        <target>Rozwiązywanie quizu</target>
+      </trans-unit>
+      <trans-unit id="title.view_quiz">
+        <source>title.view_quiz</source>
+        <target>Wyświetlanie quizu</target>
+      </trans-unit>
+      <trans-unit id="title.register">
+        <source>title.register</source>
+        <target>Rejestracja</target>
+      </trans-unit>
+      <trans-unit id="title.login">
+        <source>title.login</source>
+        <target>Logowanie</target>
       </trans-unit>
     </body>
   </file>
