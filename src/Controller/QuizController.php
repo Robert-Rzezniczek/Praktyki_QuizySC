@@ -10,6 +10,8 @@ use App\Entity\Quiz;
 use App\Entity\UserAuth;
 use App\Form\Type\QuizSolveType;
 use App\Form\Type\QuizType;
+use App\Repository\QuizRepository;
+use App\Repository\QuizResultRepository;
 use App\Service\QuizResultServiceInterface;
 use App\Service\QuizServiceInterface;
 use App\Service\UserAnswerServiceInterface;
@@ -669,6 +671,31 @@ class QuizController extends AbstractController
             'ranking' => $rankingData['ranking'],
             'userPosition' => $rankingData['userPosition'],
             'userScore' => $rankingData['userScore'],
+        ]);
+    }
+
+    #[Route('/quiz/menu', name: 'quiz_menu_view', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function menuView(QuizRepository $quizRepository, QuizResultRepository $quizResultRepository): Response
+    {
+        $user = $this->getUser();
+        $quizzes = $quizRepository->findAll();
+
+        $quizData = [];
+
+        foreach ($quizzes as $quiz) {
+            $result = $quizResultRepository->findOneByQuizAndUser($quiz, $user);
+
+            $quizData[] = [
+                'id' => $quiz->getId(),
+                'title' => $quiz->getTitle(),
+                'completed' => $result !== null,
+                'score' => $result?->getScore(), // lub getScore()
+            ];
+        }
+
+        return $this->render('quiz/menuView.html.twig', [
+            'quizzes' => $quizData,
         ]);
     }
 }
