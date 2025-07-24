@@ -624,4 +624,30 @@ class QuizController extends AbstractController
             'quiz' => $quiz,
         ]);
     }
+    #[Route('/quiz/menu', name: 'quiz_menu_view', methods: ['GET'])]
+    #[IsGranted('ROLE_USER')]
+    public function menuView(
+        QuizRepository $quizRepository,
+        QuizResultRepository $quizResultRepository
+    ): Response {
+        $user = $this->getUser();
+        $quizzes = $quizRepository->findAll();
+
+        $quizData = [];
+
+        foreach ($quizzes as $quiz) {
+            $result = $quizResultRepository->findOneByQuizAndUser($quiz, $user);
+
+            $quizData[] = [
+                'id' => $quiz->getId(),
+                'title' => $quiz->getTitle(),
+                'completed' => $result !== null,
+                'score' => $result?->getScore(), // lub getScore()
+            ];
+        }
+
+        return $this->render('quiz/menuView.html.twig', [
+            'quizzes' => $quizData,
+        ]);
+    }
 }

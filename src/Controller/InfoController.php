@@ -58,11 +58,6 @@ class InfoController extends AbstractController
      *
      * @return Response Response
      */
-    #[Route('/about', name: 'app_about')]
-    public function about(): Response
-    {
-        return $this->render('info/about.html.twig');
-    }
 
     /**
      * Rules.
