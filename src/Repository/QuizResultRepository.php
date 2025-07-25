@@ -75,7 +75,7 @@ class QuizResultRepository extends ServiceEntityRepository
      *
      * @return QuizResult|null QuizResult entity or null
      */
-    public function findOneByQuizAndUser(Quiz $quiz, UserInterface $user): ?QuizResult
+    public function findOneByQuizAndUser(Quiz $quiz, UserAuth $user): ?QuizResult
     {
         return $this->createQueryBuilder('quizResult')
             ->where('quizResult.quiz = :quiz')

@@ -29,7 +29,9 @@ class QuizResult
      * User (relation to UserAuth).
      */
     #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
     private ?UserAuth $user = null;
+
 
     /**
      * Quiz (relation).

@@ -1,7 +1,6 @@
 {% extends 'base.html.twig' %}
-
 {% block title %}
-    {{ 'title.quiz_result'|trans }} - {{ quiz.title }}
+    Wynik - {{ quiz.title }}
 {% endblock %}
 
 {% block stylesheets %}
@@ -14,10 +13,11 @@
             padding: 60px 80px;
             font-family: 'Luckiest Guy', cursive;
             text-align: center;
+            letter-spacing: 1.5px;
         }
 
         .result-header {
-            font-size: 4rem;
+            font-size: 4.5rem;
             color: #2e7d32;
             font-weight: bold;
         }
@@ -44,7 +44,6 @@
         .score-circle {
             width: 260px;
             height: 260px;
-            border: 14px solid #2e7d32;
             border-radius: 50%;
             margin: 30px auto 10px;
             display: flex;
@@ -52,7 +51,26 @@
             justify-content: center;
             font-size: 2.5rem;
             font-weight: bold;
+            color: #2e7d32;
+            background: conic-gradient(#2e7d32 0%, #e0e0e0 0%);
+            position: relative;
         }
+
+        .score-circle::before {
+            content: "";
+            position: absolute;
+            width: 200px;
+            height: 200px;
+            background-color: white;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .score-circle span {
+            position: relative;
+            z-index: 2;
+        }
+
 
         .result-score-label {
             font-size: 1.6rem;
@@ -80,34 +98,54 @@
             transform: scale(1.05);
         }
     </style>
-
 {% endblock %}
 
 {% block body %}
+
     <div class="result-card">
         <h1 class="result-header">BRAWO!</h1>
 
         <div class="result-info">
             <div class="result-section result-details">
-                <p><strong>Rozwiązujący:</strong><br>👤 Imię Nazwisko</p>
-                <p><strong>Wynik:</strong><br>✔ Test zakończony</p>
-                <p><strong>Czas:</strong><br>⏱ {{ duration }} sekundy</p>
-                <p><strong>Data:</strong><br>{{ "now"|date("Y-m-d") }}</p>
+                <p><strong>Rozwiązujący:</strong><br>👤 {{ quizResult.user.profile.imie }} {{ quizResult.user.profile.nazwisko }}</p>
+                <p><strong>Wynik:</strong><br>✔ {{ score }}%</p>
+                {% set minutes = duration // 60 %}
+                {% set seconds = duration % 60 %}
+                <p><strong>Czas:</strong><br>⏱ {{ minutes }} min {{ seconds }} sek</p>
+
+                <p><strong>Data:</strong><br>{{ quizResult.completedAt|date('Y-m-d H:i') }}</p>
             </div>
 
             <div class="result-section" style="text-align: center;">
                 <div class="result-score-label">TWÓJ WYNIK TO:</div>
-                <div class="score-circle">{{ score }}%</div>
-                <div class="result-score-label">{{ correctAnswers }}/{{ totalQuestions }} PKT</div>
+                <div class="score-circle" data-score="{{ score }}"><span>{{ score }}%</span></div>
+                <div class="result-score-label">{{ earnedPoints }}/{{ totalPoints }} PKT</div>
             </div>
         </div>
 
-
-
         <div class="action-buttons">
-            <a href="{{ path('app_quiz_list') }}">MENU</a>
-            {# <a href="{{ path('quiz_ranking', {'id': quiz.id}) }}">RANKING</a> #}
+            <a href="{{ path('quiz_ranking', {'id': quiz.id}) }}">RANKING</a>
         </div>
     </div>
-{% endblock %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const circle = document.querySelector('.score-circle');
+            if (!circle) return;
 
+            const targetScore = Math.min(100, parseFloat(circle.dataset.score));
+            let current = 0;
+            const step = 1;
+            const delay = 10;
+
+            const interval = setInterval(() => {
+                if (current >= targetScore) {
+                    current = targetScore;
+                    clearInterval(interval);
+                }
+                circle.style.background = `conic-gradient(#2e7d32 ${current}%, #e0e0e0 0%)`;
+                current += step;
+            }, delay);
+        });
+    </script>
+
+{% endblock %}

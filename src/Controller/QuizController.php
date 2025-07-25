@@ -359,6 +359,7 @@ class QuizController extends AbstractController
     public function showResult(int $id): Response
     {
         $quizResult = $this->quizResultService->getQuizResultForUser($id, $this->getUser());
+
         if (!$quizResult) {
             throw $this->createAccessDeniedException('Nie masz dostępu do tych wyników.');
         }
@@ -367,9 +368,16 @@ class QuizController extends AbstractController
         $score = $quizResult->getScore();
         $correctAnswers = $quizResult->getCorrectAnswers();
         $totalQuestions = $quiz->getQuestions()->count();
-        $startedAt = $quizResult->getStartedAt() ? $quizResult->getStartedAt()->getTimestamp() : (new \DateTime())->getTimestamp();
-        $completedAt = $quizResult->getCompletedAt() ? $quizResult->getCompletedAt()->getTimestamp() : (new \DateTime())->getTimestamp();
+        $startedAt = $quizResult->getStartedAt()?->getTimestamp() ?? (new \DateTime())->getTimestamp();
+        $completedAt = $quizResult->getCompletedAt()?->getTimestamp() ?? (new \DateTime())->getTimestamp();
         $duration = $completedAt - $startedAt;
+
+        // NOWE: Obliczenie punktów
+        $totalPoints = 0;
+        foreach ($quiz->getQuestions() as $question) {
+            $totalPoints += $question->getPoints();
+        }
+        $earnedPoints = round(($score / 100) * $totalPoints);
 
         return $this->render('quiz/result.html.twig', [
             'quiz' => $quiz,
@@ -378,8 +386,11 @@ class QuizController extends AbstractController
             'correctAnswers' => $correctAnswers,
             'totalQuestions' => $totalQuestions,
             'duration' => $duration,
+            'earnedPoints' => $earnedPoints,
+            'totalPoints' => $totalPoints,
         ]);
     }
+
 
     /**
      * Create step action (step by step quiz).
