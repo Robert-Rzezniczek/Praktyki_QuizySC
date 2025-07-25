@@ -567,6 +567,7 @@ class QuizService implements QuizServiceInterface
             $session->remove(sprintf('quiz_%d_answers', $quiz->getId()));
             $session->remove(sprintf('quiz_%d_initialized_at', $quiz->getId()));
             $session->remove(sprintf('quiz_%d_start_time', $quiz->getId()));
+            $quizResult->setUser($user);
 
             return $quizResult;
         } catch (\InvalidArgumentException $e) {

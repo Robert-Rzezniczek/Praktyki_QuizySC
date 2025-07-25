@@ -370,6 +370,14 @@ class QuizController extends AbstractController
         $completedAt = $quizResult->getCompletedAt() ? $quizResult->getCompletedAt()->getTimestamp() : (new \DateTime())->getTimestamp();
         $duration = $completedAt - $startedAt;
 
+        // NOWE: Obliczenie punktów
+        $totalPoints = 0;
+        foreach ($quiz->getQuestions() as $question) {
+            $totalPoints += $question->getPoints();
+        }
+        $earnedPoints = round(($score / 100) * $totalPoints);
+
+
         return $this->render('quiz/result.html.twig', [
             'quiz' => $quiz,
             'quizResult' => $quizResult,
@@ -377,6 +385,8 @@ class QuizController extends AbstractController
             'correctAnswers' => $correctAnswers,
             'totalQuestions' => $totalQuestions,
             'duration' => $duration,
+            'earnedPoints' => $earnedPoints,
+            'totalPoints' => $totalPoints,
         ]);
     }
 
