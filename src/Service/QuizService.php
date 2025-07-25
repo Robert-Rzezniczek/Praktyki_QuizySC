@@ -19,6 +19,7 @@ use Knp\Component\Pager\PaginatorInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * QuizService class.
@@ -610,21 +611,18 @@ class QuizService implements QuizServiceInterface
         $userPosition = null;
         $userScore = null;
         $currentUserId = (int) $currentUser->getId();
+        $isAdmin = in_array('ROLE_ADMIN', $currentUser->getRoles(), true);
 
-
-        dump([
-            'currentUserId' => $currentUserId,
-            'results' => $results,
-        ]);
         foreach ($results as $index => $result) {
             $position = $index + 1;
             $resultUserId = (int) $result['user_id'];
             $isCurrentUser = $resultUserId === $currentUserId;
 
             $fullName = trim($result['imie'].' '.$result['nazwisko']);
-            $displayName = $isCurrentUser
-                ? $fullName.' (to ja)'
-                : $this->maskName($result['imie'], $result['nazwisko']);
+            $displayName = $isAdmin ? $fullName
+                :($isCurrentUser
+                    ? $fullName.' (to ja)'
+                    : $this->maskName($result['imie'], $result['nazwisko']));
 
             if ($isCurrentUser) {
                 $userPosition = $position;
@@ -643,6 +641,78 @@ class QuizService implements QuizServiceInterface
             'userPosition' => $userPosition,
             'userScore' => $userScore,
         ];
+    }
+
+    /**
+     * Get combined list of published quizzes and quizzes solved by user.
+     *
+     * @param UserInterface $user The current user
+     *
+     * @return Quiz[] Array of unique quizzes
+     */
+    public function getCombinedQuizzesForUser(UserInterface $user): array
+    {
+        if (!$user instanceof UserAuth) {
+            throw new \InvalidArgumentException('Invalid user type');
+        }
+
+        // Pobierz opublikowane quizy
+        $publishedQuizzes = $this->quizRepository->findAllPublished();
+
+        // Pobierz quizy rozwiązane przez użytkownika
+        $solvedQuizzes = $this->quizRepository->findAllSolvedByUser($user);
+
+        // Połącz listy i usuń duplikaty (używając quiz_id jako klucza)
+        $combinedQuizzes = [];
+        foreach (array_merge($publishedQuizzes, $solvedQuizzes) as $quiz) {
+            $combinedQuizzes[$quiz->getId()] = $quiz;
+        }
+
+        return array_values($combinedQuizzes); // Przekształć z powrotem na zwykłą tablicę
+    }
+
+    /**
+     * Prepare quiz data for menu view.
+     *
+     * @param UserInterface $user The current user
+     *
+     * @return array Array of quiz data for the template
+     */
+    public function prepareMenuViewData(UserInterface $user): array
+    {
+        $quizzes = $this->getCombinedQuizzesForUser($user);
+        $quizData = [];
+
+        foreach ($quizzes as $quiz) {
+            $result = $this->quizResultRepository->findOneByQuizAndUser($quiz, $user);
+            $quizResultId = $result?->getId();
+            $quizData[] = [
+                'quiz_id' => $quiz->getId(),
+                'quiz_result' => $quizResultId ? $quizResultId : null,
+                'title' => $quiz->getTitle(),
+                'completed' => null !== $result,
+                'score' => $result?->getScore(),
+            ];
+        }
+
+        return $quizData;
+    }
+
+    /**
+     * Get quiz result for a specific quiz and user.
+     *
+     * @param Quiz          $quiz The quiz entity
+     * @param UserInterface $user The current user
+     *
+     * @return QuizResult|null The quiz result or null if not found
+     */
+    public function getQuizResultForQuizAndUser(Quiz $quiz, UserInterface $user): ?QuizResult
+    {
+        if (!$user instanceof UserAuth) {
+            throw new \InvalidArgumentException('Zły użytkownik.');
+        }
+
+        return $this->quizResultRepository->findOneByQuizAndUser($quiz, $user);
     }
 
     /**

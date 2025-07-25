@@ -51,11 +51,13 @@
 {% block body %}
     <div class="container d-flex flex-column align-items-center">
         <div class="menu-container">
-            <a href="{{ path('app_quiz_list') }}" class="menu-btn red">Quizy</a>
+{#            <a href="{{ path('quiz_menu_view') }}" class="menu-btn red">Quizy</a>#}
 
             {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('quiz_index') }}" class="menu-btn red">Quizy</a>
                 <a href="{{ path('admin_user_list') }}" class="menu-btn orange">Zarządzaj</a>
             {% else %}
+                <a href="{{ path('quiz_menu_view') }}" class="menu-btn red">Quizy</a>
                 <a href="{{ path('user_edit') }}" class="menu-btn orange">Edytuj dane</a>
             {% endif %}
         </div>

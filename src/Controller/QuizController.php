@@ -10,8 +10,6 @@ use App\Entity\Quiz;
 use App\Entity\UserAuth;
 use App\Form\Type\QuizSolveType;
 use App\Form\Type\QuizType;
-use App\Repository\QuizRepository;
-use App\Repository\QuizResultRepository;
 use App\Service\QuizResultServiceInterface;
 use App\Service\QuizServiceInterface;
 use App\Service\UserAnswerServiceInterface;
@@ -358,7 +356,8 @@ class QuizController extends AbstractController
     #[IsGranted('ROLE_USER')]
     public function showResult(int $id): Response
     {
-        $quizResult = $this->quizResultService->getQuizResultForUser($id, $this->getUser());
+        $user = $this->getUser();
+        $quizResult = $this->quizResultService->getQuizResultForUser($id, $user);
         if (!$quizResult) {
             throw $this->createAccessDeniedException('Nie masz dostępu do tych wyników.');
         }
@@ -642,8 +641,7 @@ class QuizController extends AbstractController
     /**
      * Show quiz ranking action.
      *
-     * @param Quiz                 $quiz        Quiz entity
-     * @param QuizServiceInterface $quizService QuizService
+     * @param Quiz $quiz Quiz entity
      *
      * @return Response HTTP response
      */
@@ -654,7 +652,7 @@ class QuizController extends AbstractController
         methods: 'GET'
     )]
     #[IsGranted('ROLE_USER')]
-    public function showRanking(Quiz $quiz, QuizServiceInterface $quizService): Response
+    public function showRanking(Quiz $quiz): Response
     {
         $user = $this->getUser();
 
@@ -662,40 +660,27 @@ class QuizController extends AbstractController
             throw $this->createAccessDeniedException('Musisz być zalogowany, aby zobaczyć ranking.');
         }
 
-        $rankingData = $quizService->getQuizRanking($quiz, $user);
-        //        dump($rankingData); // Tymczasowe debugowanie
-        //        die; // Zatrzymaj wykonanie, aby zobaczyć wyniki
+        $rankingData = $this->quizService->getQuizRanking($quiz, $user);
+        $quizResult = $this->quizService->getQuizResultForQuizAndUser($quiz, $user);
 
         return $this->render('quiz/ranking.html.twig', [
             'quiz' => $quiz,
+            'result_id' => $quizResult ? $quizResult->getId() : null,
             'ranking' => $rankingData['ranking'],
             'userPosition' => $rankingData['userPosition'],
             'userScore' => $rankingData['userScore'],
         ]);
     }
 
-    #[Route('/quiz/menu', name: 'quiz_menu_view', methods: ['GET'])]
+    #[Route('/menu', name: 'quiz_menu_view', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
-    public function menuView(QuizRepository $quizRepository, QuizResultRepository $quizResultRepository): Response
+    public function menuView(): Response
     {
         $user = $this->getUser();
-        $quizzes = $quizRepository->findAll();
-
-        $quizData = [];
-
-        foreach ($quizzes as $quiz) {
-            $result = $quizResultRepository->findOneByQuizAndUser($quiz, $user);
-
-            $quizData[] = [
-                'id' => $quiz->getId(),
-                'title' => $quiz->getTitle(),
-                'completed' => $result !== null,
-                'score' => $result?->getScore(), // lub getScore()
-            ];
-        }
+        $quizzes = $this->quizService->prepareMenuViewData($user);
 
         return $this->render('quiz/menuView.html.twig', [
-            'quizzes' => $quizData,
+            'quizzes' => $quizzes,
         ]);
     }
 }

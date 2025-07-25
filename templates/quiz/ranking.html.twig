@@ -2,6 +2,32 @@
 
 {% block title %}{{ 'Ranking - ' ~ quiz.title|default('Quiz')|trans }}{% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .action-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 50px;
+            margin-top: 50px;
+        }
+
+        .action-buttons a {
+            background-color: #9c27b0;
+            color: white;
+            padding: 20px 50px;
+            font-size: 1.6rem;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+        }
+
+        .action-buttons a:hover {
+            transform: scale(1.05);
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <div class="container my-5">
         <h1 class="display-6 text-center mb-4">{{ 'Ranking - ' ~ quiz.title|default('Quiz')|trans }}</h1>
@@ -29,8 +55,15 @@
             {% endif %}
         {% endif %}
 
-        <div class="text-center mt-4">
-            <a href="{{ path('quiz_index') }}" class="btn btn-secondary">{{ 'action.back_to_list'|trans }}</a>
+        <div class="action-buttons">
+            {% if is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('quiz_index') }}">QUIZY</a>
+            {% else %}
+                <a href="{{ path('quiz_menu_view') }}">MENU</a>
+            {% endif %}
+            {% if result_id is not null and not is_granted('ROLE_ADMIN') %}
+                <a href="{{ path('quiz_result', {'id': result_id}) }}">WYNIK</a>
+            {% endif %}
         </div>
     </div>
 {% endblock %}

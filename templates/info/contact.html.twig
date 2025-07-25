@@ -7,60 +7,71 @@
     <link rel="stylesheet" href="{{ asset('css/kontakt.css') }}">
     <style>
         .contact-card {
-            max-width: 420px;
-            border: none;
-            border-radius: 1rem;
+            max-width: 100%;
             padding: 2rem;
             margin-left: auto;
             margin-right: auto;
         }
 
+
         .contact-image {
             max-height: 400px;
+            width: 300px;
             border-radius: 0.5rem;
+        }
+
+        h1 {
+            font-family: "Luckiest Guy", cursive;
         }
 
     </style>
 {% endblock %}
+{% block body %}<div class="container my-5">
+    <div class="row g-5 align-items-stretch">
 
-{% block body %}
-    <div class="container my-5">
-        <div class="row g-5 align-items-center">
-            <div class="col-lg-7">
-                <h1 class="display-5 fw-bold text-center mb-3">Zostańmy w kontakcie!</h1>
-                <p class="lead text-muted text-center mb-4">Masz pytania? Skontaktuj się z nami – chętnie pomożemy!</p>
+        <div class="col-lg-7 d-flex flex-column">
 
-                <div class="card contact-card">
-                    <div class="mb-3 text-center">
-                        <h5 class="fw-semibold mb-1">Email</h5>
-                        <a href="mailto:biuro@sc.org.pl" class="text-decoration-none text-dark">biuro@sc.org.pl</a>
-                    </div>
+            <div class="mb-4 text-center">
+                <h1 class="display-5 fw-bold mb-2">Zostańmy w kontakcie!</h1>
+                <p class="lead text-muted">Masz pytania? Skontaktuj się z nami – chętnie pomożemy!</p>
+            </div>
 
-                    <div class="mb-3 text-center">
-                        <h5 class="fw-semibold mb-1">Telefon</h5>
-                        <a href="tel:+48184411994" class="text-decoration-none text-dark">18 44 11 994</a>
-                    </div>
+            <!-- Karta kontaktowa -->
+            <div class="contact-card w-100 h-100">
+                <div class="mb-3 text-center">
+                    <h5 class="fw-semibold mb-1">Email</h5>
+                    <a href="mailto:biuro@sc.org.pl" class="text-decoration-none text-dark">biuro@sc.org.pl</a>
+                </div>
 
-                    <div class="mb-3 text-center">
-                        <h5 class="fw-semibold mb-2">Znajdziesz nas również:</h5>
-                        <div class="d-flex justify-content-center gap-4 fs-4">
-                            <a href="https://www.facebook.com/Stowarzyszenie.sursum.corda/" target="_blank" class="text-primary">
-                                <i class="fab fa-facebook-f"></i>
-                            </a>
-                            <a href="https://www.instagram.com/stowarzyszenie.sursum.corda/" target="_blank" class="text-danger">
-                                <i class="fab fa-instagram"></i>
-                            </a>
-                            <a href="https://www.youtube.com/user/SursumCorda2000" target="_blank" class="text-danger">
-                                <i class="fab fa-youtube"></i>
-                            </a>
-                        </div>
+                <div class="mb-3 text-center">
+                    <h5 class="fw-semibold mb-1">Telefon</h5>
+                    <a href="tel:+48184411994" class="text-decoration-none text-dark">18 44 11 994</a>
+                </div>
+
+                <div class="mb-3 text-center">
+                    <h5 class="fw-semibold mb-2">Znajdziesz nas również:</h5>
+                    <div class="d-flex justify-content-center gap-4 fs-4">
+                        <a href="https://www.facebook.com/Stowarzyszenie.sursum.corda/" target="_blank" class="text-primary">
+                            <i class="fab fa-facebook-f"></i>
+                        </a>
+                        <a href="https://www.instagram.com/stowarzyszenie.sursum.corda/" target="_blank" class="text-danger">
+                            <i class="fab fa-instagram"></i>
+                        </a>
+                        <a href="https://www.youtube.com/user/SursumCorda2000" target="_blank" class="text-danger">
+                            <i class="fab fa-youtube"></i>
+                        </a>
                     </div>
                 </div>
             </div>
+        </div>
 
-            <div class="col-lg-5">
+        <!-- Prawa kolumna: obrazek -->
+        <div class="col-lg-5 d-flex flex-column">
+            <div class="bg-white p-3 rounded shadow border w-100 h-100 d-flex align-items-center justify-content-center">
                 <img src="{{ asset('images/sursum-carda.png') }}" alt="Sursum Corda" class="img-fluid rounded contact-image">
             </div>
         </div>
     </div>
+    </div>
+
 {% endblock %}

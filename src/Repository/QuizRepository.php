@@ -10,6 +10,7 @@ use App\Entity\Quiz;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Class QuizRepository.
@@ -72,5 +73,38 @@ class QuizRepository extends ServiceEntityRepository
         return $this->queryAll()
             ->andWhere('quiz.isPublished = :isPublished')
             ->setParameter('isPublished', true);
+    }
+
+    /**
+     * Find all published quizzes.
+     *
+     * @return Quiz[] Array of published quizzes
+     */
+    public function findAllPublished(): array
+    {
+        return $this->createQueryBuilder('q')
+            ->where('q.isPublished = true')
+            ->orderBy('q.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
+    /**
+     * Find all quizzes solved by a specific user.
+     *
+     * @param UserInterface $user The user entity
+     *
+     * @return Quiz[] Array of quizzes solved by the user
+     */
+    public function findAllSolvedByUser(UserInterface $user): array
+    {
+        return $this->createQueryBuilder('q')
+            ->join('App\Entity\QuizResult', 'qr', 'WITH', 'qr.quiz = q')
+            ->where('qr.user = :user')
+            ->setParameter('user', $user)
+            ->groupBy('q.id') // Unikamy duplikatów, jeśli istnieje wiele wyników
+            ->orderBy('q.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
     }
 }

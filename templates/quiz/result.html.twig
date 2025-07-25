@@ -89,24 +89,26 @@
 
         <div class="result-info">
             <div class="result-section result-details">
-                <p><strong>Rozwiązujący:</strong><br>👤 Imię Nazwisko</p>
-                <p><strong>Wynik:</strong><br>✔ Test zakończony</p>
-                <p><strong>Czas:</strong><br>⏱ {{ duration }} sekundy</p>
-                <p><strong>Data:</strong><br>{{ "now"|date("Y-m-d") }}</p>
+                <p><strong>Rozwiązujący:</strong><br>👤 {{ quizResult.user.profile.imie }} {{ quizResult.user.profile.nazwisko }}</p>
+                <p><strong>Wynik:</strong><br>✔ {{ score }}%</p>
+                {% set minutes = duration // 60 %}
+                {% set seconds = duration % 60 %}
+                <p><strong>Czas:</strong><br>⏱ {{ minutes }} min {{ seconds }} sek</p>
+
+                <p><strong>Data:</strong><br>{{ quizResult.completedAt|date('Y-m-d H:i') }}
+                </p>
             </div>
 
             <div class="result-section" style="text-align: center;">
                 <div class="result-score-label">TWÓJ WYNIK TO:</div>
                 <div class="score-circle">{{ score }}%</div>
-                <div class="result-score-label">{{ correctAnswers }}/{{ totalQuestions }} PKT</div>
+{#                <div class="result-score-label">{{ correctAnswers }}/{{ totalQuestions }} PKT</div>#}
             </div>
         </div>
 
-
-
         <div class="action-buttons">
-            <a href="{{ path('app_quiz_list') }}">MENU</a>
-            {# <a href="{{ path('quiz_ranking', {'id': quiz.id}) }}">RANKING</a> #}
+            <a href="{{ path('quiz_menu_view') }}">MENU</a>
+            <a href="{{ path('quiz_ranking', {'id': quiz.id}) }}">RANKING</a>
         </div>
     </div>
 {% endblock %}

@@ -1,7 +1,9 @@
 <?php
+
 /*
  *  Quiz Menu View Controller
  */
+
 namespace App\Controller;
 
 use App\Repository\QuizRepository;
@@ -25,42 +27,42 @@ class QuizMenuViewController extends AbstractController
     {
     }
 
-    /**
-     * Wyświetla listę opublikowanych quizów użytkownika (nie admina),
-     * wraz z informacją, czy zostały ukończone i jaki był wynik.
-     *
-     * @param QuizResultRepository $quizResultRepository Repozytorium wyników quizów
-     *
-     * @return Response Odpowiedź HTTP z widokiem listy quizów
-     */
-    #[IsGranted('ROLE_USER')]
-    #[Route('/quizzes', name: 'app_quiz_list')]
-    public function list(QuizResultRepository $quizResultRepository): Response
-    {
-        if ($this->isGranted('ROLE_ADMIN')) {
-            return $this->redirectToRoute('quiz_index');
-        }
-
-        $user = $this->getUser();
-        $quizzes = $this->quizRepository->findBy(['isPublished' => true]);
-
-        $quizData = [];
-
-        foreach ($quizzes as $quiz) {
-            $result = $quizResultRepository->findOneByQuizAndUser($quiz, $user);
-
-            $quizData[] = [
-                'id' => $quiz->getId(),
-                'title' => $quiz->getTitle(),
-                'completed' => $result !== null,
-                'score' => $result?->getScore(), // Uwaga: wynik w skali 0.0–1.0 lub procent
-            ];
-        }
-
-        return $this->render('quiz/menuView.html.twig', [
-            'quizzes' => $quizData,
-        ]);
-    }
+    //    /**
+    //     * Wyświetla listę opublikowanych quizów użytkownika (nie admina),
+    //     * wraz z informacją, czy zostały ukończone i jaki był wynik.
+    //     *
+    //     * @param QuizResultRepository $quizResultRepository Repozytorium wyników quizów
+    //     *
+    //     * @return Response Odpowiedź HTTP z widokiem listy quizów
+    //     */
+    //    #[IsGranted('ROLE_USER')]
+    //    #[Route('/quizzes', name: 'app_quiz_list')]
+    //    public function list(QuizResultRepository $quizResultRepository): Response
+    //    {
+    //        if ($this->isGranted('ROLE_ADMIN')) {
+    //            return $this->redirectToRoute('quiz_index');
+    //        }
+    //
+    //        $user = $this->getUser();
+    //        $quizzes = $this->quizRepository->findBy(['isPublished' => true]);
+    //
+    //        $quizData = [];
+    //
+    //        foreach ($quizzes as $quiz) {
+    //            $result = $quizResultRepository->findOneByQuizAndUser($quiz, $user);
+    //
+    //            $quizData[] = [
+    //                'id' => $quiz->getId(),
+    //                'title' => $quiz->getTitle(),
+    //                'completed' => null !== $result,
+    //                'score' => $result?->getScore(), // Uwaga: wynik w skali 0.0–1.0 lub procent
+    //            ];
+    //        }
+    //
+    //        return $this->render('quiz/menuView.html.twig', [
+    //            'quizzes' => $quizData,
+    //        ]);
+    //    }
 
     /**
      * Wyświetla ekran startowy quizu (brandowanie, opis, przycisk startowy).

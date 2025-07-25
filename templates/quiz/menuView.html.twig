@@ -80,14 +80,14 @@
 
     {% for quiz in quizzes %}
         <a href="{% if is_granted('ROLE_ADMIN') %}
-                     {{ path('quiz_view', { id: quiz.id }) }}
-                 {% else %}
-                     {% if quiz.completed %}
-                         {{ path('quiz_result', { id: quiz.id }) }}
-                     {% else %}
-                         {{ path('app_quiz_start', { id: quiz.id }) }}
-                     {% endif %}
-                 {% endif %}"
+                    {{ path('quiz_view', { id: quiz.quiz_id }) }}
+                {% else %}
+                    {% if quiz.completed %}
+                        {{ path('quiz_result', { id: quiz.quiz_result }) }}
+                    {% else %}
+                        {{ path('quiz_start_view', { id: quiz.quiz_id }) }}
+                    {% endif %}
+                {% endif %}"
            class="quiz-box-link">
             <div class="quiz-box {{ quiz.completed ? 'completed' : 'not-completed' }}">
                 <div class="quiz-title">{{ quiz.title }}</div>

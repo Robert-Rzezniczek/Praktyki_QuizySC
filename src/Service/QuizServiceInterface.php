@@ -9,6 +9,7 @@ namespace App\Service;
 use App\Entity\Quiz;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * Interface QuizServiceInterface.
@@ -72,4 +73,18 @@ interface QuizServiceInterface
      * @param Quiz $quiz Quiz
      */
     public function canBeDeleted(Quiz $quiz): bool;
+
+    /**
+     * Gets combined Quizzes for user. (published or completed quizzes, that may not be published anymore).
+     *
+     * @param UserInterface $user UserInterface
+     */
+    public function getCombinedQuizzesForUser(UserInterface $user): array;
+
+    /**
+     * Prepares the menu view data.
+     *
+     * @param UserInterface $user UserInterface
+     */
+    public function prepareMenuViewData(UserInterface $user): array;
 }
