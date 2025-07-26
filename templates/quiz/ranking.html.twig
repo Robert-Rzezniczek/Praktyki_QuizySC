@@ -4,12 +4,16 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
     <style>
         .action-buttons {
             display: flex;
             justify-content: center;
             gap: 50px;
             margin-top: 50px;
+            flex-wrap: wrap;
         }
 
         .action-buttons a {
@@ -19,11 +23,80 @@
             font-size: 1.6rem;
             border-radius: 50px;
             text-decoration: none;
-            transition: transform 0.2s ease;
+            transition: transform 0.2s ease, filter 0.2s ease;
+            font-family: 'Luckiest Guy', cursive;
         }
 
-        .action-buttons a:hover {
+        .action-buttons a.menu-btn:hover {
             transform: scale(1.05);
+            filter: brightness(1.1);
+        }
+
+        .ranking-wrapper {
+            max-width: 700px;
+            margin: 0 auto;
+            background: white;
+            border: 2px solid #ccc;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .trophies-image {
+            max-width: 300px;
+            margin: 0 auto 20px auto;
+        }
+
+        .scrollable-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            text-align: left;
+        }
+
+        .scrollable-list .list-group-item {
+            font-size: 1.25rem;
+            padding: 15px 20px;
+        }
+
+        .scrollable-list .is-user {
+            background-color: #4CAF50 !important;
+            color: white !important;
+            font-weight: bold;
+            border: none;
+            border-radius: 0;
+        }
+
+        .scrollable-list .is-user .fa-user {
+            margin-right: 10px;
+            color: white;
+        }
+
+        .scrollable-list .list-group-item .badge {
+            font-size: 1rem;
+        }
+
+        .scrollable-list .is-user .badge {
+            background-color: white;
+            color: #4CAF50;
+            font-weight: bold;
+        }
+
+        .trophy-icon {
+            margin-right: 10px;
+        }
+
+        .trophy-gold {
+            color: gold;
+        }
+
+        .trophy-silver {
+            color: silver;
+        }
+
+        .trophy-bronze {
+            color: #cd7f32;
         }
     </style>
 {% endblock %}
@@ -37,33 +110,62 @@
                 {{ 'Brak wyników dla tego quizu.'|trans }}
             </div>
         {% else %}
-            <div class="list-group">
-                {% for item in ranking %}
-                    <div class="list-group-item d-flex justify-content-between align-items-center {% if '(to ja)' in item.name %}fw-bold bg-light border-primary is-user{% endif %}">
-                        <span>
-                            {{ item.position }}. {{ item.name }}
-                        </span>
-                        <span class="badge bg-primary rounded-pill">{{ item.score }} %</span>
-                    </div>
-                {% endfor %}
-            </div>
+            <div class="ranking-wrapper">
+                <img src="{{ asset('images/puchary.png') }}" alt="Trophies" class="trophies-image" />
 
-            {% if userPosition %}
-                <div class="alert alert-info mt-3 text-center">
-                    Twoja pozycja: <strong>{{ userPosition }}</strong> z wynikiem <strong>{{ userScore }}</strong> %
+                <div class="scrollable-list list-group">
+                    {% for item in ranking %}
+                        <div class="list-group-item d-flex justify-content-between align-items-center {% if '(to ja)' in item.name %}is-user{% endif %}">
+                            <span class="d-flex align-items-center">
+                                {% if item.position == 1 %}
+                                    <i class="fas fa-trophy trophy-icon trophy-gold"></i>
+                                {% elseif item.position == 2 %}
+                                    <i class="fas fa-trophy trophy-icon trophy-silver"></i>
+                                {% elseif item.position == 3 %}
+                                    <i class="fas fa-trophy trophy-icon trophy-bronze"></i>
+                                {% endif %}
+
+                                {% if '(to ja)' in item.name %}
+                                    <i class="fas fa-user me-1"></i>
+                                {% endif %}
+
+                                {{ item.position }}. {{ item.name }}
+                            </span>
+                            <span class="badge rounded-pill">{{ item.score }} %</span>
+                        </div>
+                    {% endfor %}
                 </div>
-            {% endif %}
+
+                {% if userPosition %}
+                    <div class="alert alert-info mt-3 text-center">
+                        Twoja pozycja: <strong>{{ userPosition }}</strong> z wynikiem <strong>{{ userScore }}</strong> %
+                    </div>
+                {% endif %}
+            </div>
         {% endif %}
 
         <div class="action-buttons">
             {% if is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('quiz_index') }}">QUIZY</a>
+                <a href="{{ path('quiz_index') }}" class="menu-btn">QUIZY</a>
             {% else %}
-                <a href="{{ path('quiz_menu_view') }}">MENU</a>
+                <a href="{{ path('quiz_menu_view') }}" class="menu-btn">MENU</a>
             {% endif %}
+
             {% if result_id is not null and not is_granted('ROLE_ADMIN') %}
-                <a href="{{ path('quiz_result', {'id': result_id}) }}">WYNIK</a>
+                <a href="{{ path('quiz_result', {'id': result_id}) }}" class="menu-btn">WYNIK</a>
+
+{#       jeśli chcemy zmnienić kiedy się pojawia kto przeszedł dalej a kto nie, to wystarczy tą liczbe zmienić         #}
+{#      aktualnie działa na pierwsze 10 miejsc       #}
+                {% if userPosition <= 10 %}
+                    <a href="{{ path('quiz_certificate', {id: result_id}) }}" target="_blank" class="menu-btn">DYPLOM</a>
+                {% else %}
+                    <a href="{{ path('quiz_thankyou_certificate', {id: result_id}) }}" target="_blank" class="menu-btn">PODZIĘKOWANIE</a>
+                {% endif %}
             {% endif %}
+
+{#            {% if result_id is not null and not is_granted('ROLE_ADMIN') %}#}
+{#                <a href="{{ path('quiz_certificate', {'id': result_id}) }}" class="menu-btn" target="_blank">DYPLOM</a>#}
+{#            {% endif %}#}
         </div>
     </div>
 {% endblock %}

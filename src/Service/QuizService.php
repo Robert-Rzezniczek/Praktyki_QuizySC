@@ -621,7 +621,7 @@ class QuizService implements QuizServiceInterface
 
             $fullName = trim($result['imie'].' '.$result['nazwisko']);
             $displayName = $isAdmin ? $fullName
-                :($isCurrentUser
+                : ($isCurrentUser
                     ? $fullName.' (to ja)'
                     : $this->maskName($result['imie'], $result['nazwisko']));
 

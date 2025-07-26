@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Certyfikat</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 50px;
+            background-color: #f9f9f9;
+        }
+        .certificate {
+            background-color: white;
+            padding: 40px;
+            border: 2px solid #4CAF50;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1 {
+            color: #4CAF50;
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+        h2 {
+            color: #333;
+            font-size: 1.5em;
+            margin: 10px 0;
+        }
+        p {
+            font-size: 1.2em;
+            color: #555;
+            margin: 5px 0;
+        }
+        .date {
+            font-style: italic;
+            color: #777;
+        }
+    </style>
+</head>
+<body>
+<div class="certificate">
+    <h1>Gratulacje!</h1>
+    <h2>Potwierdzenie przejścia etapu eliminacyjnego</h2>
+    <p><strong>Imię i nazwisko:</strong> {{ user.imie }} {{ user.nazwisko }}</p>
+    <p><strong>Zdobyto punktów:</strong> {{ score }}%</p>
+    <p class="date">Data: {{ "now"|date("d.m.Y") }}</p>
+    <p><strong>Quiz:</strong> {{ quiz.title }}</p>
+</div>
+</body>
+</html>
