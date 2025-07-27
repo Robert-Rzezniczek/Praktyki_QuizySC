@@ -4,6 +4,93 @@
     {{ 'title.quiz_list'|trans }}
 {% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        /* Stylizacja przycisków w tabeli */
+        .btn-custom {
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border-width: 2px;
+            transition: all 0.3s ease;
+            border-radius: 6px;
+        }
+
+        /* Stylizacja dla btn-outline-success */
+        .btn-outline-success.btn-custom {
+            color: #28a745;
+            border-color: #28a745;
+        }
+        .btn-outline-success.btn-custom:hover {
+            background-color: #28a745;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(40, 167, 69, 0.3);
+        }
+
+        /* Stylizacja dla btn-outline-primary */
+        .btn-outline-primary.btn-custom {
+            color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-outline-primary.btn-custom:hover {
+            background-color: #007bff;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        /* Stylizacja dla btn-outline-warning */
+        .btn-outline-warning.btn-custom {
+            color: #ffc107;
+            border-color: #ffc107;
+        }
+        .btn-outline-warning.btn-custom:hover {
+            background-color: #ffc107;
+            color: #212529;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(255, 193, 7, 0.3);
+        }
+
+        /* Stylizacja dla btn-outline-danger */
+        .btn-outline-danger.btn-custom {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-outline-danger.btn-custom:hover {
+            background-color: #dc3545;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+        }
+
+        /* Dodatkowe odstępy między przyciskami */
+        .btn-group .btn-custom {
+            margin-right: 8px;
+        }
+        .btn-group .btn-custom:last-child {
+            margin-right: 0;
+        }
+
+        /* Subtelny efekt przy najechaniu */
+        .btn-custom:hover {
+            text-decoration: none;
+        }
+
+        /* Responsywność */
+        @media (max-width: 768px) {
+            .btn-custom {
+                padding: 6px 12px;
+                font-size: 0.85rem;
+            }
+            .btn-group .btn-custom {
+                margin-right: 4px;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <div class="container my-4">
         <h1 class="display-5 text-primary mb-4">{{ 'title.quiz_list'|trans }}</h1>
@@ -27,6 +114,7 @@
                     <th>{{ knp_pagination_sortable(pagination, 'label.title'|trans, 'quiz.title') }}</th>
                     <th>{{ knp_pagination_sortable(pagination, 'label.created_at'|trans, 'quiz.createdAt') }}</th>
                     <th>{{ knp_pagination_sortable(pagination, 'label.updated_at'|trans, 'quiz.updatedAt') }}</th>
+                    <th>{{ 'Opublikowany' }}</th>
                     <th>{{ 'label.actions'|trans }}</th>
                 </tr>
                 </thead>
@@ -38,31 +126,44 @@
                         <td>{{ quiz.createdAt|format_date('long') }}</td>
                         <td>{{ quiz.updatedAt|format_date('long') }}</td>
                         <td>
-                            <div class="btn-group" role="group">
+                            {% if quiz.isPublished %}
+                                {{ 'TAK' }}
+                            {% else %}
+                                {{ 'NIE' }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="btn-group d-flex justify-content-end " role="group">
                                 {% if is_granted('ROLE_ADMIN') %}
-                                    <a class="btn btn-outline-success me-2" href="{{ url('quiz_publish', {id: quiz.id}) }}" title="{{ 'action.publish'|trans }}">
-                                        {{ 'action.publish'|trans }}
+                                    {% if quiz.isPublished %}
+                                        <a class="btn btn-outline-danger btn-custom" href="{{ url('quiz_unpublish', {id: quiz.id}) }}" title="Usuń publikację">
+                                            Ukryj quiz
+                                        </a>
+{#                                        <a class="btn btn-outline-success btn-custom me-2" href="{{ url('quiz_solve', {id: quiz.id}) }}" title="{{ 'action.solve'|trans }}">#}
+{#                                            {{ 'action.solve'|trans }}#}
+{#                                        </a>#}
+                                    {% else %}
+                                        <a class="btn btn-outline-success btn-custom me-2" href="{{ url('quiz_publish', {id: quiz.id}) }}" title="{{ 'action.publish'|trans }}">
+                                            {{ 'Opublikuj '}}
+                                        </a>
+                                    {% endif %}
+                                    <a class="btn btn-outline-success btn-custom me-2" href="{{ url('quiz_ranking', {id: quiz.id}) }}" title="{{ 'action.check_ranking'|trans }}">
+                                        {{ 'Ranking' }}
                                     </a>
-                                    <a class="btn btn-outline-primary me-2" href="{{ url('quiz_view', {id: quiz.id}) }}" title="{{ 'action.view'|trans }}">
+                                    <a class="btn btn-outline-primary btn-custom me-2" href="{{ url('quiz_view', {id: quiz.id}) }}" title="{{ 'action.view'|trans }}">
                                         {{ 'action.view'|trans }}
                                     </a>
-                                    <a class="btn btn-outline-primary me-2" href="{{ url('quiz_view_quiz', {id: quiz.id}) }}" title="{{ 'action.preview'|trans }}">
+                                    <a class="btn btn-outline-primary btn-custom me-2" href="{{ url('quiz_view_quiz', {id: quiz.id}) }}" title="{{ 'action.preview'|trans }}">
                                         {{ 'action.preview'|trans }}
                                     </a>
-                                    <a class="btn btn-outline-warning me-2" href="{{ url('quiz_edit_step', {id: quiz.id}) }}" title="{{ 'action.edit'|trans }}">
+                                    <a class="btn btn-outline-warning btn-custom me-2" href="{{ url('quiz_edit_step', {id: quiz.id}) }}" title="{{ 'action.edit'|trans }}">
                                         {{ 'action.edit'|trans }}
                                     </a>
-                                    <a class="btn btn-outline-danger" href="{{ url('quiz_delete', {id: quiz.id}) }}" title="{{ 'action.delete'|trans }}">
+                                    <a class="btn btn-outline-danger btn-custom" href="{{ url('quiz_delete', {id: quiz.id}) }}" title="{{ 'action.delete'|trans }}">
                                         {{ 'action.delete'|trans }}
                                     </a>
-                                    <a class="btn btn-outline-success me-2" href="{{ url('quiz_solve', {id: quiz.id}) }}" title="{{ 'action.solve'|trans }}">
-                                        {{ 'action.solve'|trans }}
-                                    </a>
-                                    <a class="btn btn-outline-success me-2" href="{{ url('quiz_ranking', {id: quiz.id}) }}" title="{{ 'action.check_ranking'|trans }}">
-                                        {{ 'action.check_ranking'|trans }}
-                                    </a>
                                 {% else %}
-                                    <a class="btn btn-outline-success me-2" href="{{ path('quiz_start_view', {id: quiz.id}) }}" title="Rozpocznij quiz">
+                                    <a class="btn btn-outline-success btn-custom me-2" href="{{ path('quiz_start_view', {id: quiz.id}) }}" title="Rozpocznij quiz">
                                         Rozpocznij
                                     </a>
                                 {% endif %}

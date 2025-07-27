@@ -36,8 +36,8 @@ class Quiz
      *
      * @var string|null string|null
      */
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank]
+    #[ORM\Column(length: 255, nullable: true)]
+    //    #[Assert\NotBlank]
     #[Assert\Length(min: 3, max: 255)]
     private ?string $title = null;
 

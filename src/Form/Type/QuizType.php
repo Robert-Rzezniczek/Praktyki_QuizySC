@@ -17,6 +17,11 @@ use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Validator\Constraints\File;
+use Symfony\Component\Validator\Constraints\GreaterThan;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\LessThanOrEqual;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Type;
 
 /**
  * Class QuizType.
@@ -67,6 +72,15 @@ class QuizType extends AbstractType
                         'label' => false,
                         'required' => true,
                         'attr' => ['max_length' => 255, 'placeholder' => 'Podaj tytuł quizu'],
+                        'constraints' => [
+                            new NotBlank([
+                                'message' => 'Tytuł nie może być pusty.',
+                            ]),
+                            new Length([
+                                'max' => 255,
+                                'maxMessage' => 'Tytuł nie może przekraczać {{ limit }} znaków.',
+                            ]),
+                        ],
                     ])
                     ->add('description', TextareaType::class, [
                         'label' => false,
@@ -92,6 +106,23 @@ class QuizType extends AbstractType
                         'label' => false,
                         'required' => true,
                         'attr' => ['min' => 1, 'placeholder' => 'Podaj limit czasu w minutach'],
+                        'constraints' => [
+                            new NotBlank([
+                                'message' => 'Limit czasu nie może być pusty.',
+                            ]),
+                            new GreaterThan([
+                                'value' => 0,
+                                'message' => 'Limit czasu musi być większy niż 0 minut.',
+                            ]),
+                            new Type([
+                                'type' => 'integer',
+                                'message' => 'Limit czasu musi być liczbą całkowitą.',
+                            ]),
+                            new LessThanOrEqual([
+                                'value' => 1440, // Maksymalnie 24 godziny
+                                'message' => 'Limit czasu nie może przekraczać 1440 minut (24 godziny).',
+                            ]),
+                        ],
                     ])
                     ->add('isPublished', CheckboxType::class, [
                         'label' => 'Opublikuj quiz',

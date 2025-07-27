@@ -17,6 +17,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,6 +59,7 @@ class QuizController extends AbstractController
         name: 'quiz_index',
         methods: 'GET'
     )]
+    #[IsGranted('ROLE_ADMIN')]
     public function index(#[MapQueryParameter] int $page = 1): Response
     {
         $this->quizService->updateExpiredQuizzes();
@@ -154,7 +156,7 @@ class QuizController extends AbstractController
         if (!$this->quizService->canBeDeleted($quiz)) {
             $this->addFlash(
                 'warning',
-                $this->translator->trans('message.quiz_cannot_be_deleted')
+                $this->translator->trans('Quiz nie może zostać usunięty, ponieważ ma powiązane wyniki użytkowników.')
             );
 
             return $this->redirectToRoute('quiz_index');
@@ -237,7 +239,7 @@ class QuizController extends AbstractController
                 $quizResult = $this->quizService->finalizeQuiz($quiz, $user, $session, $quiz->getTimeLimit() ?? 30, $startedAt);
                 $this->addFlash('warning', 'message.quiz_expired');
 
-                return $this->redirectToRoute('quiz_index');
+                return $this->redirectToRoute('quiz_menu_view');
             } catch (\InvalidArgumentException $e) {
                 $this->addFlash('error', $e->getMessage());
             }
@@ -246,7 +248,7 @@ class QuizController extends AbstractController
         if (!$this->quizService->canUserSolveQuiz($quiz, $user)) {
             $this->addFlash('error', 'message.quiz_already_solved');
 
-            return $this->redirectToRoute('quiz_index');
+            return $this->redirectToRoute('quiz_menu_view');
         }
 
         // Inicjalizuj sesję quizu i zapisz czas rozpoczęcia
@@ -272,7 +274,7 @@ class QuizController extends AbstractController
                     return new JsonResponse(['success' => true]);
                 }
 
-                return $this->redirectToRoute('quiz_index');
+                return $this->redirectToRoute('quiz_menu_view');
             } catch (\InvalidArgumentException $e) {
                 $this->addFlash('error', $e->getMessage());
                 if ($request->isXmlHttpRequest()) {
@@ -301,7 +303,7 @@ class QuizController extends AbstractController
                 }
             }
 
-            return $this->redirectToRoute('quiz_index');
+            return $this->redirectToRoute('quiz_menu_view');
         }
 
         // Obsługa przesłanego formularza (w tym żądanie AJAX z JS)
@@ -551,6 +553,32 @@ class QuizController extends AbstractController
             'form' => $form->createView(),
             'quiz' => $quiz,
         ]);
+    }
+
+    /**
+     * Unpublish quiz action.
+     *
+     * @param Request          $request HTTP request
+     * @param Quiz             $quiz    Quiz entity
+     * @param SessionInterface $session Session interface
+     *
+     * @return RedirectResponse HTTP redirect response
+     */
+    #[Route(
+        '/{id}/unpublish',
+        name: 'quiz_unpublish',
+        requirements: ['id' => '[1-9]\d*'],
+        methods: ['GET', 'POST']
+    )]
+    #[IsGranted('ROLE_ADMIN')]
+    public function unpublish(Request $request, Quiz $quiz, SessionInterface $session): RedirectResponse
+    {
+        $quiz->setIsPublished(false);
+        $this->quizService->save($quiz);
+        $session->remove("quiz_{$quiz->getId()}_expiration"); // Usuń czas wygaśnięcia z sesji
+        $this->addFlash('success', 'Publikacja quizu została usunięta.');
+
+        return $this->redirectToRoute('quiz_index');
     }
 
     /**

@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ 'label.page_not_found'|trans }}{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .error-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            min-height: 75vh;
+            text-align: center;
+            padding: 20px;
+        }
+        /* tymczasowe xD*/
+        .error-image {
+            max-width: 300px; /* Ograniczenie szerokości zdjęcia */
+            height: auto; /* Zachowanie proporcji */
+            margin: 20px 0; /* Odstęp nad i pod zdjęciem */
+            border-radius: 10px; /* Subtelne zaokrąglenie rogów */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Lekki cień dla głębi */
+            transition: 0.5s ease-in-out;
+        }
+
+        .error-image:hover
+        {
+            transform: scale(1.1);
+            transition: 0.5s ease-in-out;
+        }
+        /* ^^^tymczasowe^^^*/
+
+        .error-title {
+            font-size: 4rem;
+            color: #dc3545; /* Czerwony kolor dla 404, pasujący do ostrzeżenia */
+            margin-bottom: 1rem;
+        }
+
+
+        .error-text {
+            font-size: 1.25rem;
+            color: #6c757d; /* Szary kolor dla tekstu */
+            margin-bottom: 1.5rem;
+        }
+
+        .error-button {
+            padding: 10px 20px;
+            font-size: 1.1rem;
+            border-width: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .error-button:hover {
+            background-color: #007bff;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+        }
+
+        @media (max-width: 768px) {
+            .error-title {
+                font-size: 3rem;
+            }
+            .error-text {
+                font-size: 1rem;
+            }
+            .error-image {
+                max-width: 200px; /* Mniejsze zdjęcie na mobile */
+            }
+            .error-button {
+                font-size: 1rem;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <div class="error-container">
+        <h1 class="error-title">{{ status_code }}</h1>
+        <p class="error-text">Błąd</p>
+        <p class="error-text">{{ 'Chyba nie chciałeś tu wylądować' }}</p>
+        <div>
+            <img src="{{ asset('images/Side-eye.jpg') }}" alt="robis cos to?" class="error-image">
+        </div>
+        <a href="{{ path('app_menu') }}" class="btn btn-outline-primary error-button mt-3">
+            {{ 'Powrót do MENU' }}
+        </a>
+    </div>
+{% endblock %}

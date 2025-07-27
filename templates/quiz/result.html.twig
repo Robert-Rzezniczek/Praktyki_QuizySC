@@ -125,7 +125,12 @@
 
         <div class="action-buttons">
             <a href="{{ path('quiz_menu_view') }}">MENU</a>
-            <a href="{{ path('quiz_ranking', {'id': quiz.id}) }}">RANKING</a>
+{#            <a href="{{ path('quiz_ranking', {'id': quiz.id}) }}">RANKING</a>#}
+            {% if quiz.isPublished %}
+                <a href="">WKRÓTCE</a>
+            {% else %}
+                <a href="{{ path('quiz_ranking', {'id': quiz.id}) }}">RANKING</a>
+            {% endif %}
         </div>
     </div>
     <script>

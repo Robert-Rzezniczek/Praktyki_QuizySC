@@ -10,9 +10,91 @@
     {{ 'title.solve_quiz'|trans }} {{ quiz.title }}
 {% endblock %}
 
+{% block stylesheets %}
+    {{ parent() }}
+    <style>
+        .quiz-question {
+            max-width: 800px;
+            margin: 60px auto;
+            padding: 40px 30px;
+            background-color: #fff;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-question h2 {
+            margin-bottom: 25px;
+            text-align: center;
+            font-size: 1.8rem;
+        }
+
+        .answer-btn {
+            margin: 8px 0;
+            padding: 15px 20px;
+            font-size: 1.1em;
+            cursor: pointer;
+            border: none;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+            width: 100%;
+            font-weight: bold;
+            color: white;
+        }
+
+        .color-1 {
+            background-color: #c82123;
+        }
+        .color-1:hover {
+            background-color: #a51a1b;
+        }
+
+        .color-2 {
+            background-color: #fbc02d;
+            color: #333;
+        }
+        .color-2:hover {
+            background-color: #f9a825;
+        }
+
+        .color-3 {
+            background-color: #43a047;
+        }
+        .color-3:hover {
+            background-color: #388e3c;
+        }
+
+        .color-4 {
+            background-color: #039be5;
+        }
+        .color-4:hover {
+            background-color: #0288d1;
+        }
+
+        /* Styl dla aktywnej (wybranej) odpowiedzi */
+        .answer-btn.active {
+            box-shadow: 0 0 0 4px #6a1b9a;
+        }
+
+        .answer-btn:focus {
+            outline: none;
+        }
+
+        @media (max-width: 600px) {
+            .answer-buttons {
+                width: 90%;
+            }
+
+            .answer-btn {
+                font-size: 1em;
+                padding: 12px 16px;
+            }
+        }
+    </style>
+{% endblock %}
+
 {% block body %}
     <h1>{{ 'title.solve_quiz'|trans }} {{ quiz.title }}</h1>
-
+    <div id="timer" class="alert alert-info">Pozostały czas: <span id="time-remaining">00:00</span></div>
     {% if app.flashes('error') is not empty %}
         <div class="alert alert-danger">
             {% for message in app.flashes('error') %}
@@ -23,10 +105,20 @@
 
     {% if question %}
         <div class="quiz-question">
+            <div class="quiz-question-number">Pytanie {{ form.question_index.vars.value + 1 }}</div>
             <h2>{{ question.content }}</h2>
-            <div id="timer" class="alert alert-info">Pozostały czas: <span id="time-remaining">00:00</span></div>
             {{ form_start(form, {'attr': {'id': 'quiz-solve-form'}}) }}
-            {{ form_widget(form.answer) }}
+            <div class="btn-group-toggle answer-buttons" data-toggle="buttons">
+                {% for child in form.answer %}
+                    {% set loopIndex = loop.index %}
+                    {{ form_widget(child, {'label': false, 'attr': {'style': 'display:none;'}}) }}
+                    <button type="button"
+                            class="answer-btn color-{{ loopIndex }}"
+                            data-target="{{ child.vars.id }}">
+                        {{ child.vars.label }}
+                    </button>
+                {% endfor %}
+            </div>
             {{ form_widget(form.question_index) }}
             <button type="submit" class="btn btn-primary">
                 {% if is_last_question %}
@@ -39,7 +131,7 @@
         </div>
     {% else %}
         <p>{{ 'message.quiz_completed'|trans }}</p>
-        <a href="{{ path('quiz_index') }}" class="btn btn-secondary">{{ 'action.back_to_list'|trans }}</a>
+        <a href="{{ path('quiz_menu_view') }}" class="btn btn-secondary">{{ 'action.back_to_list'|trans }}</a>
     {% endif %}
 
     <script>
@@ -89,15 +181,15 @@
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            window.location.href = '{{ path('quiz_index') }}';
+                            window.location.href = '{{ path('quiz_menu_view') }}';
                         } else if (data.error) {
                             alert(data.error);
-                            window.location.href = '{{ path('quiz_index') }}';
+                            window.location.href = '{{ path('quiz_menu_view') }}';
                         }
                     })
                     .catch(error => {
                         console.error('Error ending quiz:', error);
-                        window.location.href = '{{ path('quiz_index') }}';
+                        window.location.href = '{{ path('quiz_menu_view') }}';
                     });
             }
 
@@ -132,10 +224,25 @@
             // Blokada cofania
             window.onpopstate = function(event) {
                 if (event.state) {
-                    window.location.href = '{{ path('quiz_index') }}';
+                    window.location.href = '{{ path('quiz_menu_view') }}';
                 }
             };
             history.pushState(null, document.title, window.location.href);
+
+            document.querySelectorAll('.answer-btn').forEach(button => {
+                button.addEventListener('click', () => {
+                    // Dezaktywuj wszystkie
+                    document.querySelectorAll('.answer-btn').forEach(btn => btn.classList.remove('active'));
+                    // Aktywuj kliknięty
+                    button.classList.add('active');
+                    // Zaznacz odpowiadające radio
+                    const targetId = button.dataset.target;
+                    const radio = document.getElementById(targetId);
+                    if (radio) {
+                        radio.checked = true;
+                    }
+                });
+            });
         });
     </script>
 {% endblock %}

@@ -36,6 +36,10 @@
             background-color: #f77f00;
         }
 
+        .menu-btn.yellow {
+            background-color: #f9bf2d;
+        }
+
         .menu-container {
             display: flex;
             flex-direction: column;
@@ -56,6 +60,7 @@
             {% if is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('quiz_index') }}" class="menu-btn red">Quizy</a>
                 <a href="{{ path('admin_user_list') }}" class="menu-btn orange">Zarządzaj</a>
+                <a href="{{ path('powiat_index') }}" class="menu-btn yellow">Powiaty</a>
             {% else %}
                 <a href="{{ path('quiz_menu_view') }}" class="menu-btn red">Quizy</a>
                 <a href="{{ path('user_edit') }}" class="menu-btn orange">Edytuj dane</a>

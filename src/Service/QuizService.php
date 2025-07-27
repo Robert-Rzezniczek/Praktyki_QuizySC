@@ -20,6 +20,8 @@ use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Validation;
 
 /**
  * QuizService class.
@@ -223,10 +225,20 @@ class QuizService implements QuizServiceInterface
      * Checks if Quiz can be deleted.
      *
      * @param Quiz $quiz Quiz
+     *
+     * @return bool True if quiz can be deleted, false otherwise
      */
     public function canBeDeleted(Quiz $quiz): bool
     {
-        return !$quiz->isPublished();
+        if ($quiz->isPublished()) {
+            return false;
+        }
+        $resultCount = $this->quizResultRepository->count(['quiz' => $quiz]);
+        if ($resultCount > 0) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -576,6 +588,57 @@ class QuizService implements QuizServiceInterface
         }
 
         return null;
+    }
+
+    /**
+     * Validate quiz data based on step.
+     *
+     * @param Quiz $quiz The quiz entity
+     * @param int  $step Current step number
+     *
+     * @throws \InvalidArgumentException If validation fails
+     */
+    public function validateQuizStep(Quiz $quiz, int $step): void
+    {
+        $validator = Validation::createValidator();
+        $violations = [];
+
+        if ($step >= 1) {
+            // Krok 1: Walidacja tytułu
+            $titleViolations = $validator->validate($quiz->getTitle(), [
+                new NotBlank(['message' => 'Tytuł nie może być pusty.']),
+            ]);
+            $violations = array_merge($violations, iterator_to_array($titleViolations));
+        }
+
+        if ($step >= 2) {
+            // Krok 2: Walidacja limitu czasu
+            $timeLimit = $quiz->getTimeLimit();
+            $timeLimitViolations = $validator->validate($timeLimit, [
+                new NotBlank(['message' => 'Limit czasu nie może być pusty.']),
+            ]);
+            if (null !== $timeLimit && $timeLimit <= 0) {
+                $violations[] = new \Symfony\Component\Validator\ConstraintViolation(
+                    'Limit czasu musi być większy niż 0 minut.',
+                    null,
+                    [],
+                    $quiz,
+                    'timeLimit',
+                    $timeLimit
+                );
+            }
+            $violations = array_merge($violations, iterator_to_array($timeLimitViolations));
+        }
+
+        if ($step >= 3) {
+            // Krok 3: Pełna walidacja (dodatkowe pola, jeśli są)
+            $this->validateQuiz($quiz); // Użyj istniejącej metody validateQuiz
+        }
+
+        if (count($violations) > 0) {
+            $messages = array_map(fn ($v) => $v->getMessage(), $violations);
+            throw new \InvalidArgumentException(implode(' ', $messages));
+        }
     }
 
     /**

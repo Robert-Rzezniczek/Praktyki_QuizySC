@@ -11,7 +11,6 @@
 {% block body %}
     <div class="container my-4">
         <h1 class="display-5 text-primary mb-4">Create Quiz - Step {{ step }} of {{ maxSteps }}</h1>
-
         {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
 
         {% if step == 1 %}
