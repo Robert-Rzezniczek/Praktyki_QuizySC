@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Quiz Result Service
+ * Quiz Result Service.
  */
 
 namespace App\Service;
@@ -30,6 +30,7 @@ class QuizResultService implements QuizResultServiceInterface
         $this->quizResultRepository = $quizResultRepository;
         $this->entityManager = $entityManager;
     }
+
     /**
      * Persists a QuizResult entity.
      *

@@ -10,7 +10,6 @@ use App\Entity\UserAuth;
 use App\Entity\UserProfile;
 use App\Form\UserProfileType;
 use App\Repository\UserProfileRepository;
-use LogicException;
 use Symfony\Component\Form\FormFactoryInterface;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
@@ -121,7 +120,7 @@ class UserProfileService implements UserProfileServiceInterface
         $profile = $user->getProfile();
 
         if (!$profile) {
-            throw new LogicException('Brak profilu użytkownika.');
+            throw new \LogicException('Brak profilu użytkownika.');
         }
 
         $form = $this->formFactory->create(UserProfileType::class, $profile);
@@ -138,7 +137,7 @@ class UserProfileService implements UserProfileServiceInterface
         $profile = $user->getProfile();
 
         if (!$profile) {
-            throw new LogicException('Brak profilu do zapisania.');
+            throw new \LogicException('Brak profilu do zapisania.');
         }
 
         $this->save($profile);
@@ -150,7 +149,7 @@ class UserProfileService implements UserProfileServiceInterface
      * @param UserAuth $user user without an assigned profile
      *
      * @return UserProfile new profile
-    */
+     */
     public function createEmptyProfile(UserAuth $user): UserProfile
     {
         $profile = new UserProfile();
