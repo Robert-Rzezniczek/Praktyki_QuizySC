@@ -9,6 +9,7 @@ namespace App\Entity;
 use App\Entity\Enum\UserRole;
 use App\Repository\UserAuthRepository;
 use Doctrine\ORM\Mapping as ORM;
+use LogicException;
 use Scheb\TwoFactorBundle\Model\Email\TwoFactorInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -237,7 +238,7 @@ class UserAuth implements UserInterface, PasswordAuthenticatedUserInterface, Two
     public function getEmailAuthCode(): ?string
     {
         if (null === $this->authCode) {
-            throw new \LogicException('The email authentication code was not set');
+            throw new LogicException('The email authentication code was not set');
         }
 
         return $this->authCode;

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Wojewodztwo entity.
+ * Województwo entity.
  */
 
 namespace App\Entity;
@@ -11,7 +11,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
- * Class wojewodztwo.
+ * Class województwo.
  */
 #[ORM\Entity]
 #[ORM\Table(name: 'wojewodztwa')]

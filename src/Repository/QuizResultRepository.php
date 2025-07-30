@@ -86,11 +86,11 @@ class QuizResultRepository extends ServiceEntityRepository
     }
 
     /**
-     * Pobiera ranking wyników dla danego quizu.
+     * Gets the score ranking for a given quiz.
      *
      * @param Quiz $quiz Quiz entity
      *
-     * @return array Lista wyników z informacjami o użytkownikach
+     * @return array List of results with user information
      */
     public function getQuizRanking(Quiz $quiz): array
     {

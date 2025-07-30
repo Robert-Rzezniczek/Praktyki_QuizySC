@@ -7,6 +7,7 @@
 namespace App\Entity;
 
 use App\Repository\QuizRepository;
+use DateTimeImmutable;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
@@ -71,22 +72,22 @@ class Quiz
     /**
      * Created at.
      *
-     * @var \DateTimeImmutable|null \DateTimeImmutable|null
+     * @var DateTimeImmutable|null \DateTimeImmutable|null
      */
     #[ORM\Column]
-    #[Assert\Type(\DateTimeImmutable::class)]
+    #[Assert\Type(DateTimeImmutable::class)]
     #[Gedmo\Timestampable(on: 'create')]
-    private ?\DateTimeImmutable $createdAt = null;
+    private ?DateTimeImmutable $createdAt = null;
 
     /**
      * Updated at.
      *
-     * @var \DateTimeImmutable|null \DateTimeImmutable|null
+     * @var DateTimeImmutable|null \DateTimeImmutable|null
      */
     #[ORM\Column]
-    #[Assert\Type(\DateTimeImmutable::class)]
+    #[Assert\Type(DateTimeImmutable::class)]
     #[Gedmo\Timestampable(on: 'update')]
-    private ?\DateTimeImmutable $updatedAt = null;
+    private ?DateTimeImmutable $updatedAt = null;
 
     /**
      * Questions (relation).
@@ -220,9 +221,9 @@ class Quiz
     /**
      * Getter for created at.
      *
-     * @return \DateTimeImmutable|null \DateTimeImmutable|null
+     * @return DateTimeImmutable|null \DateTimeImmutable|null
      */
-    public function getCreatedAt(): ?\DateTimeImmutable
+    public function getCreatedAt(): ?DateTimeImmutable
     {
         return $this->createdAt;
     }
@@ -230,11 +231,11 @@ class Quiz
     /**
      * Setter for created at.
      *
-     * @param \DateTimeImmutable $createdAt \DateTimeImmutable
+     * @param DateTimeImmutable $createdAt \DateTimeImmutable
      *
      * @return $this this
      */
-    public function setCreatedAt(\DateTimeImmutable $createdAt): static
+    public function setCreatedAt(DateTimeImmutable $createdAt): static
     {
         $this->createdAt = $createdAt;
 
@@ -244,9 +245,9 @@ class Quiz
     /**
      * Getter for updatedAt.
      *
-     * @return \DateTimeImmutable|null \DateTimeImmutable|null
+     * @return DateTimeImmutable|null \DateTimeImmutable|null
      */
-    public function getUpdatedAt(): ?\DateTimeImmutable
+    public function getUpdatedAt(): ?DateTimeImmutable
     {
         return $this->updatedAt;
     }
@@ -254,11 +255,11 @@ class Quiz
     /**
      * Setter for updatedAt.
      *
-     * @param \DateTimeImmutable $updatedAt \DateTimeImmutable
+     * @param DateTimeImmutable $updatedAt \DateTimeImmutable
      *
      * @return $this this
      */
-    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static
+    public function setUpdatedAt(DateTimeImmutable $updatedAt): static
     {
         $this->updatedAt = $updatedAt;
 

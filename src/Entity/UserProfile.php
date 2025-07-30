@@ -78,7 +78,7 @@ class UserProfile
     /**
      * Profil. (relacja).
      */
-    #[ORM\OneToOne(inversedBy: 'profile', targetEntity: UserAuth::class)]
+    #[ORM\OneToOne(targetEntity: UserAuth::class, inversedBy: 'profile')]
     #[ORM\JoinColumn(nullable: false)]
     private ?UserAuth $userAuth = null;
 
@@ -167,7 +167,7 @@ class UserProfile
     /**
      * Getter for wojewodztwo.
      *
-     * @return string|null Województwo
+     * @return Wojewodztwo|null Województwo
      */
     public function getWojewodztwo(): ?Wojewodztwo
     {
@@ -177,7 +177,7 @@ class UserProfile
     /**
      * Setter for wojewodztwo.
      *
-     * @param string $wojewodztwo Województwo
+     * @param Wojewodztwo|null $wojewodztwo Województwo
      *
      * @return $this
      */
@@ -191,7 +191,7 @@ class UserProfile
     /**
      * Getter for powiat.
      *
-     * @return string|null Powiat
+     * @return Powiat|null Powiat
      */
     public function getPowiat(): ?Powiat
     {
@@ -201,7 +201,7 @@ class UserProfile
     /**
      * Setter for powiat.
      *
-     * @param string $powiat Powiat
+     * @param Powiat|null $powiat Powiat
      *
      * @return $this
      */
@@ -215,7 +215,7 @@ class UserProfile
     /**
      * Getter for podzialWiekowy.
      *
-     * @return string|null Podział wiekowy
+     * @return EducationLevel|null Podział wiekowy
      */
     public function getPodzialWiekowy(): ?EducationLevel
     {
@@ -225,7 +225,7 @@ class UserProfile
     /**
      * Setter for podzialWiekowy.
      *
-     * @param string $podzialWiekowy Podział wiekowy
+     * @param EducationLevel|null $podzialWiekowy Podział wiekowy
      *
      * @return $this
      */

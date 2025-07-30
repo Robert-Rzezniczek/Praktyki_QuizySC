@@ -102,7 +102,7 @@ class QuizRepository extends ServiceEntityRepository
             ->join('App\Entity\QuizResult', 'qr', 'WITH', 'qr.quiz = q')
             ->where('qr.user = :user')
             ->setParameter('user', $user)
-            ->groupBy('q.id') // Unikamy duplikatów, jeśli istnieje wiele wyników
+            ->groupBy('q.id') // Unika duplikatów, jeśli istnieje wiele wyników
             ->orderBy('q.createdAt', 'DESC')
             ->getQuery()
             ->getResult();

@@ -10,45 +10,41 @@ use App\Entity\UserAnswer;
 use Doctrine\ORM\EntityManagerInterface;
 
 /**
- * UserAnswerService class.
+ * Service responsible for saving and removing UserAnswer entities.
  */
 class UserAnswerService implements UserAnswerServiceInterface
 {
-    private EntityManagerInterface $em;
+    private EntityManagerInterface $entityManager;
 
     /**
-     * Construct.
+     * Constructor.
      *
-     * @param EntityManagerInterface $em EntityManager
+     * @param EntityManagerInterface $entityManager Doctrine entity manager
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(EntityManagerInterface $entityManager)
     {
-        $this->em = $em;
+        $this->entityManager = $entityManager;
     }
 
     /**
-     * Save entity.
+     * Saves the given UserAnswer entity.
      *
-     * @param UserAnswer $userAnswer UserAnswer
-     *
-     * @return void void
+     * @param UserAnswer $userAnswer The entity to save
      */
     public function save(UserAnswer $userAnswer): void
     {
-        $this->em->persist($userAnswer);
-        $this->em->flush();
+        $this->entityManager->persist($userAnswer);
+        $this->entityManager->flush();
     }
 
     /**
-     * Delete entity.
+     * Removes the given UserAnswer entity.
      *
-     * @param UserAnswer $userAnswer UserAnswer
-     *
-     * @return void void
+     * @param UserAnswer $userAnswer The entity to remove
      */
     public function delete(UserAnswer $userAnswer): void
     {
-        $this->em->remove($userAnswer);
-        $this->em->flush();
+        $this->entityManager->remove($userAnswer);
+        $this->entityManager->flush();
     }
 }

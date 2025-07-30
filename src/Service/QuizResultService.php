@@ -1,7 +1,7 @@
 <?php
 
 /**
- * QuizResult Service.
+ * Quiz Result Service
  */
 
 namespace App\Service;
@@ -12,54 +12,53 @@ use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
- * Class QuizResultService.
+ * Service responsible for handling QuizResult persistence and access control.
  */
 class QuizResultService implements QuizResultServiceInterface
 {
-    private EntityManagerInterface $em;
+    private QuizResultRepository $quizResultRepository;
+    private EntityManagerInterface $entityManager;
 
     /**
-     * Construct.
+     * Constructor.
      *
-     * @param QuizResultRepository $quizResultRepository QuizResultRepository
+     * @param QuizResultRepository   $quizResultRepository Repository for quiz results
+     * @param EntityManagerInterface $entityManager        Doctrine entity manager
      */
-    public function __construct(private readonly QuizResultRepository $quizResultRepository)
+    public function __construct(QuizResultRepository $quizResultRepository, EntityManagerInterface $entityManager)
     {
+        $this->quizResultRepository = $quizResultRepository;
+        $this->entityManager = $entityManager;
     }
-
     /**
-     * Zapis encji QuizResult do bazy danych.
+     * Persists a QuizResult entity.
      *
-     * @param QuizResult $quizResult QuizResult
-     *
-     * @return void void
+     * @param QuizResult $quizResult The quiz result to save
      */
     public function save(QuizResult $quizResult): void
     {
-        $this->em->persist($quizResult);
-        $this->em->flush();
+        $this->entityManager->persist($quizResult);
+        $this->entityManager->flush();
     }
 
     /**
-     * Usuwanie.
+     * Removes a QuizResult entity.
      *
-     * @param QuizResult $quizResult QuizResult
-     *
-     * @return void void
+     * @param QuizResult $quizResult The quiz result to delete
      */
     public function delete(QuizResult $quizResult): void
     {
-        $this->em->remove($quizResult);
-        $this->em->flush();
+        $this->entityManager->remove($quizResult);
+        $this->entityManager->flush();
     }
 
     /**
-     * Get quiz result for user.
+     * Returns a quiz result for the given user and ID, or null if not found or not owned by user.
      *
-     * @param int           $id   int
-     * @param UserInterface $user UserInterface
+     * @param int           $id   The ID of the quiz result
+     * @param UserInterface $user The user requesting the result
      *
-     * @return QuizResult|null QuizResult|null
+     * @return QuizResult|null The matching quiz result or null
      */
     public function getQuizResultForUser(int $id, UserInterface $user): ?QuizResult
     {

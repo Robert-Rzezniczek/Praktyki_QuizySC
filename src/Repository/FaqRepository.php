@@ -26,7 +26,7 @@ class FaqRepository extends ServiceEntityRepository
     }
 
     /**
-     * Zwraca wszystkie wpisy FAQ ASC.
+     * Returns all FAQ entries ASC.
      *
      * @return Faq[]
      */
@@ -45,9 +45,9 @@ class FaqRepository extends ServiceEntityRepository
      */
     public function save(Faq $faq, bool $flush = true): void
     {
-        $this->_em->persist($faq);
+        $this->getEntityManager()->persist($faq);
         if ($flush) {
-            $this->_em->flush();
+            $this->getEntityManager()->flush();
         }
     }
 }

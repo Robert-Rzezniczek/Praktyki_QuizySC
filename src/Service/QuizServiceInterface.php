@@ -10,6 +10,8 @@ use App\Entity\Question;
 use App\Entity\Quiz;
 use App\Entity\QuizResult;
 use App\Entity\UserAuth;
+use DateTime;
+use InvalidArgumentException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -91,7 +93,7 @@ interface QuizServiceInterface
      * @param int              $duration Duration in minutes
      * @param SessionInterface $session  Session
      *
-     * @throws \InvalidArgumentException If duration is invalid
+     * @throws InvalidArgumentException If duration is invalid
      */
     public function publishQuiz(Quiz $quiz, int $duration, SessionInterface $session): void;
 
@@ -138,7 +140,7 @@ interface QuizServiceInterface
      *
      * @return array List of question IDs
      *
-     * @throws \InvalidArgumentException If quiz has no questions
+     * @throws InvalidArgumentException If quiz has no questions
      */
     public function initializeQuizSession(Quiz $quiz, SessionInterface $session): array;
 
@@ -151,7 +153,7 @@ interface QuizServiceInterface
      *
      * @return Question|null Next question or null if no more questions
      *
-     * @throws \InvalidArgumentException If question ID is invalid
+     * @throws InvalidArgumentException If question ID is invalid
      */
     public function getNextQuestion(Quiz $quiz, int $index, SessionInterface $session): ?Question;
 
@@ -164,7 +166,7 @@ interface QuizServiceInterface
      * @param int              $answerId   Answer ID
      * @param SessionInterface $session    Session
      *
-     * @throws \InvalidArgumentException If answer is invalid
+     * @throws InvalidArgumentException If answer is invalid
      */
     public function saveUserAnswer(Quiz $quiz, UserAuth $user, int $questionId, int $answerId, SessionInterface $session): void;
 
@@ -176,13 +178,13 @@ interface QuizServiceInterface
      * @param array            $answers   Array of question ID => answer ID
      * @param int              $timeLimit Time limit in minutes
      * @param SessionInterface $session   Session
-     * @param \DateTime        $startedAt Time when quiz was started
+     * @param DateTime         $startedAt Time when quiz was started
      *
      * @return QuizResult QuizResult
      *
-     * @throws \InvalidArgumentException If answers are invalid or user already solved the quiz
+     * @throws InvalidArgumentException If answers are invalid or user already solved the quiz
      */
-    public function saveQuizResult(Quiz $quiz, UserAuth $user, array $answers, int $timeLimit, SessionInterface $session, \DateTime $startedAt): QuizResult;
+    public function saveQuizResult(Quiz $quiz, UserAuth $user, array $answers, int $timeLimit, SessionInterface $session, DateTime $startedAt): QuizResult;
 
     /**
      * Check if quiz time limit has expired.
@@ -201,13 +203,13 @@ interface QuizServiceInterface
      * @param UserAuth         $user      User auth entity
      * @param SessionInterface $session   Session
      * @param int              $timeLimit Time limit in minutes
-     * @param \DateTime        $startedAt Time when quiz was started
+     * @param DateTime         $startedAt Time when quiz was started
      *
      * @return QuizResult|null Saved quiz result or null if saving fails
      *
-     * @throws \InvalidArgumentException If saving fails
+     * @throws InvalidArgumentException If saving fails
      */
-    public function finalizeQuiz(Quiz $quiz, UserAuth $user, SessionInterface $session, int $timeLimit, \DateTime $startedAt): ?QuizResult;
+    public function finalizeQuiz(Quiz $quiz, UserAuth $user, SessionInterface $session, int $timeLimit, DateTime $startedAt): ?QuizResult;
 
     /**
      * Validate quiz data based on step.
@@ -215,7 +217,7 @@ interface QuizServiceInterface
      * @param Quiz $quiz The quiz entity
      * @param int  $step Current step number
      *
-     * @throws \InvalidArgumentException If validation fails
+     * @throws InvalidArgumentException If validation fails
      */
     public function validateQuizStep(Quiz $quiz, int $step): void;
 

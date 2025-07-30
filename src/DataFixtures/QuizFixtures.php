@@ -10,7 +10,6 @@ use App\Entity\Answer;
 use App\Entity\Question;
 use App\Entity\Quiz;
 use App\Repository\QuizRepository;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Faker\Generator;
 
 /**
@@ -68,7 +67,7 @@ class QuizFixtures extends AbstractBaseFixtures
             // Tworzenie odpowiedzi dla każdego pytania (2-4 odpowiedzi, 1 poprawna)
             $answerCount = $data['answers'];
             $correctAnswerIndex = rand(0, $answerCount - 1); // Losowy indeks poprawnej odpowiedzi
-            for ($i = 0; $i < $answerCount; $i++) {
+            for ($i = 0; $i < $answerCount; ++$i) {
                 $answer = new Answer();
                 $answer->setContent($this->faker->sentence(5));
                 $answer->setIsCorrect($i === $correctAnswerIndex); // Tylko jedna poprawna odpowiedź

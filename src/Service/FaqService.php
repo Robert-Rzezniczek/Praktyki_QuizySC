@@ -49,7 +49,7 @@ class FaqService
     }
 
     /**
-     * Zapisuje nowy wpis FAQ.
+     * Saves a new FAQ entry.
      *
      * @param Faq $faq Faq
      *
@@ -62,7 +62,7 @@ class FaqService
     }
 
     /**
-     * Zwraca listę FAQ posortowaną wg pozycji.
+     * Returns a list of FAQs sorted by item.
      *
      * @return array array
      */
