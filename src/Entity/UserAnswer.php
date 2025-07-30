@@ -7,7 +7,6 @@
 namespace App\Entity;
 
 use App\Repository\UserAnswerRepository;
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -62,7 +61,7 @@ class UserAnswer
      * Answered at.
      */
     #[ORM\Column]
-    private ?DateTime $answeredAt = null;
+    private ?\DateTime $answeredAt = null;
 
     /**
      * Getter for Id.
@@ -197,9 +196,9 @@ class UserAnswer
     /**
      * Getter for answered at.
      *
-     * @return DateTime|null \DateTime|null
+     * @return \DateTime|null \DateTime|null
      */
-    public function getAnsweredAt(): ?DateTime
+    public function getAnsweredAt(): ?\DateTime
     {
         return $this->answeredAt;
     }
@@ -207,11 +206,11 @@ class UserAnswer
     /**
      * Setter for answered at.
      *
-     * @param DateTime $answeredAt \DateTime
+     * @param \DateTime $answeredAt \DateTime
      *
      * @return $this this
      */
-    public function setAnsweredAt(DateTime $answeredAt): static
+    public function setAnsweredAt(\DateTime $answeredAt): static
     {
         $this->answeredAt = $answeredAt;
 
