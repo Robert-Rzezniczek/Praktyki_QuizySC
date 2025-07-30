@@ -13,6 +13,39 @@
         <h1 class="display-5 text-primary mb-4">{{ 'Szczegóły quizu'|trans({'%id%': quiz.id|default('')}) }}</h1>
 
         {% if quiz is defined %}
+
+            {# Branding #}
+            <div class="card shadow-sm mt-4">
+                <div class="card-body">
+                    <h5 class="text-primary mb-4">{{ 'label.branding'|trans }}</h5>
+
+                    <div class="text-center mb-3">
+                        <h3>{{ quiz.brandName ?? '—' }}</h3>
+                        <p>{{ quiz.brandDescription ?? '—' }}</p>
+                    </div>
+
+                    {% if quiz.logoFilename %}
+                        <div class="text-center my-3">
+                            <img src="{{ asset('uploads/' ~ quiz.logoFilename) }}" alt="Logo"
+                                 class="img-fluid" style="max-height: 120px; max-width: 100%; height: auto;">
+                        </div>
+                    {% else %}
+                        <div class="text-center text-muted">Brak logo</div>
+                    {% endif %}
+                </div>
+
+
+                <div class="card-footer bg-light d-flex justify-content-end">
+                    {% if is_granted('ROLE_ADMIN') %}
+                        <a class="btn btn-outline-warning"
+                           href="{{ path('quiz_edit_branding', {id: quiz.id}) }}"
+                           title="{{ 'action.edit_branding'|trans }}">
+                            <i class="bi bi-pencil-square"></i> {{ 'action.edit_branding'|trans }}
+                        </a>
+                    {% endif %}
+                </div>
+            </div>
+
             {# Szczegóły główne #}
             <div class="card shadow-sm">
                 <div class="card-body">
@@ -52,36 +85,7 @@
                 </div>
             </div>
 
-            {# Branding #}
-            <div class="card shadow-sm mt-4">
-                <div class="card-body">
-                    <h5 class="text-primary mb-4">{{ 'label.branding'|trans }}</h5>
 
-                    <div class="text-center mb-3">
-                        <h3>{{ quiz.brandName ?? '—' }}</h3>
-                        <p>{{ quiz.brandDescription ?? '—' }}</p>
-                    </div>
-
-                    {% if quiz.logoFilename %}
-                        <div class="text-center my-3">
-                            <img src="{{ asset('uploads/' ~ quiz.logoFilename) }}" alt="Logo"
-                                 class="img-fluid" style="max-height: 120px; max-width: 100%; height: auto;">
-                        </div>
-                    {% else %}
-                        <div class="text-center text-muted">Brak logo</div>
-                    {% endif %}
-                </div>
-
-
-            <div class="card-footer bg-light d-flex justify-content-end">
-                {% if is_granted('ROLE_ADMIN') %}
-                    <a class="btn btn-outline-warning"
-                       href="{{ path('quiz_edit_branding', {id: quiz.id}) }}"
-                       title="{{ 'action.edit_branding'|trans }}">
-                        <i class="bi bi-pencil-square"></i> {{ 'action.edit_branding'|trans }}
-                    </a>
-                {% endif %}
-            </div>
 
 
 
