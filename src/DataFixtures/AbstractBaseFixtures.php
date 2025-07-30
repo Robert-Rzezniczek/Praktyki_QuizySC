@@ -77,7 +77,6 @@ abstract class AbstractBaseFixtures extends Fixture
                 throw new \LogicException('Did you forget to return the entity object from your callback to BaseFixture::createMany()?');
             }
 
-            // Save using repository if available, otherwise use manager
             if (isset($this->repositories[$referenceGroupName])) {
                 $this->repositories[$referenceGroupName]->save($entity);
             } else {
@@ -85,11 +84,9 @@ abstract class AbstractBaseFixtures extends Fixture
                 $this->manager->flush();
             }
 
-            // Store for usage later as groupName_#COUNT#
             $this->addReference(sprintf('%s_%d', $referenceGroupName, $i), $entity);
         }
 
-        // Flush only if no repository is used
         if (!isset($this->repositories[$referenceGroupName])) {
             $this->manager->flush();
         }

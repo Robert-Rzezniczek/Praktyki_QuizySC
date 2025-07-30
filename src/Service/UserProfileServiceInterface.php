@@ -8,6 +8,8 @@ namespace App\Service;
 
 use App\Entity\UserAuth;
 use App\Entity\UserProfile;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Interface UserProfileServiceInterface.
@@ -56,4 +58,29 @@ interface UserProfileServiceInterface
      * @return UserProfile Updated profile entity
      */
     public function updateProfile(UserProfile $profile, array $profileData): UserProfile;
+
+    /**
+     * Build the edit form.
+     *
+     * @param Request  $request Request
+     * @param UserAuth $user    UserAuth
+     *
+     * @return FormInterface FormInterface
+     */
+    public function buildEditForm(Request $request, UserAuth $user): FormInterface;
+
+    /**
+     * @param UserAuth $user user
+     */
+    public function processEditForm(UserAuth $user): void;
+
+    /**
+     * Tworzy pusty profil użytkownika – np. gdy admin edytuje konto bez danych osobowych.
+     * Służy głównie do umożliwienia wyświetlenia formularza Symfony.
+     *
+     * @param UserAuth $user użytkownik bez przypisanego profilu
+     *
+     * @return UserProfile nowy profil
+     */
+    public function createEmptyProfile(UserAuth $user): UserProfile;
 }

@@ -9,7 +9,6 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Contracts\Translation\TranslatorInterface;
 
 /**
  * Class StartController.
@@ -19,10 +18,8 @@ class StartController extends AbstractController
 {
     /**
      * Constructor.
-     *
-     * @param TranslatorInterface $translator Translator
      */
-    public function __construct(private readonly TranslatorInterface $translator)
+    public function __construct()
     {
     }
 

@@ -36,4 +36,30 @@ interface UserAuthServiceInterface
      * @param FormInterface<RegistrationForm> $form Form instance of RegistrationForm
      */
     public function registerUser(UserAuth $user, FormInterface $form): void;
+
+    /**
+     * Delete account.
+     *
+     * @param UserAuth $user UserAuth
+     *
+     * @return void void
+     */
+    public function processDeleteAccount(UserAuth $user): void;
+
+    /**
+     * Change password.
+     *
+     * @param UserAuth $user          UserAuth
+     * @param string   $plainPassword string
+     *
+     * @return void void
+     */
+    public function changePassword(UserAuth $user, string $plainPassword): void;
+
+    /**
+     * Get all users.
+     *
+     * @return array array
+     */
+    public function getAll(): array;
 }

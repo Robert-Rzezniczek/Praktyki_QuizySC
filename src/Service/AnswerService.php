@@ -111,12 +111,12 @@ class AnswerService implements AnswerServiceInterface
         $question = $answer->getQuestion();
         $answers = $question->getAnswers();
         if ($answers->count() <= 2) {
-            return false; // Minimum 2 odpowiedzi
+            return false;
         }
         if ($answer->isCorrect()) {
             $correctAnswers = $answers->filter(fn ($a) => $a->isCorrect())->count();
 
-            return $correctAnswers > 1; // Musi zostać co najmniej jedna poprawna odpowiedź
+            return $correctAnswers > 1;
         }
 
         return true;
