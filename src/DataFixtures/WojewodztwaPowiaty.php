@@ -20,8 +20,6 @@ class WojewodztwaPowiaty extends Fixture
      * Loads the data.
      *
      * @param ObjectManager $manager ObjectManager
-     *
-     * @return void
      */
     public function load(ObjectManager $manager): void
     {
