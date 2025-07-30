@@ -93,7 +93,7 @@ class Quiz
      *
      * @var Collection<int, Question> Collection
      */
-    #[ORM\OneToMany(targetEntity: Question::class, mappedBy: 'quiz', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    #[ORM\OneToMany(targetEntity: Question::class, mappedBy: 'quiz', cascade: ['persist', 'remove'], orphanRemoval: true)]
     private Collection $questions;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -310,13 +310,22 @@ class Quiz
         return $this;
     }
 
+    /**
+     * Getter for brand name.
+     *
+     * @return string|null string|null
+     */
     public function getBrandName(): ?string
     {
         return $this->brandName;
     }
 
     /**
-     * @return $this
+     * Setter for brand name.
+     *
+     * @param string|null $brandName string|null
+     *
+     * @return $this this
      */
     public function setBrandName(?string $brandName): static
     {
@@ -325,13 +334,22 @@ class Quiz
         return $this;
     }
 
+    /**
+     * Getter for brand description.
+     *
+     * @return string|null string|null
+     */
     public function getBranddescription(): ?string
     {
         return $this->branddescription;
     }
 
     /**
-     * @return $this
+     * Setter for brand description.
+     *
+     * @param string|null $branddescription string|null
+     *
+     * @return $this this
      */
     public function setBranddescription(?string $branddescription): static
     {
@@ -340,11 +358,23 @@ class Quiz
         return $this;
     }
 
+    /**
+     * Getter for logo filename.
+     *
+     * @return string|null string|null
+     */
     public function getLogoFilename(): ?string
     {
         return $this->logoFilename;
     }
 
+    /**
+     * Setter for logo filename.
+     *
+     * @param string|null $filename string|null
+     *
+     * @return void void
+     */
     public function setLogoFilename(?string $filename): void
     {
         $this->logoFilename = $filename;

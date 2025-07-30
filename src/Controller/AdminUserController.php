@@ -44,7 +44,7 @@ class AdminUserController extends AbstractController
     #[Route('/', name: 'admin_user_list')]
     public function list(): Response
     {
-        $users = $this->userService->getAll(); // możesz dodać metodę w serwisie
+        $users = $this->userService->getAll();
 
         return $this->render('admin_user/list.html.twig', ['users' => $users]);
     }

@@ -32,6 +32,12 @@ class QuizService implements QuizServiceInterface
 
     /**
      * Construct.
+     *
+     * @param QuizRepository       $quizRepository       QuizRepository
+     * @param PaginatorInterface   $paginator            PaginatorInterface
+     * @param QuizResultRepository $quizResultRepository QuizResultRepository
+     * @param QuestionRepository   $questionRepository   QuestionRepository
+     * @param RequestStack         $requestStack         RequestStack
      */
     public function __construct(private readonly QuizRepository $quizRepository, private readonly PaginatorInterface $paginator, private readonly QuizResultRepository $quizResultRepository, private readonly QuestionRepository $questionRepository, private readonly RequestStack $requestStack)
     {
@@ -82,6 +88,11 @@ class QuizService implements QuizServiceInterface
 
     /**
      * Initialize quiz with session data or return existing quiz for editing.
+     *
+     * @param SessionInterface $session SessionInterface
+     * @param Quiz|null        $quiz    Quiz|null
+     *
+     * @return Quiz Quiz
      */
     public function initializeQuizFromSession(SessionInterface $session, ?Quiz $quiz = null): Quiz
     {
@@ -188,7 +199,8 @@ class QuizService implements QuizServiceInterface
     /**
      * Save entity.
      *
-     * @param Quiz $quiz Quiz entity
+     * @param Quiz $quiz           Quiz entity
+     * @param bool $skipValidation bool
      */
     public function save(Quiz $quiz, bool $skipValidation = false): void
     {
@@ -314,8 +326,10 @@ class QuizService implements QuizServiceInterface
     /**
      * Check if user can solve the quiz.
      *
-     * @param Quiz     $quiz Quiz entity
-     * @param UserAuth $user User auth entity
+     * @param Quiz     $quiz Quiz
+     * @param UserAuth $user UserAuth
+     *
+     * @return bool bool
      */
     public function canUserSolveQuiz(Quiz $quiz, UserAuth $user): bool
     {
@@ -476,6 +490,8 @@ class QuizService implements QuizServiceInterface
      * @param SessionInterface $session   Session
      * @param \DateTime        $startedAt Time when quiz was started
      *
+     * @return QuizResult QuizResult
+     *
      * @throws \InvalidArgumentException If answers are invalid or user already solved the quiz
      */
     public function saveQuizResult(Quiz $quiz, UserAuth $user, array $answers, int $timeLimit, SessionInterface $session, \DateTime $startedAt): QuizResult
@@ -586,8 +602,6 @@ class QuizService implements QuizServiceInterface
             error_log('Error finalizing quiz: '.$e->getMessage());
             throw new \InvalidArgumentException($e->getMessage());
         }
-
-        return null;
     }
 
     /**
@@ -642,31 +656,13 @@ class QuizService implements QuizServiceInterface
     }
 
     /**
-     * Validate quiz.
+     * Get ranking for quiz.
      *
-     * @param Quiz $quiz Quiz
+     * @param Quiz     $quiz        Quiz
+     * @param UserAuth $currentUser UserAuth
+     *
+     * @return array array
      */
-    private function validateQuiz(Quiz $quiz): void
-    {
-        if ($quiz->getQuestions()->isEmpty()) {
-            throw new \InvalidArgumentException('Quiz musi mieć co najmniej jedno pytanie.');
-        }
-
-        foreach ($quiz->getQuestions() as $question) {
-            $answers = $question->getAnswers();
-            if ($answers->count() < 2) {
-                throw new \InvalidArgumentException('Każde pytanie musi mieć co najmniej dwie odpowiedzi.');
-            }
-            if ($answers->count() > 4) {
-                throw new \InvalidArgumentException('Każde pytanie może mieć maksymalnie 4 odpowiedzi.');
-            }
-            $correctAnswers = $answers->filter(fn (Answer $answer) => $answer->isCorrect())->count();
-            if (1 !== $correctAnswers) {
-                throw new \InvalidArgumentException('Każde pytanie musi mieć dokładnie jedną poprawną odpowiedź.');
-            }
-        }
-    }
-
     public function getQuizRanking(Quiz $quiz, UserAuth $currentUser): array
     {
         $results = $this->quizResultRepository->getQuizRanking($quiz);
@@ -804,6 +800,14 @@ class QuizService implements QuizServiceInterface
         }
     }
 
+    /**
+     * Mask names.
+     *
+     * @param string|null $imie     string|null
+     * @param string|null $nazwisko string|null
+     *
+     * @return string string
+     */
     private function maskName(?string $imie, ?string $nazwisko): string
     {
         if (!$imie || !$nazwisko) {
@@ -813,5 +817,31 @@ class QuizService implements QuizServiceInterface
         $maskedNazwisko = substr($nazwisko, 0, 1).str_repeat('*', 5);
 
         return $maskedImie.' '.$maskedNazwisko;
+    }
+
+    /**
+     * Validate quiz.
+     *
+     * @param Quiz $quiz Quiz
+     */
+    private function validateQuiz(Quiz $quiz): void
+    {
+        if ($quiz->getQuestions()->isEmpty()) {
+            throw new \InvalidArgumentException('Quiz musi mieć co najmniej jedno pytanie.');
+        }
+
+        foreach ($quiz->getQuestions() as $question) {
+            $answers = $question->getAnswers();
+            if ($answers->count() < 2) {
+                throw new \InvalidArgumentException('Każde pytanie musi mieć co najmniej dwie odpowiedzi.');
+            }
+            if ($answers->count() > 4) {
+                throw new \InvalidArgumentException('Każde pytanie może mieć maksymalnie 4 odpowiedzi.');
+            }
+            $correctAnswers = $answers->filter(fn (Answer $answer) => $answer->isCorrect())->count();
+            if (1 !== $correctAnswers) {
+                throw new \InvalidArgumentException('Każde pytanie musi mieć dokładnie jedną poprawną odpowiedź.');
+            }
+        }
     }
 }

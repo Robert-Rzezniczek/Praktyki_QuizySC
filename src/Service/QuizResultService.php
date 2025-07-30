@@ -29,6 +29,10 @@ class QuizResultService implements QuizResultServiceInterface
 
     /**
      * Zapis encji QuizResult do bazy danych.
+     *
+     * @param QuizResult $quizResult QuizResult
+     *
+     * @return void void
      */
     public function save(QuizResult $quizResult): void
     {
@@ -38,6 +42,10 @@ class QuizResultService implements QuizResultServiceInterface
 
     /**
      * Usuwanie.
+     *
+     * @param QuizResult $quizResult QuizResult
+     *
+     * @return void void
      */
     public function delete(QuizResult $quizResult): void
     {

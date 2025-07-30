@@ -25,6 +25,16 @@ interface QuestionServiceInterface
     public function getPaginatedList(int $page): PaginationInterface;
 
     /**
+     * Get paginated list of questions by quiz.
+     *
+     * @param int  $page Page number
+     * @param Quiz $quiz Quiz entity
+     *
+     * @return PaginationInterface Paginated list
+     */
+    public function getPaginatedListByQuiz(int $page, Quiz $quiz): PaginationInterface;
+
+    /**
      * Save entity.
      *
      * @param Question $question Question entity
@@ -37,14 +47,4 @@ interface QuestionServiceInterface
      * @param Question $question Question entity
      */
     public function delete(Question $question): void;
-
-    /**
-     * Get paginated list of questions by quiz.
-     *
-     * @param int  $page Page number
-     * @param Quiz $quiz Quiz entity
-     *
-     * @return PaginationInterface Paginated list
-     */
-    public function getPaginatedListByQuiz(int $page, Quiz $quiz): PaginationInterface;
 }

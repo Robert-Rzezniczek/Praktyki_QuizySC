@@ -13,6 +13,32 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
+
+        #timer {
+            border: none;
+            outline: none;
+            font-size: 1.6rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px auto;
+            padding: 12px 30px;
+            border-radius: 12px;
+            background-color: #ffffff;
+            color: #000000;
+            max-width: 500px;
+            margin: 0 auto 10px auto;
+        }
+
+
+        .quiz-question-number {
+            font-size: 1.4rem;
+            margin-bottom: 20px;
+            margin-top: -90px;
+            font-weight: bold;
+            text-align: center;
+            color: #050505;
+        }
+
         .quiz-question {
             max-width: 800px;
             margin: 60px auto;
@@ -23,61 +49,96 @@
         }
 
         .quiz-question h2 {
-            margin-bottom: 25px;
+            margin-bottom: 10px;
             text-align: center;
             font-size: 1.8rem;
         }
 
+        .answer-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
         .answer-btn {
-            margin: 8px 0;
-            padding: 15px 20px;
-            font-size: 1.1em;
+            padding: 20px 24px;
+            font-size: 1.2em;
             cursor: pointer;
-            border: none;
+            border: 2px solid transparent;
             border-radius: 12px;
             transition: all 0.2s ease;
             width: 100%;
             font-weight: bold;
+            height: 90px;
             color: white;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+        }
+
+        .answer-btn:hover {
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
         }
 
         .color-1 {
             background-color: #c82123;
         }
-        .color-1:hover {
-            background-color: #a51a1b;
-        }
 
         .color-2 {
             background-color: #fbc02d;
-            color: #333;
-        }
-        .color-2:hover {
-            background-color: #f9a825;
         }
 
         .color-3 {
             background-color: #43a047;
         }
-        .color-3:hover {
-            background-color: #388e3c;
-        }
 
         .color-4 {
             background-color: #039be5;
         }
-        .color-4:hover {
-            background-color: #0288d1;
-        }
 
-        /* Styl dla aktywnej (wybranej) odpowiedzi */
         .answer-btn.active {
-            box-shadow: 0 0 0 4px #6a1b9a;
+            border-color: #6a1b9a;
+            border-width: 5px;
+            border-style: solid;
         }
 
-        .answer-btn:focus {
+        .answer-btn:hover {
+            filter: brightness(1.1);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .btn-primary {
+            background-color: #6a1b9a;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+            padding: 10px 50px;
+            border: none;
+            border-radius: 999px;
+            display: inline-block;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+            transition: transform 0.2s ease, filter 0.2s ease;
+            margin: 40px auto 0;
+            font-family: 'Luckiest Guy', cursive;
+            letter-spacing: 2px;
+        }
+
+        .btn-primary:hover {
+            background-color: #6a1b9a;
+            filter: brightness(1.1);
+            transform: scale(1.02);
+        }
+
+        .btn-primary:focus,
+        .btn-primary:active,
+        .btn-primary:focus:active {
+            background-color: #6a1b9a;
+            color: white;
+            box-shadow: none;
             outline: none;
         }
+
+
 
         @media (max-width: 600px) {
             .answer-buttons {
@@ -86,15 +147,17 @@
 
             .answer-btn {
                 font-size: 1em;
-                padding: 12px 16px;
+                padding: 16px 20px;
+                height: auto;
             }
         }
     </style>
 {% endblock %}
 
+
 {% block body %}
     <h1>{{ 'title.solve_quiz'|trans }} {{ quiz.title }}</h1>
-    <div id="timer" class="alert alert-info">Pozostały czas: <span id="time-remaining">00:00</span></div>
+    <div id="timer" class="alert alert-info"> <i class="fa-solid fa-clock"></i> <span id="time-remaining">00:00</span></div>
     {% if app.flashes('error') is not empty %}
         <div class="alert alert-danger">
             {% for message in app.flashes('error') %}
@@ -105,7 +168,7 @@
 
     {% if question %}
         <div class="quiz-question">
-            <div class="quiz-question-number">Pytanie {{ form.question_index.vars.value + 1 }}</div>
+            <div class="quiz-question-number">Pytanie {{ form.question_index.vars.value + 1 }}/{{ totalQuestions }}</div>
             <h2>{{ question.content }}</h2>
             {{ form_start(form, {'attr': {'id': 'quiz-solve-form'}}) }}
             <div class="btn-group-toggle answer-buttons" data-toggle="buttons">
@@ -138,7 +201,7 @@
         document.addEventListener('DOMContentLoaded', function () {
             const quizId = {{ quiz.id }};
             const startedAt = {{ started_at|default(0) }};
-            const timeLimit = {{ time_limit }} * 60; // Konwersja minut na sekundy
+            const timeLimit = {{ time_limit }} * 60;
             const checkStatusUrl = '{{ path('quiz_check_status', {'id': quiz.id}) }}';
             const timerElement = document.getElementById('time-remaining');
             const form = document.getElementById('quiz-solve-form');
@@ -193,11 +256,9 @@
                     });
             }
 
-            // Aktualizuj timer co sekundę
             const timerInterval = setInterval(updateTimer, 1000);
             updateTimer();
 
-            // Sprawdzaj status quizu co 10 sekund
             const statusInterval = setInterval(() => {
                 fetch(checkStatusUrl, {
                     method: 'GET',
@@ -215,13 +276,11 @@
                     .catch(error => console.error('Error checking status:', error));
             }, 10000);
 
-            // Zatrzymaj timer i sprawdzanie statusu, jeśli quiz się zakończy
             form.addEventListener('submit', () => {
                 clearInterval(timerInterval);
                 clearInterval(statusInterval);
             });
 
-            // Blokada cofania
             window.onpopstate = function(event) {
                 if (event.state) {
                     window.location.href = '{{ path('quiz_menu_view') }}';
@@ -231,11 +290,8 @@
 
             document.querySelectorAll('.answer-btn').forEach(button => {
                 button.addEventListener('click', () => {
-                    // Dezaktywuj wszystkie
                     document.querySelectorAll('.answer-btn').forEach(btn => btn.classList.remove('active'));
-                    // Aktywuj kliknięty
                     button.classList.add('active');
-                    // Zaznacz odpowiadające radio
                     const targetId = button.dataset.target;
                     const radio = document.getElementById(targetId);
                     if (radio) {

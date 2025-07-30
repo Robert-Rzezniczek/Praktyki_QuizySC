@@ -36,4 +36,13 @@ interface PowiatServiceInterface
      * @param Powiat $powiat Powiat entity
      */
     public function delete(Powiat $powiat): void;
+
+    /**
+     * Check if powiat can be deleted (no associated UserProfiles).
+     *
+     * @param Powiat $powiat Powiat entity
+     *
+     * @return bool True if deletable, false otherwise
+     */
+    public function canBeDeleted(Powiat $powiat): bool;
 }
