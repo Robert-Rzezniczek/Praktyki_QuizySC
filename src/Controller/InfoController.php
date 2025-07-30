@@ -56,6 +56,8 @@ class InfoController extends AbstractController
     /**
      * About.
      *
+     * Przekierowanie na stronę Sursum corda
+     *
      * @return Response Response
      */
 

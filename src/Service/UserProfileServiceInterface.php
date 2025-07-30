@@ -75,12 +75,11 @@ interface UserProfileServiceInterface
     public function processEditForm(UserAuth $user): void;
 
     /**
-     * Tworzy pusty profil użytkownika – np. gdy admin edytuje konto bez danych osobowych.
-     * Służy głównie do umożliwienia wyświetlenia formularza Symfony.
+     * Creates an empty user profile – for example, when an admin edits an account without personal data.
      *
-     * @param UserAuth $user użytkownik bez przypisanego profilu
+     * @param UserAuth $user user without an assigned profile
      *
-     * @return UserProfile nowy profil
+     * @return UserProfile new profile
      */
     public function createEmptyProfile(UserAuth $user): UserProfile;
 }

@@ -6,7 +6,7 @@
 {% block stylesheets %}
     {{ parent() }}
     <style>
-        .result-card {
+       .result-card {
             max-width: 1000px;
             margin: 60px auto;
             border-radius: 60px;
@@ -40,7 +40,6 @@
             flex-direction: column;
             gap: 20px;
         }
-
         .score-circle {
             width: 260px;
             height: 260px;
@@ -59,12 +58,16 @@
         .score-circle::before {
             content: "";
             position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             width: 200px;
             height: 200px;
             background-color: white;
             border-radius: 50%;
             z-index: 1;
         }
+
 
         .score-circle span {
             position: relative;
@@ -97,7 +100,8 @@
         .action-buttons a:hover {
             transform: scale(1.05);
         }
-    </style>
+
+                 </style>
 {% endblock %}
 
 {% block body %}
@@ -124,8 +128,7 @@
         </div>
 
         <div class="action-buttons">
-            <a href="{{ path('quiz_menu_view') }}">MENU</a>
-{#            <a href="{{ path('quiz_ranking', {'id': quiz.id}) }}">RANKING</a>#}
+            <a href="{{ path('quiz_menu_view') }}">LISTA QUIZÓW</a>
             {% if quiz.isPublished %}
                 <a href="">WKRÓTCE</a>
             {% else %}
@@ -148,7 +151,7 @@
                     current = targetScore;
                     clearInterval(interval);
                 }
-                circle.style.background = `conic-gradient(#2e7d32 ${current}%, #e0e0e0 0%)`;
+                circle.style.background = `conic-gradient(#2e7d32 ${current}%, #e0e0e0 ${current}% 100%)`;
                 current += step;
             }, delay);
         });

@@ -7,6 +7,7 @@
 namespace App\Entity;
 
 use App\Repository\QuizResultRepository;
+use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -55,27 +56,27 @@ class QuizResult
      * Started at.
      */
     #[ORM\Column]
-    private ?\DateTime $startedAt = null;
+    private ?DateTime $startedAt = null;
 
     /**
      * Completed at.
      */
     #[ORM\Column]
-    private ?\DateTime $completedAt = null;
+    private ?DateTime $completedAt = null;
 
     /**
      * Expires at.
      */
     #[ORM\Column]
-    private ?\DateTime $expiresAt = null;
+    private ?DateTime $expiresAt = null;
 
 
     /**
      * User Answers (collection).
      *
-     * @var Collection|ArrayCollection Collection|ArrayCollection
+     * @var Collection Collection|ArrayCollection
      */
-    #[ORM\OneToMany(mappedBy: 'quizResult', targetEntity: UserAnswer::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
+    #[ORM\OneToMany(targetEntity: UserAnswer::class, mappedBy: 'quizResult', cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(name: 'id', referencedColumnName: 'quiz_result_id')]
     private Collection $userAnswers;
 
@@ -196,9 +197,9 @@ class QuizResult
     /**
      * Getter for started at.
      *
-     * @return \DateTime|null \DateTime|null
+     * @return DateTime|null \DateTime|null
      */
-    public function getStartedAt(): ?\DateTime
+    public function getStartedAt(): ?DateTime
     {
         return $this->startedAt;
     }
@@ -206,11 +207,11 @@ class QuizResult
     /**
      * Setter for started at.
      *
-     * @param \DateTime $startedAt \DateTime
+     * @param DateTime $startedAt \DateTime
      *
      * @return $this
      */
-    public function setStartedAt(\DateTime $startedAt): static
+    public function setStartedAt(DateTime $startedAt): static
     {
         $this->startedAt = $startedAt;
 
@@ -220,9 +221,9 @@ class QuizResult
     /**
      * Getter for completed at.
      *
-     * @return \DateTime|null \DateTime|null
+     * @return DateTime|null \DateTime|null
      */
-    public function getCompletedAt(): ?\DateTime
+    public function getCompletedAt(): ?DateTime
     {
         return $this->completedAt;
     }
@@ -230,11 +231,11 @@ class QuizResult
     /**
      * Setter for completed at.
      *
-     * @param \DateTime $completedAt \DateTime
+     * @param DateTime $completedAt \DateTime
      *
      * @return $this this
      */
-    public function setCompletedAt(\DateTime $completedAt): static
+    public function setCompletedAt(DateTime $completedAt): static
     {
         $this->completedAt = $completedAt;
 
@@ -244,9 +245,9 @@ class QuizResult
     /**
      * Getter for expires at.
      *
-     * @return \DateTime|null \DateTime|null
+     * @return DateTime|null \DateTime|null
      */
-    public function getExpiresAt(): ?\DateTime
+    public function getExpiresAt(): ?DateTime
     {
         return $this->expiresAt;
     }
@@ -254,11 +255,11 @@ class QuizResult
     /**
      * Setter for expires at.
      *
-     * @param \DateTime $expiresAt \DateTime
+     * @param DateTime $expiresAt \DateTime
      *
      * @return $this
      */
-    public function setExpiresAt(\DateTime $expiresAt): static
+    public function setExpiresAt(DateTime $expiresAt): static
     {
         $this->expiresAt = $expiresAt;
 

@@ -94,6 +94,19 @@
                 transform: scale(1.05);
                 z-index: 11;
             }
+            .wyloguj {
+                background-color: #d51b60;
+                border: none !important;
+                outline: none !important;
+                box-shadow: none !important;
+            }
+
+            .wyloguj:hover {
+                background-color: #b0154f;
+                transform: scale(1.05);
+                cursor: pointer;
+            }
+
 
             .logout-btn-container {
                 position: fixed;
@@ -388,22 +401,9 @@
 <button id="mobileMenuToggle" class="d-md-none btn btn-light position-fixed top-0 end-0 m-3 z-3">
     <i class="fas fa-bars"></i>
 </button>
+
 <body>
-
 <main role="main" class="container-fluid">
-    {# ... #}
-    <div class="container-fluid">
-        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-            <div class="logout-btn-container">
-                <form action="{{ path('app_logout') }}" method="post">
-                    <button type="submit" class="logout-btn">
-                        {{ 'Wyloguj'|trans }}
-                    </button>
-                </form>
-            </div>
-
-        {% endif %}
-
         {# Nagłówek z logo i menu #}
         <header>
             <nav class="menu-bar">
@@ -417,9 +417,31 @@
                 <a href="{{ path('app_faq') }}" class="menu-button faq">FAQ</a>
                 <a href="{{ path('app_contact') }}" class="menu-button kontakt">KONTAKT</a>
 
+                {# PRZYCISK WYLOGUJ - widoczny tylko na urządzeniach mobilnych #}
+                {# W menu mobilnym — link wyglądający jak przycisk #}
+                <a href="#" class="menu-button wyloguj d-md-none"
+                   onclick="event.preventDefault(); document.getElementById('mobileLogoutForm').submit();">
+                    {{ 'Wyloguj'|trans }}
+                </a>
+
+                {# Ukryty formularz wylogowania #}
+                <form id="mobileLogoutForm" action="{{ path('app_logout') }}" method="post" class="d-md-none" style="display: none;"></form>
+
             </nav>
+
             {% include 'default/_flash_messages.html.twig' %}
         </header>
+
+        {# PRZYCISK WYLOGUJ widoczny tylko na desktopie #}
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+            <div class="logout-btn-container d-none d-md-block">
+                <form action="{{ path('app_logout') }}" method="post">
+                    <button type="submit" class="logout-btn">
+                        {{ 'Wyloguj'|trans }}
+                    </button>
+                </form>
+            </div>
+        {% endif %}
 
         <div class="logo">
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}

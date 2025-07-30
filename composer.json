@@ -13,7 +13,7 @@
         "doctrine/orm": "^3.3",
         "dompdf/dompdf": "*",
         "knplabs/knp-paginator-bundle": "*",
-        "knplabs/knp-snappy-bundle": "*",
+        "knplabs/knp-snappy-bundle": "^1.10",
         "phpdocumentor/reflection-docblock": "*",
         "phpstan/phpdoc-parser": "^2.1",
         "scheb/2fa": "*",

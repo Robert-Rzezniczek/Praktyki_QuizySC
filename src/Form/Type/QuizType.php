@@ -54,7 +54,7 @@ class QuizType extends AbstractType
                 ])
                 ->add('logoFile', FileType::class, [
                     'label' => 'Logo (plik graficzny)',
-                    'mapped' => false, // ważne: nie jest bezpośrednio mapowane na entity
+                    'mapped' => false, // nie jest bezpośrednio mapowane na entity
                     'required' => false,
                     'constraints' => [
                         new File([
@@ -65,7 +65,7 @@ class QuizType extends AbstractType
                     ],
                 ]);
         } else {
-            // Formularz krokowy ten od edycji
+            // Formularz krokowy od edycji
             if (1 === $step) {
                 $builder
                     ->add('title', TextType::class, [

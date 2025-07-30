@@ -15,12 +15,15 @@ use App\Entity\UserAuth;
 use App\Repository\QuestionRepository;
 use App\Repository\QuizRepository;
 use App\Repository\QuizResultRepository;
+use DateTime;
+use InvalidArgumentException;
 use Knp\Component\Pager\PaginatorInterface;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\ConstraintViolation;
 use Symfony\Component\Validator\Validation;
 
 /**
@@ -260,16 +263,16 @@ class QuizService implements QuizServiceInterface
      * @param int              $duration Duration in minutes
      * @param SessionInterface $session  Session
      *
-     * @throws \InvalidArgumentException If duration is invalid
+     * @throws InvalidArgumentException If duration is invalid
      */
     public function publishQuiz(Quiz $quiz, int $duration, SessionInterface $session): void
     {
         if ($duration <= 0) {
-            throw new \InvalidArgumentException('Czas publikacji musi być większy od zera.');
+            throw new InvalidArgumentException('Czas publikacji musi być większy od zera.');
         }
 
         $quiz->setIsPublished(true);
-        $expirationTime = (new \DateTime())->modify("+$duration minutes");
+        $expirationTime = (new DateTime())->modify("+$duration minutes");
         $expirationTimestamp = $expirationTime->getTimestamp();
         $session->set("quiz_{$quiz->getId()}_expiration", $expirationTimestamp);
         $this->save($quiz);
@@ -280,17 +283,15 @@ class QuizService implements QuizServiceInterface
      */
     public function updateExpiredQuizzes(): void
     {
-        $now = (new \DateTime())->getTimestamp();
+        $now = (new DateTime())->getTimestamp();
         $quizzes = $this->quizRepository->findBy(['isPublished' => true]);
 
         foreach ($quizzes as $quiz) {
-            $expirationTimestamp = $this->session ? $this->session->get("quiz_{$quiz->getId()}_expiration") : null;
+            $expirationTimestamp = $this->session?->get("quiz_{$quiz->getId()}_expiration");
             if ($expirationTimestamp && $now > $expirationTimestamp) {
                 $quiz->setIsPublished(false);
                 $this->save($quiz); // Używa quizRepository->save przez metodę save w QuizService
-                if ($this->session) {
-                    $this->session->remove("quiz_{$quiz->getId()}_expiration");
-                }
+                $this->session?->remove("quiz_{$quiz->getId()}_expiration");
             }
         }
     }
@@ -306,7 +307,7 @@ class QuizService implements QuizServiceInterface
     public function checkQuizStatus(Quiz $quiz, SessionInterface $session): array
     {
         $expirationTimestamp = $session->get("quiz_{$quiz->getId()}_expiration");
-        $now = (new \DateTime())->getTimestamp();
+        $now = (new DateTime())->getTimestamp();
         $isPublished = $quiz->isPublished();
 
         if ($expirationTimestamp && $now > $expirationTimestamp) {
@@ -347,7 +348,7 @@ class QuizService implements QuizServiceInterface
     public function isQuizPublished(Quiz $quiz, SessionInterface $session): bool
     {
         $expirationTimestamp = $session->get("quiz_{$quiz->getId()}_expiration");
-        $now = (new \DateTime())->getTimestamp();
+        $now = (new DateTime())->getTimestamp();
 
         if ($expirationTimestamp && $now > $expirationTimestamp) {
             $quiz->setIsPublished(false);
@@ -366,12 +367,12 @@ class QuizService implements QuizServiceInterface
      *
      * @return array List of question IDs
      *
-     * @throws \InvalidArgumentException If quiz has no questions
+     * @throws InvalidArgumentException If quiz has no questions
      */
     public function initializeQuizSession(Quiz $quiz, SessionInterface $session): array
     {
         if ($quiz->getQuestions()->isEmpty()) {
-            throw new \InvalidArgumentException('Quiz musi mieć co najmniej jedno pytanie.');
+            throw new InvalidArgumentException('Quiz musi mieć co najmniej jedno pytanie.');
         }
 
         $sessionKey = sprintf('quiz_%d_questions', $quiz->getId());
@@ -394,7 +395,7 @@ class QuizService implements QuizServiceInterface
             $session->set(sprintf('quiz_%d_answer_orders', $quiz->getId()), $answerOrders);
 
             // Debug: Zapisz czas inicjalizacji sesji
-            $session->set(sprintf('quiz_%d_initialized_at', $quiz->getId()), (new \DateTime())->getTimestamp());
+            $session->set(sprintf('quiz_%d_initialized_at', $quiz->getId()), (new DateTime())->getTimestamp());
         }
 
         return $questionIds;
@@ -409,7 +410,7 @@ class QuizService implements QuizServiceInterface
      *
      * @return Question|null Next question or null if no more questions
      *
-     * @throws \InvalidArgumentException If question ID is invalid
+     * @throws InvalidArgumentException If question ID is invalid
      */
     public function getNextQuestion(Quiz $quiz, int $index, SessionInterface $session): ?Question
     {
@@ -417,7 +418,7 @@ class QuizService implements QuizServiceInterface
         $questionIds = $session->get($sessionKey, []);
 
         if (empty($questionIds)) {
-            throw new \InvalidArgumentException(sprintf('Brak pytań w sesji dla quizu %d.', $quiz->getId()));
+            throw new InvalidArgumentException(sprintf('Brak pytań w sesji dla quizu %d.', $quiz->getId()));
         }
 
         if ($index >= count($questionIds)) {
@@ -427,7 +428,7 @@ class QuizService implements QuizServiceInterface
         $questionId = $questionIds[$index];
         $question = $this->questionRepository->find($questionId);
         if (!$question) {
-            throw new \InvalidArgumentException(sprintf('Pytanie o ID %d nie istnieje.', $questionId));
+            throw new InvalidArgumentException(sprintf('Pytanie o ID %d nie istnieje.', $questionId));
         }
 
         // Pobierz zapisaną kolejność odpowiedzi
@@ -459,18 +460,18 @@ class QuizService implements QuizServiceInterface
      * @param int              $answerId   Answer ID
      * @param SessionInterface $session    Session
      *
-     * @throws \InvalidArgumentException If answer is invalid
+     * @throws InvalidArgumentException If answer is invalid
      */
     public function saveUserAnswer(Quiz $quiz, UserAuth $user, int $questionId, int $answerId, SessionInterface $session): void
     {
         $question = $this->questionRepository->find($questionId);
         if (!$question || $question->getQuiz() !== $quiz) {
-            throw new \InvalidArgumentException(sprintf('Pytanie o ID %d nie należy do quizu.', $questionId));
+            throw new InvalidArgumentException(sprintf('Pytanie o ID %d nie należy do quizu.', $questionId));
         }
 
         $answer = $this->quizRepository->getEntityManager()->getRepository(Answer::class)->find($answerId);
         if (!$answer || $answer->getQuestion() !== $question) {
-            throw new \InvalidArgumentException(sprintf('Nieprawidłowa odpowiedź dla pytania: %s', $question->getContent()));
+            throw new InvalidArgumentException(sprintf('Nieprawidłowa odpowiedź dla pytania: %s', $question->getContent()));
         }
 
         $sessionKey = sprintf('quiz_%d_answers', $quiz->getId());
@@ -488,13 +489,13 @@ class QuizService implements QuizServiceInterface
      * @param array            $answers   Array of question ID => answer ID
      * @param int              $timeLimit Time limit in minutes
      * @param SessionInterface $session   Session
-     * @param \DateTime        $startedAt Time when quiz was started
+     * @param DateTime         $startedAt Time when quiz was started
      *
      * @return QuizResult QuizResult
      *
-     * @throws \InvalidArgumentException If answers are invalid or user already solved the quiz
+     * @throws InvalidArgumentException If answers are invalid or user already solved the quiz
      */
-    public function saveQuizResult(Quiz $quiz, UserAuth $user, array $answers, int $timeLimit, SessionInterface $session, \DateTime $startedAt): QuizResult
+    public function saveQuizResult(Quiz $quiz, UserAuth $user, array $answers, int $timeLimit, SessionInterface $session, DateTime $startedAt): QuizResult
     {
         //        if (!$this->canUserSolveQuiz($quiz, $user)) {
         //            throw new \InvalidArgumentException('Użytkownik już rozwiązał ten quiz.');
@@ -504,8 +505,8 @@ class QuizService implements QuizServiceInterface
         $quizResult->setUser($user);
         $quizResult->setQuiz($quiz);
         $quizResult->setStartedAt($startedAt);
-        $quizResult->setCompletedAt(new \DateTime());
-        $quizResult->setExpiresAt((new \DateTime())->modify(sprintf('+%d minutes', $timeLimit)));
+        $quizResult->setCompletedAt(new DateTime());
+        $quizResult->setExpiresAt((new DateTime())->modify(sprintf('+%d minutes', $timeLimit)));
 
         $totalPoints = 0;
         $correctAnswers = 0;
@@ -524,7 +525,7 @@ class QuizService implements QuizServiceInterface
             if (null !== $answerId) {
                 $answer = $this->quizRepository->getEntityManager()->getRepository(Answer::class)->find($answerId);
                 if (!$answer || $answer->getQuestion() !== $question) {
-                    throw new \InvalidArgumentException(sprintf('Nieprawidłowa odpowiedź dla pytania: %s', $question->getContent()));
+                    throw new InvalidArgumentException(sprintf('Nieprawidłowa odpowiedź dla pytania: %s', $question->getContent()));
                 }
 
                 $userAnswer = new UserAnswer();
@@ -532,7 +533,7 @@ class QuizService implements QuizServiceInterface
                 $userAnswer->setQuestion($question);
                 $userAnswer->setAnswer($answer);
                 $userAnswer->setIsCorrect($answer->isCorrect());
-                $userAnswer->setAnsweredAt(new \DateTime());
+                $userAnswer->setAnsweredAt(new DateTime());
                 $userAnswer->setQuizResult($quizResult);
 
                 $quizResult->addUserAnswer($userAnswer);
@@ -568,7 +569,7 @@ class QuizService implements QuizServiceInterface
             return false;
         }
         $timeLimit = $quiz->getTimeLimit() ?? 30; // Domyślny limit 30 minut
-        $elapsedTime = (new \DateTime())->getTimestamp() - $startedAtTimestamp;
+        $elapsedTime = (new DateTime())->getTimestamp() - $startedAtTimestamp;
 
         return $elapsedTime >= $timeLimit * 60; // Konwersja minut na sekundy
     }
@@ -580,13 +581,13 @@ class QuizService implements QuizServiceInterface
      * @param UserAuth         $user      User auth entity
      * @param SessionInterface $session   Session
      * @param int              $timeLimit Time limit in minutes
-     * @param \DateTime        $startedAt Time when quiz was started
+     * @param DateTime         $startedAt Time when quiz was started
      *
      * @return QuizResult|null Saved quiz result or null if saving fails
      *
-     * @throws \InvalidArgumentException If saving fails
+     * @throws InvalidArgumentException If saving fails
      */
-    public function finalizeQuiz(Quiz $quiz, UserAuth $user, SessionInterface $session, int $timeLimit, \DateTime $startedAt): ?QuizResult
+    public function finalizeQuiz(Quiz $quiz, UserAuth $user, SessionInterface $session, int $timeLimit, DateTime $startedAt): ?QuizResult
     {
         try {
             $userAnswers = $session->get(sprintf('quiz_%d_answers', $quiz->getId()), []);
@@ -598,9 +599,9 @@ class QuizService implements QuizServiceInterface
             $quizResult->setUser($user);
 
             return $quizResult;
-        } catch (\InvalidArgumentException $e) {
+        } catch (InvalidArgumentException $e) {
             error_log('Error finalizing quiz: '.$e->getMessage());
-            throw new \InvalidArgumentException($e->getMessage());
+            throw new InvalidArgumentException($e->getMessage());
         }
     }
 
@@ -610,7 +611,7 @@ class QuizService implements QuizServiceInterface
      * @param Quiz $quiz The quiz entity
      * @param int  $step Current step number
      *
-     * @throws \InvalidArgumentException If validation fails
+     * @throws InvalidArgumentException If validation fails
      */
     public function validateQuizStep(Quiz $quiz, int $step): void
     {
@@ -632,7 +633,7 @@ class QuizService implements QuizServiceInterface
                 new NotBlank(['message' => 'Limit czasu nie może być pusty.']),
             ]);
             if (null !== $timeLimit && $timeLimit <= 0) {
-                $violations[] = new \Symfony\Component\Validator\ConstraintViolation(
+                $violations[] = new ConstraintViolation(
                     'Limit czasu musi być większy niż 0 minut.',
                     null,
                     [],
@@ -651,7 +652,7 @@ class QuizService implements QuizServiceInterface
 
         if (count($violations) > 0) {
             $messages = array_map(fn ($v) => $v->getMessage(), $violations);
-            throw new \InvalidArgumentException(implode(' ', $messages));
+            throw new InvalidArgumentException(implode(' ', $messages));
         }
     }
 
@@ -713,7 +714,7 @@ class QuizService implements QuizServiceInterface
     public function getCombinedQuizzesForUser(UserInterface $user): array
     {
         if (!$user instanceof UserAuth) {
-            throw new \InvalidArgumentException('Invalid user type');
+            throw new InvalidArgumentException('Invalid user type');
         }
 
         // Pobierz opublikowane quizy
@@ -769,7 +770,7 @@ class QuizService implements QuizServiceInterface
     public function getQuizResultForQuizAndUser(Quiz $quiz, UserInterface $user): ?QuizResult
     {
         if (!$user instanceof UserAuth) {
-            throw new \InvalidArgumentException('Zły użytkownik.');
+            throw new InvalidArgumentException('Zły użytkownik.');
         }
 
         return $this->quizResultRepository->findOneByQuizAndUser($quiz, $user);
@@ -827,20 +828,20 @@ class QuizService implements QuizServiceInterface
     private function validateQuiz(Quiz $quiz): void
     {
         if ($quiz->getQuestions()->isEmpty()) {
-            throw new \InvalidArgumentException('Quiz musi mieć co najmniej jedno pytanie.');
+            throw new InvalidArgumentException('Quiz musi mieć co najmniej jedno pytanie.');
         }
 
         foreach ($quiz->getQuestions() as $question) {
             $answers = $question->getAnswers();
             if ($answers->count() < 2) {
-                throw new \InvalidArgumentException('Każde pytanie musi mieć co najmniej dwie odpowiedzi.');
+                throw new InvalidArgumentException('Każde pytanie musi mieć co najmniej dwie odpowiedzi.');
             }
             if ($answers->count() > 4) {
-                throw new \InvalidArgumentException('Każde pytanie może mieć maksymalnie 4 odpowiedzi.');
+                throw new InvalidArgumentException('Każde pytanie może mieć maksymalnie 4 odpowiedzi.');
             }
             $correctAnswers = $answers->filter(fn (Answer $answer) => $answer->isCorrect())->count();
             if (1 !== $correctAnswers) {
-                throw new \InvalidArgumentException('Każde pytanie musi mieć dokładnie jedną poprawną odpowiedź.');
+                throw new InvalidArgumentException('Każde pytanie musi mieć dokładnie jedną poprawną odpowiedź.');
             }
         }
     }

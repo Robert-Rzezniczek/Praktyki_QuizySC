@@ -15,7 +15,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 interface QuizResultServiceInterface
 {
     /**
-     * Zapis encji QuizResult do bazy danych.
+     *Saving the QuizResult entity to the database.
      *
      * @param QuizResult $quizResult QuizResult
      *
@@ -24,7 +24,7 @@ interface QuizResultServiceInterface
     public function save(QuizResult $quizResult): void;
 
     /**
-     * Usuwanie.
+     * Delete.
      *
      * @param QuizResult $quizResult QuizResult
      *

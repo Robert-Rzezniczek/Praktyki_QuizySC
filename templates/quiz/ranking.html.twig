@@ -148,7 +148,7 @@
             {% if is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('quiz_index') }}" class="menu-btn">QUIZY</a>
             {% else %}
-                <a href="{{ path('quiz_menu_view') }}" class="menu-btn">MENU</a>
+                <a href="{{ path('quiz_menu_view') }}" class="menu-btn">LISTA QUIZÓW</a>
             {% endif %}
 
             {% if result_id is not null and not is_granted('ROLE_ADMIN') %}
