@@ -231,7 +231,6 @@ class QuizController extends AbstractController
             throw $this->createAccessDeniedException('Użytkownik nie jest zalogowany.');
         }
 
-        // Sprawdź, czy quiz jest opublikowany
         if (!$this->quizService->isQuizPublished($quiz, $session)) {
             try {
                 $startedAtTimestamp = $session->get(sprintf('quiz_%d_start_time', $quiz->getId()));
@@ -251,19 +250,18 @@ class QuizController extends AbstractController
             return $this->redirectToRoute('quiz_menu_view');
         }
 
-        // Inicjalizuj sesję quizu i zapisz czas rozpoczęcia
         $questionIds = $this->quizService->initializeQuizSession($quiz, $session);
         $currentIndex = $request->query->getInt('question_index', $request->request->getInt('question_index', 0));
+        $totalQuestions = count($questionIds);
 
-        // Zapisz czas rozpoczęcia, jeśli to pierwsze pytanie
+        // zapis czasu rozpoczęcia, jeśli to pierwsze pytanie
         if (0 === $currentIndex && !$session->has(sprintf('quiz_%d_start_time', $quiz->getId()))) {
             $session->set(sprintf('quiz_%d_start_time', $quiz->getId()), (new \DateTime())->getTimestamp());
         }
-
-        // Pobierz kolejne pytanie
+        // pobieranie kolejnych pytań
         $question = $this->quizService->getNextQuestion($quiz, $currentIndex, $session);
 
-        // Sprawdź, czy czas się skończył
+        // sprawdzenie, czy czas się skończył
         if ($question && $this->quizService->isTimeLimitExceeded($quiz, $session)) {
             try {
                 $startedAtTimestamp = $session->get(sprintf('quiz_%d_start_time', $quiz->getId()));
@@ -283,9 +281,7 @@ class QuizController extends AbstractController
             }
         }
 
-        // Sprawdź, czy wszystkie pytania zostały odpowiedziane
         if (!$question) {
-            // Zapisz wynik quizu
             try {
                 $startedAtTimestamp = $session->get(sprintf('quiz_%d_start_time', $quiz->getId()));
                 $startedAt = $startedAtTimestamp ? (new \DateTime())->setTimestamp($startedAtTimestamp) : new \DateTime();
@@ -306,7 +302,6 @@ class QuizController extends AbstractController
             return $this->redirectToRoute('quiz_menu_view');
         }
 
-        // Obsługa przesłanego formularza (w tym żądanie AJAX z JS)
         $form = $this->createForm(QuizSolveType::class, null, [
             'question' => $question,
             'question_index' => $currentIndex,
@@ -332,8 +327,6 @@ class QuizController extends AbstractController
                 }
             }
         }
-
-        // Przekazanie czasu rozpoczęcia i limitu do szablonu
         $startedAtTimestamp = $session->get(sprintf('quiz_%d_start_time', $quiz->getId()));
         $timeLimit = $quiz->getTimeLimit() ?? 30; // Domyślny limit 30 minut, jeśli nie ustawiono
 
@@ -344,6 +337,7 @@ class QuizController extends AbstractController
             'is_last_question' => $currentIndex === count($questionIds) - 1,
             'started_at' => $startedAtTimestamp,
             'time_limit' => $timeLimit,
+            'totalQuestions' => $totalQuestions,
         ]);
     }
 
@@ -371,9 +365,8 @@ class QuizController extends AbstractController
         $startedAt = $quizResult->getStartedAt() ? $quizResult->getStartedAt()->getTimestamp() : (new \DateTime())->getTimestamp();
         $completedAt = $quizResult->getCompletedAt() ? $quizResult->getCompletedAt()->getTimestamp() : (new \DateTime())->getTimestamp();
         $duration = $completedAt - $startedAt;
-
-        // NOWE: Obliczenie punktów
         $totalPoints = 0;
+
         foreach ($quiz->getQuestions() as $question) {
             $totalPoints += $question->getPoints();
         }
@@ -404,11 +397,8 @@ class QuizController extends AbstractController
     public function createStep(Request $request, int $step = 1): Response
     {
         $session = $request->getSession();
-
-        // Quiz z sesji – TYLKO DO WYŚWIETLENIA FORMULARZA
         $quiz = $this->quizService->initializeQuizFromSession($session);
 
-        // Formularz z tym quizem
         $form = $this->createForm(QuizType::class, $quiz, [
             'step' => $step,
         ]);
@@ -416,14 +406,13 @@ class QuizController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // Zapisz TYLKO wtedy, gdy formularz został przesłany i jest poprawny
             $this->quizService->saveQuizToSession($quiz, $session);
 
             if ($step < 3) {
                 return $this->redirectToRoute('quiz_create_step', ['step' => $step + 1]);
             }
 
-            // Ostatni krok – zapisz do bazy
+            // zapis do bazy
             $this->quizService->save($quiz);
             $session->remove('quiz_data');
             $this->addFlash('success', 'Quiz został utworzony.');
@@ -457,16 +446,13 @@ class QuizController extends AbstractController
     public function editStep(Request $request, Quiz $quiz, int $step = 1): Response
     {
         $maxSteps = 3;
-
         // Walidacja kroku
         if ($step < 1 || $step > $maxSteps) {
             throw $this->createNotFoundException('Nieprawidłowy krok.');
         }
-
-        // Ładowanie quizu z uwzględnieniem danych z sesji
+        // ładowanie quizu z uwzględnieniem danych z sesji
         $quiz = $this->quizService->initializeQuizFromSession($request->getSession(), $quiz);
 
-        // Tworzenie formularza dla danego kroku
         $form = $this->createForm(QuizType::class, $quiz, [
             'step' => $step,
             'action' => $this->generateUrl('quiz_edit_step', ['id' => $quiz->getId(), 'step' => $step]),
@@ -477,18 +463,17 @@ class QuizController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             try {
-                // Zapis do sesji między krokami
+                // zapis do sesji między krokami
                 $this->quizService->saveQuizToSession($quiz, $request->getSession());
 
                 if ($step < $maxSteps) {
-                    // Przejdź do następnego kroku
                     return $this->redirectToRoute('quiz_edit_step', [
                         'id' => $quiz->getId(),
                         'step' => $step + 1,
                     ]);
                 }
 
-                // Ostatni krok - zapis do bazy danych
+                // zapis do bazy
                 $this->quizService->save($quiz);
                 $request->getSession()->remove('quiz_data');
                 $this->addFlash('success', $this->translator->trans('message.edited_successfully'));
@@ -622,6 +607,8 @@ class QuizController extends AbstractController
      *
      * @param Request $request Request
      * @param Quiz    $quiz    Quiz
+     *
+     * @return Response Response
      */
     #[Route('/quiz/{id}/branding/edit', name: 'quiz_edit_branding', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN')]
@@ -710,6 +697,11 @@ class QuizController extends AbstractController
         ]);
     }
 
+    /**
+     * Menu quiz view action.
+     *
+     * @return Response Response
+     */
     #[Route('/menu', name: 'quiz_menu_view', methods: ['GET'])]
     #[IsGranted('ROLE_USER')]
     public function menuView(): Response
