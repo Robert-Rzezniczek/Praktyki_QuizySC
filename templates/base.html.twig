@@ -1,3 +1,16 @@
+{#
+    This file is part of the nasza_nazwa project.
+
+    nasza_nazwa is an educational platform for creating, branding, and solving quizzes made on behalf of the Sursum Corda association.
+    It supports user authentication, quiz management, and result tracking, etc.
+
+    The authors are:
+        @author Beatrycze Piłat <beatrycze.pilat@gmail.com>
+        @author Klara Szczerbińska <klaraszczerbinska@gmail.com>
+        @author Marcelina Milc <marcelina.milc@gmail.com>
+        @author Robert Rzeźniczek <r.rzezniczek19@gmail.com>
+#}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -94,6 +107,18 @@
                 transform: scale(1.05);
                 z-index: 11;
             }
+            .wyloguj {
+                background-color: #d51b60;
+                border: none !important;
+                outline: none !important;
+                box-shadow: none !important;
+            }
+
+            .wyloguj:hover {
+                background-color: #b0154f;
+                transform: scale(1.05);
+                cursor: pointer;
+            }
 
             .logout-btn-container {
                 position: fixed;
@@ -137,7 +162,7 @@
             }
 
             .serduszka {
-                position: absolute;
+                position: fixed;
                 bottom: 0;
                 left: 0;
                 width: 100%;
@@ -182,7 +207,6 @@
 
                 /* Hamburger */
                 #mobileMenuToggle {
-                    display: block !important;
                     background-color: #8e24aa;
                     color: white;
                     border: none;
@@ -338,7 +362,7 @@
                 display: none !important;
             }
 
-            /* PRZYCISK OTWIERAJĄCY – fiolet jak REJESTRACJA */
+            /* PRZYCISK OTWIERAJĄCY */
             #accessibilityToggleBtn {
                 position: fixed;
                 top: 50%;
@@ -364,7 +388,6 @@
                 background-color: #9c27b0;
             }
 
-            /* === KONTRAST === */
             .high-contrast {
                 background-color: #000 !important;
                 color: #fff !important;
@@ -377,7 +400,6 @@
                 border-color: #fff !important;
             }
 
-            /* === PODKREŚLENIE LINKÓW === */
             .underline-links a {
                 text-decoration: underline !important;
             }
@@ -388,119 +410,131 @@
 <button id="mobileMenuToggle" class="d-md-none btn btn-light position-fixed top-0 end-0 m-3 z-3">
     <i class="fas fa-bars"></i>
 </button>
-<body>
 
+<body>
 <main role="main" class="container-fluid">
     {# ... #}
-    <div class="container-fluid">
-        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-            <div class="logout-btn-container">
-                <form action="{{ path('app_logout') }}" method="post">
-                    <button type="submit" class="logout-btn">
-                        {{ 'Wyloguj'|trans }}
-                    </button>
-                </form>
-            </div>
 
-        {% endif %}
-
-        {# Nagłówek z logo i menu #}
-        <header>
-            <nav class="menu-bar">
-                {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-                    <a href="{{ path('app_menu') }}" class="menu-button menu">MENU</a>
-                {% else %}
-                    <a href="{{ path('start_index') }}" class="menu-button menu">MENU</a>
-                {% endif %}
-                <a href="{{ path('app_rules') }}" class="menu-button zasady">ZASADY</a>
-                <a href="https://www.sc.org.pl/o-nas/" class="menu-button onas" target="_blank" rel="noopener">O NAS</a>
-                <a href="{{ path('app_faq') }}" class="menu-button faq">FAQ</a>
-                <a href="{{ path('app_contact') }}" class="menu-button kontakt">KONTAKT</a>
-
-            </nav>
-            {% include 'default/_flash_messages.html.twig' %}
-        </header>
-
-        <div class="logo">
+    {# Nagłówek z logo i menu #}
+    <header>
+        <nav class="menu-bar">
             {% if is_granted('IS_AUTHENTICATED_FULLY') %}
-            <a href="{{ path('app_menu') }}">
-                {% else %}
-                <a href="{{ path('start_index') }}">
-                    {% endif %}
-                    <img src="{{ asset('images/sursum-logo.png') }}" alt="Sursum Corda Logo">
+                <a href="{{ path('app_menu') }}" class="menu-button menu">MENU</a>
+            {% else %}
+                <a href="{{ path('start_index') }}" class="menu-button menu">MENU</a>
+            {% endif %}
+            <a href="{{ path('app_rules') }}" class="menu-button zasady">ZASADY</a>
+            <a href="https://www.sc.org.pl/o-nas/" class="menu-button onas" target="_blank" rel="noopener">O NAS</a>
+            <a href="{{ path('app_faq') }}" class="menu-button faq">FAQ</a>
+            <a href="{{ path('app_contact') }}" class="menu-button kontakt">KONTAKT</a>
+
+            {# PRZYCISK WYLOGUJ - widoczny tylko na urządzeniach mobilnych #}
+            {# W menu mobilnym — link wyglądający jak przycisk #}
+            {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+                <a href="#" class="menu-button wyloguj d-md-none"
+                   onclick="event.preventDefault(); document.getElementById('mobileLogoutForm').submit();">
+                    {{ 'Wyloguj'|trans }}
                 </a>
+            {% endif %}
+
+            {# Ukryty formularz wylogowania #}
+            <form id="mobileLogoutForm" action="{{ path('app_logout') }}" method="post" class="d-md-none" style="display: none;"></form>
+        </nav>
+
+        {% include 'default/_flash_messages.html.twig' %}
+    </header>
+
+    {# PRZYCISK WYLOGUJ widoczny tylko na desktopie #}
+    {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <div class="logout-btn-container d-none d-md-block">
+            <form action="{{ path('app_logout') }}" method="post">
+                <button type="submit" class="logout-btn">
+                    {{ 'Wyloguj'|trans }}
+                </button>
+            </form>
         </div>
+    {% endif %}
+
+    <div class="logo">
+        {% if is_granted('IS_AUTHENTICATED_FULLY') %}
+        <a href="{{ path('app_menu') }}">
+            {% else %}
+            <a href="{{ path('start_index') }}">
+                {% endif %}
+                <img src="{{ asset('images/sursum-logo.png') }}" alt="Sursum Corda Logo">
+            </a>
+    </div>
 
 
-        <!-- Przycisk otwierający -->
-        <button id="accessibilityToggleBtn" title="Dostępność" aria-label="Panel dostępności">
-            <i class="fas fa-universal-access"></i>
-        </button>
+    <!-- Przycisk otwierający -->
+    <button id="accessibilityToggleBtn" title="Dostępność" aria-label="Panel dostępności">
+        <i class="fas fa-universal-access"></i>
+    </button>
 
 
-        <!-- Panel dostępności -->
-        <div id="accessibilityPanel" aria-label="Panel dostępności" role="region">
-            <strong>Dostępność</strong>
-            <button onclick="changeTextSize('increase')">Powiększ tekst</button>
-            <button onclick="changeTextSize('decrease')">Pomniejsz tekst</button>
-            <button onclick="toggleClass('high-contrast')">Kontrast</button>
-            <button onclick="toggleClass('light-bg')">Jasne tło</button>
-            <button onclick="toggleClass('underline-links')">Podkreślenie linków</button>
-            <button onclick="resetAccessibility()">Reset</button>
-            <button id="closeAccessibilityBtn">Zamknij</button>
-        </div>
+    <!-- Panel dostępności -->
+    <div id="accessibilityPanel" aria-label="Panel dostępności" role="region">
+        <strong>Dostępność</strong>
+        <button onclick="changeTextSize('increase')">Powiększ tekst</button>
+        <button onclick="changeTextSize('decrease')">Pomniejsz tekst</button>
+        <button onclick="toggleClass('high-contrast')">Kontrast</button>
+        <button onclick="toggleClass('light-bg')">Jasne tło</button>
+        <button onclick="toggleClass('underline-links')">Podkreślenie linków</button>
+        <button onclick="resetAccessibility()">Reset</button>
+        <button id="closeAccessibilityBtn">Zamknij</button>
+    </div>
 
 
-        <script>
-            const panel = document.getElementById('accessibilityPanel');
-            const toggleBtn = document.getElementById('accessibilityToggleBtn');
-            const closeBtn = document.getElementById('closeAccessibilityBtn');
+    <script>
+        const panel = document.getElementById('accessibilityPanel');
+        const toggleBtn = document.getElementById('accessibilityToggleBtn');
+        const closeBtn = document.getElementById('closeAccessibilityBtn');
 
-            toggleBtn.addEventListener('click', () => {
-                panel.classList.add('active');
-                toggleBtn.classList.add('hidden'); // Ukryj przycisk ☰ po kliknięciu
-            });
+        toggleBtn.addEventListener('click', () => {
+            panel.classList.add('active');
+            toggleBtn.classList.add('hidden'); // Ukryj przycisk ☰ po kliknięciu
+        });
 
-            closeBtn.addEventListener('click', () => {
-                panel.classList.remove('active');
-                toggleBtn.classList.remove('hidden'); // Pokaż przycisk ☰ po zamknięciu
-            });
+        closeBtn.addEventListener('click', () => {
+            panel.classList.remove('active');
+            toggleBtn.classList.remove('hidden'); // Pokaż przycisk ☰ po zamknięciu
+        });
 
-            let currentFontSize = 1;
+        let currentFontSize = 1;
 
-            function changeTextSize(direction) {
-                if (direction === 'increase' && currentFontSize < 2) {
-                    currentFontSize += 0.1;
-                } else if (direction === 'decrease' && currentFontSize > 0.7) {
-                    currentFontSize -= 0.1;
-                }
-                document.body.style.fontSize = currentFontSize + 'em';
+        function changeTextSize(direction) {
+            if (direction === 'increase' && currentFontSize < 2) {
+                currentFontSize += 0.1;
+            } else if (direction === 'decrease' && currentFontSize > 0.7) {
+                currentFontSize -= 0.1;
             }
+            document.body.style.fontSize = currentFontSize + 'em';
+        }
 
-            function toggleClass(className) {
-                document.body.classList.toggle(className);
-            }
+        function toggleClass(className) {
+            document.body.classList.toggle(className);
+        }
 
-            function resetAccessibility() {
-                currentFontSize = 1;
-                document.body.style.fontSize = '';
-                document.body.classList.remove(
-                    'grayscale',
-                    'high-contrast',
-                    'light-bg',
-                    'underline-links'
-                );
-                document.body.style.backgroundColor = '';
-                document.body.style.color = '';
-            }
-            const mobileToggleBtn = document.getElementById('mobileMenuToggle');
-            const menuBar = document.querySelector('.menu-bar');
+        function resetAccessibility() {
+            currentFontSize = 1;
+            document.body.style.fontSize = '';
+            document.body.classList.remove(
+                'grayscale',
+                'high-contrast',
+                'light-bg',
+                'underline-links'
+            );
+            document.body.style.backgroundColor = '';
+            document.body.style.color = '';
+        }
+        const mobileToggleBtn = document.getElementById('mobileMenuToggle');
+        const menuBar = document.querySelector('.menu-bar');
 
-            mobileToggleBtn.addEventListener('click', () => {
-                menuBar.classList.toggle('show');
-            });
+        mobileToggleBtn.addEventListener('click', () => {
+            menuBar.classList.toggle('show');
+        });
 
-        </script>
+    </script>
 
     </div>
 

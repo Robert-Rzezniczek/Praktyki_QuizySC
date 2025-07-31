@@ -55,7 +55,6 @@
 {% block body %}
     <div class="container d-flex flex-column align-items-center">
         <div class="menu-container">
-{#            <a href="{{ path('quiz_menu_view') }}" class="menu-btn red">Quizy</a>#}
 
             {% if is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('quiz_index') }}" class="menu-btn red">Quizy</a>

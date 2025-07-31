@@ -6,6 +6,7 @@
 
 namespace App\Controller;
 
+use App\Entity\UserAuth;
 use Knp\Snappy\Pdf;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
@@ -83,7 +84,7 @@ class CertificateController extends AbstractController
         }
 
         $user = $this->getUser();
-        /** @var \App\Entity\UserAuth $user */
+        /** @var UserAuth $user */
         $userProfile = $user->getProfile();
         $quiz = $result->getQuiz();
 

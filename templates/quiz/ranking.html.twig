@@ -154,7 +154,7 @@
             {% if result_id is not null and not is_granted('ROLE_ADMIN') %}
                 <a href="{{ path('quiz_result', {'id': result_id}) }}" class="menu-btn">WYNIK</a>
 
-{#       jeśli chcemy zmnienić kiedy się pojawia kto przeszedł dalej a kto nie, to wystarczy tą liczbe zmienić         #}
+{#      jeśli chcemy zmnienić kiedy się pojawia kto przeszedł dalej a kto nie, to wystarczy tą liczbe zmienić         #}
 {#      aktualnie działa na pierwsze 10 miejsc       #}
                 {% if userPosition <= 10 %}
                     <a href="{{ path('quiz_certificate', {id: result_id}) }}" target="_blank" class="menu-btn">DYPLOM</a>

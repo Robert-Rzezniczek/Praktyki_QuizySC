@@ -4,34 +4,8 @@
     {{ 'title.view_quiz'|trans }}
 {% endblock %}
 
-{% block body %}
-    <div class="container my-4">
-        <h1 class="display-5 text-primary mb-4">{{ quiz.title }}</h1>
-        <p class="lead">{{ quiz.description }}</p>
-        <p><strong>Limit czasu:</strong> {{ quiz.timeLimit }} minut/y</p>
-        <p><strong>Opublikowany:</strong> {% if quiz.isPublished %}Tak{% else %}Nie{% endif %}</p>
-
-        {% for question in quiz.questions %}
-            <div class="question-item card mt-3 p-3 border">
-                <h5>Pytanie {{ loop.index }}</h5>
-                <p>{{ question.content }}</p>
-                <p><strong>Punkty:</strong> {{ question.points }}</p>
-                <ul class="list-group mt-2">
-                    {% for answer in question.answers %}
-                        <li class="list-group-item">
-                            {{ answer.content }}
-                            {% if answer.isCorrect %}<span class="text-success">(Poprawna)</span>{% endif %}
-                        </li>
-                    {% endfor %}
-                </ul>
-            </div>
-        {% endfor %}
-
-        <div class="mt-3">
-            <a href="{{ url('quiz_index') }}" class="btn btn-secondary">Powrót do listy</a>
-        </div>
-    </div>
-
+{% block stylesheets %}
+    {{ parent() }}
     <style>
         .question-item {
             background-color: #f8f9fa;
@@ -64,4 +38,34 @@
             margin-top: 1rem;
         }
     </style>
+{% endblock %}
+
+{% block body %}
+    <div class="container my-4">
+        <h1 class="display-5 text-primary mb-4">{{ quiz.title }}</h1>
+        <p class="lead">{{ quiz.description }}</p>
+        <p><strong>Limit czasu:</strong> {{ quiz.timeLimit }} minut/y</p>
+        <p><strong>Opublikowany:</strong> {% if quiz.isPublished %}Tak{% else %}Nie{% endif %}</p>
+
+        {% for question in quiz.questions %}
+            <div class="question-item card mt-3 p-3 border">
+                <h5>Pytanie {{ loop.index }}</h5>
+                <p>{{ question.content }}</p>
+                <p><strong>Punkty:</strong> {{ question.points }}</p>
+                <ul class="list-group mt-2">
+                    {% for answer in question.answers %}
+                        <li class="list-group-item">
+                            {{ answer.content }}
+                            {% if answer.isCorrect %}<span class="text-success">(Poprawna)</span>{% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endfor %}
+
+        <div class="mt-3">
+            <a href="{{ url('quiz_index') }}" class="btn btn-secondary">Powrót do listy</a>
+        </div>
+    </div>
+
 {% endblock %}

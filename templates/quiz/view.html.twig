@@ -72,9 +72,6 @@
 
                 <div class="card-footer bg-light d-flex flex-wrap gap-2 justify-content-between">
                     {% if is_granted('ROLE_ADMIN') %}
-                        <a class="btn btn-outline-warning" href="{{ path('quiz_edit', {id: quiz.id}) }}" title="{{ 'action.edit'|trans }}">
-                            <i class="bi bi-pencil"></i> {{ 'action.edit'|trans }}
-                        </a>
                         <a class="btn btn-outline-danger" href="{{ path('quiz_delete', {id: quiz.id}) }}" title="{{ 'action.delete'|trans }}">
                             <i class="bi bi-trash"></i> {{ 'action.delete'|trans }}
                         </a>
@@ -84,11 +81,6 @@
                     </a>
                 </div>
             </div>
-
-
-
-
-
 
         {% else %}
             <div class="alert alert-warning" role="alert">
