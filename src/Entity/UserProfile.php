@@ -46,33 +46,29 @@ class UserProfile
     /**
      * Szkoła.
      */
-    #[Assert\NotBlank]
     #[Assert\Type('string')]
     #[Assert\Length(max: 100)]
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, nullable: true)]
     private ?string $szkola = null;
 
     /**
      * Wojewodztwo.
      */
-    #[Assert\NotNull]
     #[ORM\ManyToOne(targetEntity: Wojewodztwo::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Wojewodztwo $wojewodztwo = null;
 
     /**
      * Powiat.
      */
-    #[Assert\NotNull]
     #[ORM\ManyToOne(targetEntity: Powiat::class)]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: true)]
     private ?Powiat $powiat = null;
 
     /**
      * Podział wiekowy.
      */
-    #[Assert\NotBlank]
-    #[ORM\Column(type: 'string', enumType: EducationLevel::class)]
+    #[ORM\Column(type: 'string', nullable: true, enumType: EducationLevel::class)]
     private ?EducationLevel $podzialWiekowy = null;
 
     /**

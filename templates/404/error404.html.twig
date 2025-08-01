@@ -4,6 +4,7 @@
 
 {% block stylesheets %}
     {{ parent() }}
+    <link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&display=swap" rel="stylesheet">
     <style>
         .error-container {
             display: flex;
@@ -12,61 +13,64 @@
             align-items: center;
             min-height: 75vh;
             text-align: center;
-            padding: 20px;
+            padding: 10px;
         }
-        /* tymczasowe xD*/
-        .error-image {
-            max-width: 300px;
-            height: auto;
-            margin: 20px 0;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: 0.5s ease-in-out;
-        }
-
-        .error-image:hover
-        {
-            transform: scale(1.1);
-            transition: 0.5s ease-in-out;
-        }
-        /* ^^^tymczasowe^^^*/
 
         .error-title {
-            font-size: 4rem;
+            font-size: 3rem;
             color: #dc3545;
             margin-bottom: 1rem;
+            font-family: 'Luckiest Guy', cursive;
         }
-
 
         .error-text {
             font-size: 1.25rem;
             color: #6c757d;
+            margin-bottom: 1rem;
+        }
+
+        .error-emoji {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            font-family: 'Luckiest Guy', cursive;
+        }
+
+        .thinking-emoji {
+            font-size: 6rem;
+            margin-top: 1rem;
             margin-bottom: 1.5rem;
         }
 
         .error-button {
-            padding: 10px 20px;
-            font-size: 1.1rem;
-            border-width: 2px;
-            transition: all 0.3s ease;
+            background-color: #6a1b9a;
+            color: white;
+            padding: 20px 50px;
+            font-size: 1.6rem;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: transform 0.2s ease;
+            display: inline-block;
+            font-family: 'Luckiest Guy', cursive;
         }
 
         .error-button:hover {
-            background-color: #007bff;
-            color: #fff;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0, 123, 255, 0.3);
+            background-color: #6a1b9a;
+            filter: brightness(1.1);
+            transform: scale(1.02);
         }
 
         @media (max-width: 768px) {
             .error-title {
-                font-size: 3rem;
+                font-size: 2.5rem;
             }
             .error-text {
                 font-size: 1rem;
             }
-            .error-image {
-                max-width: 200px;
+            .error-emoji {
+                font-size: 3rem;
+            }
+            .thinking-emoji {
+                font-size: 4rem;
             }
             .error-button {
                 font-size: 1rem;
@@ -78,14 +82,13 @@
 
 {% block body %}
     <div class="error-container">
-        <h1 class="error-title">{{ status_code }}</h1>
-        <p class="error-text">Błąd</p>
-        <p class="error-text">{{ 'Chyba nie chciałeś tu wylądować' }}</p>
-        <div>
-            <img src="{{ asset('images/Side-eye.jpg') }}" alt="robis cos to?" class="error-image">
-        </div>
-        <a href="{{ path('app_menu') }}" class="btn btn-outline-primary error-button mt-3">
-            {{ 'Powrót do MENU' }}
+        <div class="error-emoji">Ups!</div>
+        <h1 class="error-title">404 – Pytanie bez odpowiedzi!</h1>
+        <p class="error-text">Wygląda na to, że ta strona nie istnieje...</p>
+        <p class="error-text">Ale za to istnieje mnóstwo świetnych quizów!</p>
+        <div class="thinking-emoji">🤔</div>
+        <a href="{{ path('app_menu') }}" class="error-button mt-3">
+            Powrót do MENU
         </a>
     </div>
 {% endblock %}

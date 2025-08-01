@@ -8,6 +8,7 @@ namespace App\DataFixtures;
 
 use App\Entity\Enum\UserRole;
 use App\Entity\UserAuth;
+use App\Entity\UserProfile;
 use Doctrine\Persistence\ObjectManager;
 use Faker\Generator;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -53,6 +54,12 @@ class UserAuthFixtures extends AbstractBaseFixtures
             );
             $user->setIsTwoFactorEnabled(false);
 
+            $profile = new UserProfile();
+            $profile->setImie($this->faker->firstName());
+            $profile->setNazwisko($this->faker->lastName());
+            $profile->setUserAuth($user);
+            $user->setProfile($profile);
+
             return $user;
         });
 
@@ -67,6 +74,12 @@ class UserAuthFixtures extends AbstractBaseFixtures
                 )
             );
             $user->setIsTwoFactorEnabled(false);
+
+            $profile = new UserProfile();
+            $profile->setImie($this->faker->firstName());
+            $profile->setNazwisko($this->faker->lastName());
+            $profile->setUserAuth($user);
+            $user->setProfile($profile);
 
             return $user;
         });

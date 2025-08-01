@@ -100,6 +100,7 @@
 
         .action-buttons a:hover {
             transform: scale(1.05);
+            filter: brightness(1.1);
         }
 
                  </style>
@@ -131,7 +132,7 @@
         <div class="action-buttons">
             <a href="{{ path('quiz_menu_view') }}">LISTA QUIZÓW</a>
             {% if quiz.isPublished %}
-                <a href="">WKRÓTCE</a>
+                <a href="">WYNIKI WKRÓTCE</a>
             {% else %}
                 <a href="{{ path('quiz_ranking', {'id': quiz.id}) }}">RANKING</a>
             {% endif %}

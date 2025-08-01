@@ -32,6 +32,8 @@
             'method': form.vars.method,
             'enctype': 'multipart/form-data'
         }) }}
+        {# Ukryte pole z step (do walidacji) #}
+        <input type="hidden" name="step" value="{{ step|default(1) }}">
 
         {% if brandingEdit is defined %}
             {{ form_row(form.brandName) }}
@@ -75,6 +77,8 @@
                                 {% endfor %}
                             </div>
 
+                            <div class="question-errors validation-error" style="display: none;"></div>
+
                             <button type="button" class="remove-question btn btn-danger btn-sm mt-2" style="display: {% if loop.index0 > 0 %}inline-block{% else %}none{% endif %};">Usuń</button>
                         </div>
                     {% endfor %}
@@ -82,8 +86,15 @@
                 <button type="button" class="add-question btn btn-primary mt-3 mb-2">Dodaj pytanie</button>
 
             {% elseif step == 3 %}
-                {{ form_row(form.timeLimit) }}
-                {{ form_row(form.isPublished) }}
+                <div class="d-flex flex-column align-items-center mt-4">
+                    <div class="mb-3 w-50">
+                        {{ form_row(form.timeLimit) }}
+                    </div>
+                    <div class="form-check form-switch d-flex justify-content-center align-items-center">
+                        {{ form_label(form.isPublished, 'Opublikuj quiz', {'label_attr': {'class': 'form-check-label me-3'}}) }}
+                        {{ form_widget(form.isPublished, {'attr': {'class': 'form-check-input'}}) }}
+                    </div>
+                </div>
             {% endif %}
         {% endif %}
 
@@ -108,7 +119,6 @@
         </div>
 
         {{ form_end(form) }}
-
         <style>
             .question-item {
                 background-color: #f8f9fa;
@@ -132,18 +142,49 @@
                 top: 10px;
                 right: 10px;
             }
+            .validation-error {
+                color: #721c24;
+                background-color: #f8d7da;
+                border: 1px solid #f5c6cb;
+                padding: 10px;
+                border-radius: 5px;
+                margin-top: 10px;
+                display: none;
+                flex-direction: column;
+                gap: 5px;
+            }
+            .validation-error.show {
+                display: flex !important;
+            }
+            .validation-error .error-message {
+                margin: 0;
+            }
+            .form-switch .form-check-input {
+                margin-right: 10px;
+            }
+            .form-switch .form-check-label {
+                font-size: 1.1rem;
+            }
+            .form-switch {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
         </style>
     </div>
 {% endblock %}
 
 {% block javascripts %}
+    {{ parent() }}
     <script>
         function restyleAnswerItem(answerElem) {
             const input = answerElem.querySelector('input[type="text"]');
             const checkbox = answerElem.querySelector('input[type="checkbox"]');
             const label = answerElem.querySelector('label');
+
             const wrapper = document.createElement('div');
             wrapper.className = 'row align-items-center';
+
             const colCheckbox = document.createElement('div');
             colCheckbox.className = 'col-md-2';
             const formCheck = document.createElement('div');
@@ -151,17 +192,16 @@
             if (checkbox) formCheck.appendChild(checkbox);
             if (label) formCheck.appendChild(label);
             colCheckbox.appendChild(formCheck);
+
             const colInput = document.createElement('div');
-            colInput.className = 'col-md-10';
+            colInput.className = 'col-md-9';
             if (input) colInput.appendChild(input);
-            wrapper.append(colCheckbox, colInput);
 
-            answerElem.innerHTML = '';
-            answerElem.appendChild(wrapper);
-
+            const colBtn = document.createElement('div');
+            colBtn.className = 'col-md-1 text-end';
             const removeBtn = document.createElement('button');
             removeBtn.type = 'button';
-            removeBtn.className = 'remove-answer btn btn-danger btn-sm mt-2';
+            removeBtn.className = 'remove-answer btn btn-danger btn-sm';
             removeBtn.textContent = 'Usuń';
             removeBtn.addEventListener('click', () => {
                 const parent = answerElem.parentElement;
@@ -169,7 +209,12 @@
                 parent.dataset.index = parent.querySelectorAll('.answer-item').length;
                 updateAddAnswerVisibility(parent);
             });
-            answerElem.appendChild(removeBtn);
+            colBtn.appendChild(removeBtn);
+
+            wrapper.append(colCheckbox, colInput, colBtn);
+
+            answerElem.innerHTML = '';
+            answerElem.appendChild(wrapper);
         }
 
         function updateAddAnswerVisibility(container) {
@@ -226,15 +271,67 @@
             const addQ = document.querySelector('.add-question');
             let qIndex = parseInt(questionHolder.dataset.index);
 
-            addQ.addEventListener('click', () => {
-                const protoQ = questionHolder.dataset.prototype;
-                const div = document.createElement('div');
-                div.className = 'question-item card mt-3 p-3 border';
-                div.innerHTML = `<h6 class="question-header">Pytanie ${qIndex + 1}</h6>` + protoQ.replace(/__name__/g, qIndex);
-                questionHolder.appendChild(div);
-                bindQuestion(div);
-                questionHolder.dataset.index = ++qIndex;
-            });
+            if (addQ) {
+                addQ.addEventListener('click', () => {
+                    const protoQ = questionHolder.dataset.prototype;
+                    const div = document.createElement('div');
+                    div.className = 'question-item card mt-3 p-3 border';
+                    div.innerHTML = `<h6 class="question-header">Pytanie ${qIndex + 1}</h6>` +
+                        protoQ.replace(/__name__/g, qIndex);
+                    div.innerHTML += '<div class="question-errors validation-error" style="display: none;"></div>';
+                    questionHolder.appendChild(div);
+                    bindQuestion(div);
+                    questionHolder.dataset.index = ++qIndex;
+                });
+            }
+
+            // walidacja kroku 2
+            const form = document.querySelector('form.needs-validation');
+            if (form) {
+                form.addEventListener('submit', (event) => {
+                    const stepInput = document.querySelector('input[name="step"]');
+                    if (!stepInput || parseInt(stepInput.value) !== 2) return;
+
+                    const questions = document.querySelectorAll('.question-item');
+                    let isValid = true;
+
+                    questions.forEach((question, index) => {
+                        const errorsDiv = question.querySelector('.question-errors');
+                        const answers = question.querySelectorAll('.answer-item');
+                        const correctAnswers = question.querySelectorAll('.answer-item input[type="checkbox"]:checked');
+                        const questionTitleInput = question.querySelector('input[name$="[content]"]');
+                        const questionTitle = questionTitleInput ? questionTitleInput.value.trim() : `Pytanie ${index + 1}`;
+                        errorsDiv.innerHTML = '';
+
+                        if (answers.length < 2) {
+                            isValid = false;
+                            const errorDiv = document.createElement('div');
+                            errorDiv.className = 'error-message';
+                            errorDiv.textContent = `❌ Muszą być co najmniej 2 odpowiedzi.`;
+                            errorsDiv.appendChild(errorDiv);
+                        }
+
+                        if (correctAnswers.length !== 1) {
+                            isValid = false;
+                            const errorDiv = document.createElement('div');
+                            errorDiv.className = 'error-message';
+                            errorDiv.textContent = `❌ Musi być dokładnie 1 poprawna odpowiedź.`;
+                            errorsDiv.appendChild(errorDiv);
+                        }
+
+                        if (errorsDiv.children.length > 0) {
+                            errorsDiv.classList.add('show');
+                        } else {
+                            errorsDiv.classList.remove('show');
+                        }
+                    });
+
+                    if (!isValid) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                });
+            }
         });
 
         window.addEventListener('load', initAll);

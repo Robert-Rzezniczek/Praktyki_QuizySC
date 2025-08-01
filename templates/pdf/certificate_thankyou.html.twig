@@ -1,55 +1,87 @@
+
 <!DOCTYPE html>
 <html lang="pl">
 <head>
     <meta charset="UTF-8">
-    <title>Podziękowanie za udział</title>
+    <title>Certyfikat</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jost:ital,wght@0,400;0,700;1,400&family=Luckiest+Guy&display=swap" rel="stylesheet">
     <style>
-        body {
+
+        html, body {
+            padding: 0;
+            width: 210mm;
+            height: 297mm;
+            margin: 10px;
             font-family: Arial, sans-serif;
-            text-align: center;
-            margin: 0;
-            padding: 50px;
-            background-color: #f9f9f9;
+            background: white;
         }
+
         .certificate {
-            background-color: white;
-            padding: 40px;
-            border: 2px solid #9c27b0;
+
+            width: 210mm;
+            height: 340mm;
+            margin: 0mm;
+            border: 10px solid #9c27b0;
+            padding: 30px;
+            box-sizing: border-box;
+            text-align: center;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 600px;
-            margin: 0 auto;
+
+            display: table;
         }
+
+        .certificate > * {
+            display: table-row;
+            vertical-align: middle;
+            height: calc(340mm / 3);
+        }
+
         h1 {
+            font-family: "Luckiest Guy";
             color: #9c27b0;
-            font-size: 2.5em;
+            font-size: 90pt;
             margin-bottom: 20px;
         }
+
         h2 {
             color: #333;
-            font-size: 1.5em;
+            font-size: 24pt;
             margin: 10px 0;
         }
+
         p {
-            font-size: 1.2em;
+            font-size: 16pt;
             color: #555;
-            margin: 5px 0;
+            margin: 8px 0;
         }
+
         .date {
             font-style: italic;
             color: #777;
+        }
+
+        img {
+            width: 200mm;
         }
     </style>
 </head>
 <body>
 <div class="certificate">
-    <h1>Dziękujemy za udział!</h1>
-    <h2>Uczestnictwo w quizie zostało potwierdzone</h2>
+    <div>
+        <h1>Dziękujemy za udział!</h1>
+        <h2>Potwierdzenie uczestnictwa w konkursie</h2>
+    </div>
+    <div>
+        <p><strong>Imię i nazwisko:</strong> {{ user.imie }} {{ user.nazwisko }}</p>
+        <p><strong>Zdobyto punktów:</strong> {{ score }}%</p>
+        <p class="date">Data: {{ "now"|date("d.m.Y") }}</p>
+        <p><strong>Quiz:</strong> {{ quiz.title }}</p>
+    </div>
 
-    <p><strong>Imię i nazwisko:</strong> {{ user.imie }} {{ user.nazwisko }}</p>
-    <p><strong>Zdobyto punktów:</strong> {{ score }}%</p>
-    <p><strong>Quiz:</strong> {{ quiz.title }}</p>
-    <p class="date">Data: {{ "now"|date("d.m.Y") }}</p>
+    <div class="image-wrapper">
+        <img src="{{ absolute_url(asset('images/puchary.png')) }}" alt="Puchary"/>
+    </div>
 </div>
+
 </body>
 </html>

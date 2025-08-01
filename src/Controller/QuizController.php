@@ -236,7 +236,7 @@ class QuizController extends AbstractController
                 $startedAtTimestamp = $session->get(sprintf('quiz_%d_start_time', $quiz->getId()));
                 $startedAt = $startedAtTimestamp ? (new \DateTime())->setTimestamp($startedAtTimestamp) : new \DateTime();
                 $quizResult = $this->quizService->finalizeQuiz($quiz, $user, $session, $quiz->getTimeLimit() ?? 30, $startedAt);
-                $this->addFlash('warning', 'message.quiz_expired');
+                $this->addFlash('warning', 'Quiz wygasł');
 
                 return $this->redirectToRoute('quiz_menu_view');
             } catch (\InvalidArgumentException $e) {
@@ -245,7 +245,7 @@ class QuizController extends AbstractController
         }
 
         if (!$this->quizService->canUserSolveQuiz($quiz, $user)) {
-            $this->addFlash('error', 'message.quiz_already_solved');
+            $this->addFlash('error', 'Już rozwiązywałeś ten quiz');
 
             return $this->redirectToRoute('quiz_menu_view');
         }
@@ -267,7 +267,7 @@ class QuizController extends AbstractController
                 $startedAtTimestamp = $session->get(sprintf('quiz_%d_start_time', $quiz->getId()));
                 $startedAt = $startedAtTimestamp ? (new \DateTime())->setTimestamp($startedAtTimestamp) : new \DateTime();
                 $quizResult = $this->quizService->finalizeQuiz($quiz, $user, $session, $quiz->getTimeLimit() ?? 30, $startedAt);
-                $this->addFlash('warning', 'message.time_limit_exceeded_saved');
+                $this->addFlash('warning', 'Przekroczono limit czasu, zapisano odpowiedź');
                 if ($request->isXmlHttpRequest()) {
                     return new JsonResponse(['success' => true]);
                 }
@@ -286,7 +286,7 @@ class QuizController extends AbstractController
                 $startedAtTimestamp = $session->get(sprintf('quiz_%d_start_time', $quiz->getId()));
                 $startedAt = $startedAtTimestamp ? (new \DateTime())->setTimestamp($startedAtTimestamp) : new \DateTime();
                 $quizResult = $this->quizService->finalizeQuiz($quiz, $user, $session, $quiz->getTimeLimit() ?? 30, $startedAt);
-                $this->addFlash('success', 'message.quiz_completed');
+                $this->addFlash('success', 'Ukończono quiz pomyślnie.');
                 if ($request->isXmlHttpRequest()) {
                     return new JsonResponse(['success' => true]);
                 }
@@ -476,7 +476,7 @@ class QuizController extends AbstractController
                 // zapis do bazy
                 $this->quizService->save($quiz);
                 $request->getSession()->remove('quiz_data');
-                $this->addFlash('success', $this->translator->trans('message.edited_successfully'));
+                $this->addFlash('success', $this->translator->trans('Edytowano pomyślnie.'));
 
                 return $this->redirectToRoute('quiz_index');
             } catch (\InvalidArgumentException $e) {

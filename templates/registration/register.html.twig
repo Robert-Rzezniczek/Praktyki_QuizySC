@@ -12,7 +12,7 @@
             background-color: white;
         }
         .register-form {
-            margin-top: 140px; /* Dostosowanie do przykładowego kodu */
+            margin-top: 140px;
             max-width: 1200px;
             margin: 0 auto;
             padding: 2rem;
@@ -98,6 +98,15 @@
         .btn-primary:hover {
             transform: scale(1.05);
             background-color: #5A2F77;
+        }
+
+        .btn-primary:active,
+        .btn-primary:focus,
+        .btn-primary:focus-visible {
+            background-color: #994DCB !important;
+            box-shadow: 0 0 0 0.2rem rgba(153, 77, 203, 0.5) !important;
+            outline: none !important;
+            transform: scale(1);
         }
 
         .alert {
@@ -230,10 +239,20 @@
                         </div>
 
                         <!-- Zgoda na regulamin -->
+{#                        <div class="mb-4">#}
+{#                            <div class="form-check d-flex flex-column">#}
+{#                                {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}#}
+{#                                {{ form_label(registrationForm.agreeTerms, 'label.agree_terms'|trans, {'label_attr': {'class': 'form-check-label'}}) }}#}
+{#                                {{ form_errors(registrationForm.agreeTerms) }}#}
+{#                            </div>#}
+{#                        </div>#}
+                        <!-- Zgoda na regulamin -->
                         <div class="mb-4">
                             <div class="form-check d-flex flex-column">
                                 {{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
-                                {{ form_label(registrationForm.agreeTerms, 'label.agree_terms'|trans, {'label_attr': {'class': 'form-check-label'}}) }}
+                                <label class="form-check-label">
+                                   <a href="{{ path('app_rules') }}" target="_blank">Regulamin</a>
+                                </label>
                                 {{ form_errors(registrationForm.agreeTerms) }}
                             </div>
                         </div>

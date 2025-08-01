@@ -11,7 +11,10 @@
 {% block body %}
     <div class="container my-4">
         <h1 class="display-5 text-primary mb-4">Create Quiz - Step {{ step }} of {{ maxSteps }}</h1>
-        {{ form_start(form, {'attr': {'class': 'needs-validation', 'novalidate': 'novalidate'}}) }}
+        {{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
+
+        {# Ukryte pole z step (do walidacji) #}
+        <input type="hidden" name="step" value="{{ step }}">
 
         {% if step == 1 %}
             {{ form_row(form.title) }}
@@ -45,27 +48,41 @@
                                             {{ form_widget(answer.content) }}
                                         </div>
                                     </div>
-                                    <button type="button" class="remove-answer btn btn-danger btn-sm mt-2" style="display: {% if loop.index0 > 0 %}inline-block{% else %}none{% endif %};">Remove</button>
+                                    <button type="button" class="remove-answer btn btn-danger btn-sm mt-2" style="display: {% if loop.index0 > 0 %}inline-block{% else %}none{% endif %};">Usuń</button>
                                 </div>
                             {% endfor %}
                         </div>
 
-                        <!-- NIE dodajemy przycisku Add Answer w Twig -->
-                        <button type="button" class="remove-question btn btn-danger btn-sm mt-2" style="display: {% if loop.index0 > 0 %}inline-block{% else %}none{% endif %};">Remove</button>
+                        <div class="question-errors validation-error" style="display: none;"></div>
+
+                        <button type="button" class="remove-question btn btn-danger btn-sm mt-2" style="display: {% if loop.index0 > 0 %}inline-block{% else %}none{% endif %};">Usuń</button>
                     </div>
                 {% endfor %}
             </div>
-            <button type="button" class="add-question btn btn-primary mt-3 mb-2">Add Question</button>
+            <button type="button" class="add-question btn btn-primary mt-3 mb-2">Dodaj pytanie</button>
 
         {% elseif step == 3 %}
-            {{ form_row(form.timeLimit) }}
-            {{ form_row(form.isPublished) }}
+            <div class="d-flex flex-column align-items-center mt-4">
+                <div class="mb-3 w-50">
+                    {{ form_row(form.timeLimit) }}
+                </div>
+                <div class="form-check form-switch d-flex justify-content-center align-items-center">
+                    {{ form_label(form.isPublished, 'Opublikuj quiz', {'label_attr': {'class': 'form-check-label me-3'}}) }}
+                    {{ form_widget(form.isPublished, {'attr': {'class': 'form-check-input'}}) }}
+                </div>
+            </div>
         {% endif %}
 
         <div class="mt-3">
-            <button type="submit" class="btn btn-primary">Next</button>
+            <button type="submit" class="btn btn-primary">
+                {% if step == 3 %}
+                    Zakończ
+                {% else %}
+                    Dalej
+                {% endif %}
+            </button>
             {% if step > 1 %}
-                <a href="{{ path('quiz_create_step', {'step': step - 1}) }}" class="btn btn-secondary">Back</a>
+                <a href="{{ path('quiz_create_step', {'step': step - 1}) }}" class="btn btn-secondary">Cofnij</a>
             {% endif %}
             <a href="{{ path('quiz_create_cancel') }}" class="btn btn-danger">Przerwij tworzenie</a>
         </div>
@@ -92,6 +109,34 @@
                 top: 10px;
                 right: 10px;
             }
+            .validation-error {
+                color: #721c24;
+                background-color: #f8d7da;
+                border: 1px solid #f5c6cb;
+                padding: 10px;
+                border-radius: 5px;
+                margin-top: 10px;
+                display: none;
+                flex-direction: column;
+                gap: 5px;
+            }
+            .validation-error.show {
+                display: flex !important;
+            }
+            .validation-error .error-message {
+                margin: 0;
+            }
+            .form-switch .form-check-input {
+                margin-right: 10px;
+            }
+            .form-switch .form-check-label {
+                font-size: 1.1rem;
+            }
+            .form-switch {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+            }
         </style>
     </div>
 {% endblock %}
@@ -102,8 +147,10 @@
             const input = answerElem.querySelector('input[type="text"]');
             const checkbox = answerElem.querySelector('input[type="checkbox"]');
             const label = answerElem.querySelector('label');
+
             const wrapper = document.createElement('div');
             wrapper.className = 'row align-items-center';
+
             const colCheckbox = document.createElement('div');
             colCheckbox.className = 'col-md-2';
             const formCheck = document.createElement('div');
@@ -111,25 +158,29 @@
             if (checkbox) formCheck.appendChild(checkbox);
             if (label) formCheck.appendChild(label);
             colCheckbox.appendChild(formCheck);
+
             const colInput = document.createElement('div');
-            colInput.className = 'col-md-10';
+            colInput.className = 'col-md-9';
             if (input) colInput.appendChild(input);
-            wrapper.append(colCheckbox, colInput);
 
-            answerElem.innerHTML = '';
-            answerElem.appendChild(wrapper);
-
+            const colBtn = document.createElement('div');
+            colBtn.className = 'col-md-1 text-end';
             const removeBtn = document.createElement('button');
             removeBtn.type = 'button';
-            removeBtn.className = 'remove-answer btn btn-danger btn-sm mt-2';
-            removeBtn.textContent = 'Remove';
+            removeBtn.className = 'remove-answer btn btn-danger btn-sm';
+            removeBtn.textContent = 'Usuń';
             removeBtn.addEventListener('click', () => {
                 const parent = answerElem.parentElement;
                 answerElem.remove();
                 parent.dataset.index = parent.querySelectorAll('.answer-item').length;
                 updateAddAnswerVisibility(parent);
             });
-            answerElem.appendChild(removeBtn);
+            colBtn.appendChild(removeBtn);
+
+            wrapper.append(colCheckbox, colInput, colBtn);
+
+            answerElem.innerHTML = '';
+            answerElem.appendChild(wrapper);
         }
 
         function updateAddAnswerVisibility(container) {
@@ -143,13 +194,12 @@
             const prototype = container.dataset.prototype;
             const parent = container.closest('.question-item');
 
-            // add‑answer button
             let btn = parent.querySelector('.add-answer');
             if (!btn) {
                 btn = document.createElement('button');
                 btn.type = 'button';
                 btn.className = 'add-answer btn btn-secondary mt-2 mb-2';
-                btn.textContent = 'Add Answer';
+                btn.textContent = 'Dodaj odpowiedź';
                 parent.appendChild(btn);
             }
             btn.addEventListener('click', () => {
@@ -164,7 +214,6 @@
                 updateAddAnswerVisibility(container);
             });
 
-            // bind removal on existing items
             container.querySelectorAll('.answer-item').forEach(restyleAnswerItem);
             updateAddAnswerVisibility(container);
         }
@@ -181,7 +230,6 @@
             document.querySelectorAll('.answers-collection').forEach(bindAnswerCollection);
         }
 
-        // init on DOM ready
         document.addEventListener('DOMContentLoaded', () => {
             initAll();
 
@@ -194,13 +242,62 @@
                 const div = document.createElement('div');
                 div.className = 'question-item card mt-3 p-3 border';
                 div.innerHTML = `<h6 class="question-header">Pytanie ${qIndex+1}</h6>` + protoQ.replace(/__name__/g, qIndex);
+                // Dodajemy div na błędy dla nowego pytania
+                div.innerHTML += '<div class="question-errors validation-error" style="display: none;"></div>';
                 questionHolder.appendChild(div);
                 bindQuestion(div);
                 questionHolder.dataset.index = ++qIndex;
             });
+
+            // walidacja 2 kroku (minimum 2 odpowiedzi, dokładnie 1 prawidłowa)
+            const form = document.querySelector('form.needs-validation');
+            if (form) {
+                form.addEventListener('submit', (event) => {
+                    const stepInput = document.querySelector('input[name="step"]');
+                    if (!stepInput || stepInput.value !== '2') return;
+
+                    const questions = document.querySelectorAll('.question-item');
+                    let isValid = true;
+
+                    questions.forEach((question, index) => {
+                        const errorsDiv = question.querySelector('.question-errors');
+                        const answers = question.querySelectorAll('.answer-item');
+                        const correctAnswers = question.querySelectorAll('.answer-item input[type="checkbox"]:checked');
+                        const questionTitleInput = question.querySelector('input[name$="[content]"]');
+                        const questionTitle = questionTitleInput ? questionTitleInput.value.trim() : `Pytanie ${index + 1}`;
+                        errorsDiv.innerHTML = '';
+
+                        if (answers.length < 2) {
+                            isValid = false;
+                            const errorDiv = document.createElement('div');
+                            errorDiv.className = 'error-message';
+                            errorDiv.textContent = `❌ Muszą być co najmniej 2 odpowiedzi.`;
+                            errorsDiv.appendChild(errorDiv);
+                        }
+
+                        if (correctAnswers.length !== 1) {
+                            isValid = false;
+                            const errorDiv = document.createElement('div');
+                            errorDiv.className = 'error-message';
+                            errorDiv.textContent = `❌ Musi być dokładnie 1 poprawna odpowiedź.`;
+                            errorsDiv.appendChild(errorDiv);
+                        }
+
+                        if (errorsDiv.children.length > 0) {
+                            errorsDiv.classList.add('show');
+                        } else {
+                            errorsDiv.classList.remove('show');
+                        }
+                    });
+
+                    if (!isValid) {
+                        event.preventDefault();
+                        event.stopPropagation();
+                    }
+                });
+            }
         });
 
-        // re-init on full load (after twig re-renders reply from server restoring session state)
         window.addEventListener('load', initAll);
     </script>
 {% endblock %}

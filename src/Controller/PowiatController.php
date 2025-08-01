@@ -52,27 +52,6 @@ class PowiatController extends AbstractController
     }
 
     /**
-     * View action.
-     *
-     * @param Powiat $powiat Powiat entity
-     *
-     * @return Response HTTP response
-     */
-    #[Route(
-        '/{id}',
-        name: 'powiat_view',
-        requirements: ['id' => '[1-9]\d*'],
-        methods: 'GET'
-    )]
-    public function view(Powiat $powiat): Response
-    {
-        return $this->render(
-            'powiat/view.html.twig',
-            ['powiat' => $powiat]
-        );
-    }
-
-    /**
      * Create action.
      *
      * @param Request $request HTTP request
