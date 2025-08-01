@@ -25,15 +25,21 @@
                 align-items: center;
                 justify-content: space-between;
                 gap: 40px;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
             }
 
             .quiz-branding-text {
-                text-align: left;
-                margin: 0 auto;
-                max-width: 500px; /* lub dostosuj do szerokości quizu */
+                flex: 1 1 60%;
+                max-width: 60%;
             }
 
+            .quiz-start-logo {
+                flex: 1 1 40%;
+                max-width: 40%;
+                max-height: 160px;
+                height: auto;
+                object-fit: contain;
+            }
 
             .quiz-start-title {
                 font-size: 2.6rem;
@@ -44,11 +50,6 @@
             .quiz-description {
                 font-size: 1.3rem;
                 color: #444;
-            }
-
-            .quiz-start-logo {
-                max-height: 160px;
-                width: auto;
             }
 
             .quiz-info {

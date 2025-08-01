@@ -26,9 +26,7 @@
             background-color: #ffffff;
             color: #000000;
             max-width: 500px;
-            margin: 0 auto 10px auto;
         }
-
 
         .quiz-question-number {
             font-size: 1.4rem;
@@ -138,8 +136,6 @@
             outline: none;
         }
 
-
-
         @media (max-width: 600px) {
             .answer-buttons {
                 width: 90%;
@@ -208,7 +204,6 @@
             const questionIndexInput = form.querySelector('input[name="quiz_solve[question_index]"]');
             let timeRemaining = timeLimit - (Date.now() / 1000 - startedAt);
             let quizEnded = false;
-
             function updateTimer() {
                 if (quizEnded || timeRemaining <= 0) {
                     if (!quizEnded) {
