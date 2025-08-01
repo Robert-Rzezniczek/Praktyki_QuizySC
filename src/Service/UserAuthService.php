@@ -13,7 +13,6 @@ use App\Form\RegistrationForm;
 use App\Repository\PowiatRepository;
 use App\Repository\UserAuthRepository;
 use App\Repository\WojewodztwoRepository;
-use InvalidArgumentException;
 use Knp\Component\Pager\Pagination\PaginationInterface;
 use Knp\Component\Pager\PaginatorInterface;
 use Symfony\Component\Form\FormInterface;
@@ -103,7 +102,7 @@ class UserAuthService implements UserAuthServiceInterface
 
         // Walidacja zgodności województwa i powiatu
         if ($powiat && $wojewodztwo && $powiat->getWojewodztwo()->getId() !== $wojewodztwo->getId()) {
-            throw new InvalidArgumentException('Wybrany powiat nie należy do wybranego województwa.');
+            throw new \InvalidArgumentException('Wybrany powiat nie należy do wybranego województwa.');
         }
         // Konwersja podzialWiekowy na obiekt EducationLevel
         $podzialWiekowy = $form->get('podzialWiekowy')->getData();
