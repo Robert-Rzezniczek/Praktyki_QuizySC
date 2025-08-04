@@ -6,11 +6,11 @@
     <meta http-equiv="Expires" content="0">
 {% endblock %}
 
-{% block title %}Create Quiz - Step {{ step }}{% endblock %}
+{% block title %}Tworzenie Quizu - krok {{ step }}{% endblock %}
 
 {% block body %}
     <div class="container my-4">
-        <h1 class="display-5 text-primary mb-4">Create Quiz - Step {{ step }} of {{ maxSteps }}</h1>
+        <h1 class="display-5 text-primary mb-4">Tworzenie quizu - krok {{ step }} z {{ maxSteps }}</h1>
         {{ form_start(form, {'attr': {'class': 'needs-validation'}}) }}
 
         {# Ukryte pole z step (do walidacji) #}

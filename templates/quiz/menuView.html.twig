@@ -74,8 +74,6 @@
 {% endblock %}
 
 {% block body %}
-    <a href="{{ path('app_menu') }}" class="menu-button">☰ Menu</a>
-
     {% for quiz in quizzes %}
         <a href="{% if is_granted('ROLE_ADMIN') %}
                     {{ path('quiz_view', { id: quiz.quiz_id }) }}
