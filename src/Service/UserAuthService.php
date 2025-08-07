@@ -23,6 +23,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
  */
 class UserAuthService implements UserAuthServiceInterface
 {
+    private bool $invalidRegionSelected = false;
     private const PAGINATOR_ITEMS_PER_PAGE = 10;
 
     /**
@@ -102,7 +103,9 @@ class UserAuthService implements UserAuthServiceInterface
 
         // Walidacja zgodności województwa i powiatu
         if ($powiat && $wojewodztwo && $powiat->getWojewodztwo()->getId() !== $wojewodztwo->getId()) {
-            throw new \InvalidArgumentException('Wybrany powiat nie należy do wybranego województwa.');
+            $this->invalidRegionSelected = true;
+
+            return;
         }
         // Konwersja podzialWiekowy na obiekt EducationLevel
         $podzialWiekowy = $form->get('podzialWiekowy')->getData();
@@ -118,6 +121,16 @@ class UserAuthService implements UserAuthServiceInterface
         ];
         $this->save($user);
         $this->profileService->createProfile($user, $profileData);
+    }
+
+    /**
+     * Checks if powiat is from the correct wojewodztwo and returns the value.
+     *
+     * @return bool bool
+     */
+    public function isInvalidRegionSelected(): bool
+    {
+        return $this->invalidRegionSelected;
     }
 
     /**

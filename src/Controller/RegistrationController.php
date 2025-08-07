@@ -46,6 +46,16 @@ class RegistrationController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $this->userAuthService->registerUser($user, $form);
+
+            if ($this->userAuthService->isInvalidRegionSelected()) {
+                $this->addFlash('warning', 'Wybrany powiat nie należy do wybranego województwa.');
+
+                // Możesz przekierować z powrotem lub po prostu wyrenderować ten sam widok (jak poniżej)
+                return $this->render('registration/register.html.twig', [
+                    'registrationForm' => $form,
+                ]);
+            }
+
             $this->addFlash('success', 'Zarejestrowano pomyślnie.');
 
             return $this->redirectToRoute('app_login');
