@@ -6,6 +6,7 @@
 
 namespace App\Controller;
 
+use App\Repository\UserAnswerRepository;
 use App\Service\UserAuthService;
 use App\Service\UserProfileService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -29,10 +30,11 @@ class AdminUserController extends AbstractController
     /**
      * Constructor.
      *
-     * @param UserAuthService    $userService    UserAuthService
-     * @param UserProfileService $profileService UserProfileService
+     * @param UserAuthService      $userService          UserAuthService
+     * @param UserProfileService   $profileService       UserProfileService
+     * @param UserAnswerRepository $userAnswerRepository UserAnswerRepository
      */
-    public function __construct(private readonly UserAuthService $userService, private readonly UserProfileService $profileService)
+    public function __construct(private readonly UserAuthService $userService, private readonly UserProfileService $profileService, private readonly UserAnswerRepository $userAnswerRepository)
     {
     }
 
@@ -117,8 +119,16 @@ class AdminUserController extends AbstractController
     #[Route('/{id}/delete', name: 'admin_user_delete', methods: ['POST'])]
     public function delete(UserAuth $user, Request $request): Response
     {
+        $userAnswers = $this->userAnswerRepository->findBy(['user' => $user]);
+
         if (!$this->isCsrfTokenValid('delete-user-'.$user->getId(), $request->request->get('_token'))) {
             $this->addFlash('danger', 'Nieprawidłowy token CSRF.');
+
+            return $this->redirectToRoute('admin_user_list');
+        }
+        // Blokada usuwania jeśli są odpowiedzi
+        if (!empty($userAnswers)) {
+            $this->addFlash('warning', 'Nie można usunąć użytkownika, który brał udział w testach.');
 
             return $this->redirectToRoute('admin_user_list');
         }

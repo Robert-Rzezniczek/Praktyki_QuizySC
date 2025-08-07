@@ -131,7 +131,7 @@
         {{ form_end(editForm) }}
 
         <form method="post" action="{{ path('user_delete_account') }}"
-              onsubmit="return confirm('Czy na pewno chcesz usunąć swoje konto? Tej operacji nie można cofnąć.');">
+              onsubmit="return confirm('Usunięcie konta spowoduje również usunięcie Twoich wyników. Czy na pewno chcesz usunąć swoje konto? Tej operacji nie można cofnąć.');">
             <input type="hidden" name="_token" value="{{ csrf_token('delete-account') }}">
             <button class="btn btn-danger">Usuń moje konto</button>
         </form>
